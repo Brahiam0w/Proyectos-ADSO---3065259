@@ -25,6 +25,23 @@ section{
     justify-content: center;
     color: rgb(0, 0, 0);
 }
+.web1-content button{
+    background-color: #0B2B26;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    height: 50px;
+    width: 200px;
+    font-size: 20px;
+}
+
+.web1-content button:hover{
+    background-color: #679c93;
+    color: #ffffff;
+}
 
 .web1-content{
     background-color: #ffffff;
@@ -33,6 +50,7 @@ section{
     border: 3px solid black;
     border-radius: 50px;
     display: flex;
+    align-items: center;
     justify-content: center;
     gap: 50px;
     flex-direction: column;
