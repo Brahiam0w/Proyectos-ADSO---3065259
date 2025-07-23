@@ -1,0 +1,712 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.principal {
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(211, 210, 210);
+    height: 100%;
+    position: relative;
+}
+
+.header1 {
+    display: flex;
+    justify-content: space-between;
+    color: white;
+    background-color: #222222;
+    padding: 0 140px 20px 140px;
+}
+
+.icono-header {
+    display: flex;
+    align-items: center;
+}
+
+.icono-header img {
+    width: 250px;
+    height: 100px;
+}
+
+.nav-central {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    align-items: flex-end;
+    width: 350px;
+}
+
+.nav-central ul {
+    display: flex;
+    justify-content: space-between;
+    padding: 40px 0 0;
+}
+
+.nav-central ul div {
+    display: flex;
+    gap: 10px
+}
+
+.nav-derecho {
+    display: flex;
+    align-items: flex-start;
+}
+
+.nav-derecho ul {
+    flex-direction: column;
+    align-items: flex-end;
+    margin-top: 10px;
+}
+
+.header1 nav ul {
+    display: flex;
+    list-style: none;
+    gap: 50px;
+    width: 100%;
+}
+
+.contactos {
+    display: flex;
+    list-style: none;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.icono-header-central {
+    width: 35px;
+    height: 35px;
+}
+
+.cuadro-busqueda {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin: 5px 0 15px 0;
+}
+
+.cuadro-busqueda input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid white;
+    border-radius: 4px 0 0 4px;
+    font-size: 16px;
+}
+
+.cuadro-busqueda button {
+    padding: 10px 14px;
+    border: 1px solid white;
+    background: #fff;
+    border-radius: 0 4px 4px 0;
+    font-size: 16px;
+}
+
+.canasta-header {
+    background-color: #e71717;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #e71717;
+    position: relative;
+}
+
+.shoping-section {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.shoping-section p {
+    color: #e71717;
+}
+
+.data-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+.data-header span {
+    padding: 0 5px;
+    border-left: 1px solid #8f8f8f;
+}
+
+#span1 {
+    border-left: 0;
+}
+
+.secundario {
+    background-color: white;
+    flex: 1;
+    width: 85%;
+    margin: 40px auto 0;
+    position: relative;
+}
+
+.header-secundario {
+    display: flex;
+    position: absolute;
+    top: -65px;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+.header-secundario img {
+    background-color: rgb(26, 26, 26);
+    width: 50px;
+}
+
+.header2 {
+    display: flex;
+    justify-content: flex-start;
+    background-color: #e71717;
+    width: 100%;
+    color: white;
+}
+
+.header2 ul {
+    display: flex;
+}
+
+.header2 ul li {
+    display: flex;
+    text-decoration: none;
+    padding: 10px;
+    border: 1px solid #d10b0b;
+    height: 55%;
+    align-items: center;
+}
+
+.licuadora {
+    margin: 8px;
+}
+
+.licuadora img {
+    width: 100%;
+}
+
+.category-titulo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: 40px 0 10px;
+}
+
+.category-titulo hr {
+    flex: 1;
+    border: none;
+    border-top: 4px solid #ccc;
+    margin: 0 10px;
+}
+
+.category-titulo h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+.category {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    padding: 10px;
+    gap: 20px;
+}
+
+.category div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.electrodomesticos1-5 img,
+.electrodomesticos1-6 img {
+    width: 100%;
+    height: 150px;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.category h2 {
+    display: flex;
+    color: red;
+    margin: 10px;
+    justify-content: center;
+}
+
+.electrodomesticos1-1 {
+    grid-row: span 3 / span 3;
+    border-right: 3px solid #ccc;
+    padding: 30px;
+}
+
+.electrodomesticos1-2 {
+    grid-row: span 3 / span 3;
+    border-right: 3px solid #ccc;
+    padding: 30px;
+}
+
+.electrodomesticos1-3 {
+    grid-row: span 3 / span 3;
+    border-right: 3px solid #ccc;
+    padding: 30px;
+}
+
+.electrodomesticos1-4 {
+    grid-row: span 3 / span 3;
+    padding: 30px;
+}
+
+.electrodomesticos1-5 {
+    grid-column: span 2 / span 2;
+    grid-row: span 1 / span 1;
+    grid-row-start: 4;
+    margin: 0 12px 0 0;
+    border: 1px solid grey;
+}
+
+.electrodomesticos1-6 {
+    grid-column: span 2 / span 2;
+    grid-row: span 1 / span 1;
+    grid-column-start: 3;
+    grid-row-start: 4;
+    margin: 0 0 0 8px;
+    border: 1px solid grey;
+}
+
+.new-product-titulo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: 30px;
+}
+
+.new-product-titulo hr {
+    flex: 1;
+    border: none;
+    border-top: 4px solid #ccc;
+    margin: 0 10px;
+}
+
+.new-product {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 10px;
+    gap: 5px;
+    align-items: center;
+}
+
+
+.new-product-item {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgb(243, 238, 238);
+    object-fit: contain;
+    height: 420px;
+}
+
+.new-product-item img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.imagen-producto {
+    display: flex;
+    padding: 0 10px 0 15px;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    border: none;
+}
+
+.seccion-producto {
+    display: flex;
+    margin: 15px 0;
+}
+
+.new-product-item p {
+    padding: 10px 0 0 10px;
+}
+
+#canasta-new-product {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #e71717;
+    border: 1px solid #e71717;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+#canasta-new-product img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    display: block;
+    margin: auto;
+}
+
+
+.boton-new-product {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #9b9b9b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none
+}
+
+
+.boton-new-product img {
+    width: 60%;
+    height: 60%;
+    object-fit: cover;
+    display: block;
+    margin: auto;
+}
+
+.precio-producto {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    border-right: 1px solid #9b9b9b;
+    padding: 0 60px 0 0;
+}
+
+#precio-original-producto {
+    text-decoration: line-through;
+}
+
+#precio-descuento-producto {
+    color: #e71717;
+    font-size: 20px;
+}
+
+.estrellas {
+    margin: 0 10px;
+}
+
+.estrellas i {
+    color: #FFD700;
+    font-size: 13px;
+    margin-right: px;
+}
+
+.barra {
+    display: flex;
+    background-color: #f1f1f1;
+    justify-content: space-between;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.contacto-redes {
+    background-color: #222222;
+    color: white;
+    margin: 10px;
+}
+
+.contacto {
+    display: flex;
+    background-color: #fafafa;
+    color: black;
+    padding: 10px;
+    gap: 40px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.busqueda {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.cuadro-busqueda-barra {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin: 5px 0 15px 0;
+}
+
+.cuadro-busqueda-barra input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid rgb(226, 226, 226);
+    border-radius: 4px 0 0 4px;
+    font-size: 16px;
+}
+
+.cuadro-busqueda-barra button {
+    padding: 10px 14px;
+    border: 1px solid rgb(0, 0, 0);
+    background: #000000;
+    border-radius: 0 4px 4px 0;
+    font-size: 16px;
+    color: white;
+}
+
+.follow,
+.lang,
+.curency {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border-left: 1px solid #ccc;
+    padding: 10px 0 0 50px;
+}
+
+
+
+.redes-sociales i {
+    color: #b3b3b3;
+    font-size: 20px;
+}
+
+.informacion {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 40px;
+}
+
+.informacion-item {
+    width: 25%;
+}
+
+.informacion-item h3 {
+    color: #e5e5e5;
+    font-size: 17px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.informacion-item ul {
+    list-style: disc inside;
+    padding-left: 0;
+    color: #e5e5e5;
+}
+
+.informacion-item ul li {
+    font-size: 15px;
+    margin-bottom: 6px;
+    color: #e5e5e5;
+    text-align: left;
+}
+
+.footer-rojo {
+    color: red;
+}
+
+.iconos-contacto-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    list-style: none;
+}
+
+@media (max-width: 1400px) {
+    .new-product {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        object-fit: contain;
+        align-items: stretch;
+    }
+
+    .new-product-item img {
+        height: auto;
+        object-fit: contain;
+        display: block;
+    }
+
+    .new-product-item {
+        height: auto;
+    }
+
+    .contacto {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        align-items: center;
+        justify-items: center;
+        text-align: center;
+    }
+}
+
+@media (max-width: 1340px) {
+    .category {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        padding: 10px;
+        align-items: stretch;
+    }
+    .category div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        min-width: 0;
+        box-sizing: border-box;
+        border: none !important;
+        margin: 0 !important;
+    }
+    .electrodomesticos1-1,
+    .electrodomesticos1-2,
+    .electrodomesticos1-3,
+    .electrodomesticos1-4,
+    .electrodomesticos1-5,
+    .electrodomesticos1-6 {
+        padding: 10px !important;
+        border: none !important;
+        margin: 0 !important;
+        grid-row: auto !important;
+        grid-column: auto !important;
+        grid-row-start: auto !important;
+        grid-column-start: auto !important;
+        grid-row-end: auto !important;
+        grid-column-end: auto !important;
+    }
+    .category h2 {
+        font-size: 18px;
+        color: red;
+        margin: 10px 0 0 0;
+        text-align: center;
+        width: 100%;
+        display: block;
+    }
+    .category img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        margin: 0;
+    }
+    .category p {
+        text-align: center;
+        margin: 0;
+        padding: 0 10px;
+    }
+
+    .barra{
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        justify-content: center;
+        align-self: center;
+    }
+    .barra > div {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .barra img {
+        display: block;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 1300px) {
+    .header1 {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto auto;
+        align-items: start;
+        justify-items: center;
+        padding: 20px 10px;
+        gap: 20px;
+    }
+    .icono-header {
+        grid-column: 1;
+        grid-row: 1;
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+    .shoping-section,
+    .nav-derecho {
+        grid-column: 2;
+        grid-row: 1;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 20px;
+        width: auto;
+        margin-top: 0;
+    }
+    .nav-central {
+        grid-column: 1 / span 2;
+        grid-row: 2;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+        gap: 10px;
+        text-align: center;
+    }
+    .nav-central ul {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+        padding: 0;
+    }
+    .cuadro-busqueda {
+        width: 100%;
+        max-width: 400px;
+        margin: 10px auto;
+        display: flex;
+        justify-content: center;
+    }
+    .data-header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+    }
+    .shoping-section .canasta-header {
+        margin-right: 8px;
+    }
+    .shoping-section p {
+        margin: 0;
+        color: #e71717;
+        font-weight: bold;
+    }
+}
+
+@media (max-width: 1200px) {
+    .header2 ul{
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        margin: auto;
+    }
+    .header2{
+        height: 90px;
+    }
+}
+
