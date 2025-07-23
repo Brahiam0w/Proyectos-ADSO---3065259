@@ -51,13 +51,14 @@ section{
     justify-content: center;
     align-items: center;
     color: white;
+    flex-direction: column;
 }
 
 .web2-content{
     display: flex;
     flex-direction: column;
     gap: 30px;
-    margin: 0 30px 0 0;
+    margin: 0 30px 20px 0;
 }
 
 .web2-content ul{
@@ -66,6 +67,7 @@ section{
     padding: 0;
     margin: 0;
     gap: 20px;
+    justify-content: center;
 }
 .img-web2{
     display: flex;
@@ -80,31 +82,27 @@ section{
     width: 100%;
     border-radius: 15px;
     box-shadow: 0 0 15px rgb(0, 0, 0, 1.5);
+    cursor: pointer;
 }
 
-.web3{
-    position: relative;
-    height: 100%;
-    width: 80%;
-    display: flex;
-    flex-direction: column;
-    background-color: #BEB5A9;
-    align-items: center;
-    margin: auto;
+.web2 button{
+    background-color: #ffffff;
+    color: #0B2B26;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    height: 50px;
+    width: 200px;
+    margin: 40px 0;
+    font-size: 20px;
 }
 
-.web4{
-    position: relative;
-    height: 100%;
-    width: 80%;
-    display: flex;
-    flex-direction: column;
-    background-color: #E1DAC2;
-    align-items: center;
-    margin: auto;
+.web2 button:hover{
+    background-color: #0B2B26;
+    color: #ffffff;
 }
-
-
 
 main{
     position: relative;
@@ -113,3 +111,4 @@ main{
     overflow: auto;
     scroll-snap-type: y mandatory;
 }
+
