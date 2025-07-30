@@ -1,0 +1,121 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #b4b3b1;
+}
+
+.Principal {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./imagenes/fondo.jpg');
+    background-size: cover;
+    background-position: center;
+    width: 80%;
+    height: 100vh;
+    margin: auto;
+    padding: 0 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    color: #ffffff;
+}
+
+.header-adventure {
+    display: flex;
+    justify-content: space-between;
+}
+
+.header-adventure ul {
+    display: flex;
+    list-style: none;
+    gap: 40px;
+    justify-content: center;
+    align-items: center;
+}
+
+.home {
+    display: flex;
+    justify-content: space-between;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.slider-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.slider {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 20px 0;
+}
+
+.slider::-webkit-scrollbar {
+    display: none;
+}
+
+.destinos {
+    position: relative;
+    border-radius: 20px;
+    flex: 0 0 auto;
+    max-width: 300px;
+    height: 300px;
+    background-color: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.destinos img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.slider-controls {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+    gap: 15px;
+}
+
+.slider-controls button {
+    font-size: 28px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.slider-controls button:hover {
+    background-color: rgba(14, 177, 76, 0.745);
+}
+
+.destinos{
+    color: black;
+    
+}
+
+.titulo-destino {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    text-shadow: 1px 1px 3px black;
+}
