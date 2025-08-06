@@ -1,0 +1,276 @@
+* {
+    margin: 0;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: #363941;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 40px;
+}
+
+header p {
+    margin: 15px;
+    font-size: 23px;
+}
+
+#inicio {
+    color: white;
+}
+
+#nombre {
+    color: white;
+
+}
+
+nav {
+    display: flex;
+    gap: 15px;
+    margin: 15px;
+}
+
+a{
+    color: #8E9299;
+    text-decoration: none;
+}
+
+.seccion1 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 20px;
+    margin: 10px auto;
+}
+
+#imagen {
+    height: 600px;
+    margin: auto;
+}
+
+.seccion1 #texto {
+    margin: auto;
+}
+
+.seccion1 #texto p{
+    max-width: 75%;
+}
+
+.seccion1 h2 {
+    color: red;
+    font-size: 60px;
+    margin-bottom: 15px;
+}
+
+.seccion1 button {
+    background-color: red;
+    border: 1px black solid;
+    border-radius: 4px;
+    padding: 10px;
+    width: 120px;
+    color: white;
+    font-size: 20px;
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+.seccion2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #FF411D;
+}
+
+.seccion2 div {
+    text-align: center;
+    width: 80%;
+    font-size: 35px;
+    margin: 20px;
+    color: white;
+}
+
+.seccion2 i {
+    font-size: 25px;
+}
+
+.seccion2 img {
+    background-color: white;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    margin: 20px 0 30px 0;
+}
+
+.seccion3 {
+    padding: 15px;
+}
+
+#misproyectos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #363941;
+    font-size: 35px;
+    margin: 20px;
+}
+
+#tarjetas {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    height: 80%;
+    align-items: center;
+    justify-content: center;
+    margin: 40px 0;
+}
+
+.tarjeta {
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center;
+    box-shadow: 2px 2px 5px #eec8c8;
+    border-radius: 3px;
+    font-size: 17px;
+}
+
+.tarjeta img {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+}
+
+.tarjeta h3 {
+    margin: 10px auto;
+}
+
+.tarjeta p {
+    margin: 10px;
+    font-size: 20px;
+}
+
+.tarjeta button {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 120px;
+    font-size: 15px;
+    margin: 20px auto;
+}
+
+footer {
+    background-color: #363941;
+    color: white;
+    padding: 20px 200px;
+    text-align: end;
+}
+
+@media (max-width : 800px) {
+    #imagen {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #imagen img {
+        height: 400px;
+        width: 400px;
+    }
+}
+
+@media (max-width: 1000px){
+    #tarjetas{
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 630px){
+    #imagen {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #imagen img {
+        height: 300px;
+        width: 300px;
+    }
+}
+
+@media(max-width: 530px){
+    #imagen{
+        height: 200px;
+    }
+}
+
+@media (min-width: 300px) and (max-width : 530px){
+    .seccion1{
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    #texto{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #imagen {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #imagen img {
+        height: 250px;
+        width: 250px;
+    }
+
+    #tarjetas{
+        grid-template-columns: 1fr;
+    }
+    footer{
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    nav{
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 400px)
+{
+    .seccion2 div{
+        font-size: 25px;
+    }
+
+    footer{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 13px;
+    }
+}
+
+@media (min-width:300px) and ( max-width: 440px){
+    #misproyectos{
+        text-align: center;
+        font-size: 29px;
+    }
+
+    footer{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
