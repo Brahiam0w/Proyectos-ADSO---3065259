@@ -26,12 +26,15 @@ if (document.getElementById('pagina-slider')) {
 
 if (document.getElementById('pagina-tarjetas')) {
     const lugar = JSON.parse(localStorage.getItem("lugarSeleccionado"));
+    const contenedor = document.getElementById('pagina-tarjetas');
+    contenedor.style.background = `linear-gradient(to bottom right, ${lugar.categoria.colorPrimario}, ${lugar.categoria.colorSecundario})`;
 
     if (lugar) {
         const contenedor = document.getElementById('viewport-tarjetas');
         contenedor.style.backgroundImage = `url(${lugar.url_imagen})`;
         contenedor.style.backgroundSize = "cover";
         contenedor.style.backgroundPosition = "center";
+
 
         contenedor.innerHTML = `
         <div id="contenido-tarjetas">

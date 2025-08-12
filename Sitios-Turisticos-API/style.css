@@ -117,8 +117,9 @@ body {
 }
 
 .viewport-tarjetas{
-    width: 100%;
+    width: 90%;
     height: 100vh;
+    margin: auto;
     padding: 0 60px;
     display: flex;
     flex-direction: column;
@@ -309,5 +310,5 @@ main{
     height: 100vh;
     overflow: auto;
     scroll-snap-type: y mandatory;
+    
 }
-
