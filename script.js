@@ -1,3 +1,4 @@
+
 if (document.getElementById('pagina-slider')) {
     fetch("API´s/lugares.json")
         .then(response => response.json())
@@ -31,33 +32,38 @@ if (document.getElementById('pagina-tarjetas')) {
 
     if (lugar) {
         const contenedor = document.getElementById('viewport-tarjetas');
-        contenedor.style.backgroundImage = `url(${lugar.url_imagen})`;
         contenedor.style.backgroundSize = "cover";
         contenedor.style.backgroundPosition = "center";
 
 
         contenedor.innerHTML = `
         <div id="contenido-tarjetas">
-            <div id="info-1">
-                <div>
-                    <p>WELCOME TO</p>
+            <div class="seccion-1-tarjetas">
+                
+                <div id="info-1">
+                    <p id="welcome">WELCOME TO</p>
                     <p id="ciudad">${lugar.ciudad}</p>
                     <p id="pais">${lugar.pais}</p>
+                    
                 </div>
                 <div>
-                    <p id="Descripcion-info-1">${lugar.descripcion}</p>
+                    <img id="imagen-tarjeta" src=${lugar.url_imagen} alt="imagen-${lugar.nombre}">
+                </div>
+                
+            </div>
+           <div>
+            <div id="actividades-recomendadas">
+                
+                <p id="Descripcion-info-1">${lugar.descripcion}</p>
+                <h2>Actividades Recomendadas:</h2>
+                <ul id="lista-actividades"></ul>
+            </div>
+                <div id="">
                 </div>
             </div>
-            <div id="info-2">
-                <div>
-                    <p id="nombre">${lugar.nombre}</p>
-                </div>
-                <div id="actividades-recomendadas">
-                    <h2>Actividades Recomendadas:</h2>
-                    <ul id="lista-actividades"></ul>
-                </div>
-            </div>
+            
         </div>
+        <footer>${lugar.categoria.nombre} -- Coordenadas: Longitud: ${lugar.coordenadas.longitud} Latitud: ${lugar.coordenadas.latitud}</footer>
         `;
 
         const lista = document.getElementById('lista-actividades');
