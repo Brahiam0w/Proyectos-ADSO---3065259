@@ -1,0 +1,344 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #b4b3b1;
+}
+
+.Principal {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./imagenes/fondo.jpg');
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: 100vh;
+    margin: auto;
+    padding: 0 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    color: #ffffff;
+}
+
+.header-adventure {
+    display: flex;
+    justify-content: space-between;
+}
+
+.header-adventure ul {
+    display: flex;
+    list-style: none;
+    gap: 40px;
+    justify-content: center;
+    align-items: center;
+}
+
+.home {
+    display: flex;
+    justify-content: space-between;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.slider-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.slider {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 20px 0;
+}
+
+.slider::-webkit-scrollbar {
+    display: none;
+}
+
+.destinos {
+    position: relative;
+    border-radius: 20px;
+    flex: 0 0 auto;
+    width: 300px;
+    height: 300px;
+    background-color: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+
+.destinos img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.slider-controls {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+    gap: 15px;
+}
+
+.slider-controls button {
+    font-size: 28px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.slider-controls button:hover {
+    background-color: rgba(14, 177, 76, 0.745);
+}
+
+.titulo-destino {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    text-shadow: 1px 1px 3px black;
+}
+
+#imagen-tarjeta{
+    object-fit: cover;
+    border-radius: 10px;
+    margin: 20px;
+    width: 450px;
+    height: 450px;
+}
+
+.viewport-tarjetas{
+    display: flex;
+    flex-direction: column;
+    color: #000000;
+}
+
+#nombre{
+    font-size: 120px;
+}
+
+#welcome{
+    font-size: 30px;
+}
+
+#ciudad{
+    font-size: 120px;
+}
+
+#pais{
+    font-size: 70px;
+}
+
+#contenido-tarjetas{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    margin: auto;
+    padding: 50px;
+    gap: 30px;
+    background-color: white;
+}
+
+#actividades-recomendadas{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#actividades-recomendadas ul{
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    gap: 10px;
+}
+
+#info-1{
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#info-2{
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+}
+
+#Descripcion-info-1{
+    font-size: 20px;
+}
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+section{
+    position: relative;
+    overflow: hidden;
+    height: 100vh;
+    background-color: #0B2B26;
+    text-align: center;
+    scroll-snap-align: start;
+}
+
+.web1{
+    position: relative;
+    height: 100%;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    background-color: #163832;
+    align-items: center;
+    margin: auto;
+    justify-content: center;
+    color: rgb(0, 0, 0);
+}
+.web1-content button{
+    background-color: #0B2B26;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    height: 50px;
+    width: 200px;
+    font-size: 20px;
+}
+
+.web1-content button:hover{
+    background-color: #679c93;
+    color: #ffffff;
+}
+
+.web1-content{
+    background-color: #ffffff;
+    height: 70%;
+    width: 70%;
+    border: 3px solid black;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    flex-direction: column;
+    font-size: 20px;
+    box-shadow: 0 0 15px rgb(0, 0, 0, 1.5);
+}
+
+.web2{
+    position: relative;
+    height: 100%;
+    width: 80%;
+    display: flex;
+    background-color: #235347;
+    margin: auto;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    flex-direction: column;
+}
+
+.web2-content{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin: 0 30px 20px 0;
+}
+
+.web2-content ul{
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    gap: 20px;
+    justify-content: center;
+}
+.img-web2{
+    display: flex;
+    height: 50%;
+    width: 50%;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgb(0, 0, 0, 1.5);
+}
+
+.web2 img{
+    height: 100%;
+    width: 100%;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgb(0, 0, 0, 1.5);
+    cursor: pointer;
+}
+
+.web2 button{
+    background-color: #ffffff;
+    color: #0B2B26;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    height: 50px;
+    width: 200px;
+    margin: 40px 0;
+    font-size: 20px;
+}
+
+.web2 button:hover{
+    background-color: #0B2B26;
+    color: #ffffff;
+}
+
+main{
+    position: relative;
+    width: 100%;
+    height: 100vh;
+}
+
+.seccion-1-tarjetas{
+    display: flex;
+    height: 100%;
+    padding: 50px;
+}
+
+footer{
+    display: flex;
+    background-color: #679c93;
+    width: 100%;
+    height: 30px;
+    font-size: 20px;
+    justify-content: center;
+    color: white;
+    position: fixed;
+    bottom: 0;
+    margin: 10px 0 0;
+}
