@@ -1,3 +1,4 @@
+
 * {
     margin: 0;
     padding: 0;
@@ -116,17 +117,18 @@ body {
     text-shadow: 1px 1px 3px black;
 }
 
+#imagen-tarjeta{
+    object-fit: cover;
+    border-radius: 10px;
+    margin: 20px;
+    width: 450px;
+    height: 450px;
+}
+
 .viewport-tarjetas{
-    width: 90%;
-    height: 100vh;
-    margin: auto;
-    padding: 0 60px;
     display: flex;
     flex-direction: column;
     color: #000000;
-    gap: 50px;
-    justify-content: center;
-    text-shadow: 2px 2px 1px rgb(255, 255, 255);
 }
 
 #nombre{
@@ -134,7 +136,7 @@ body {
 }
 
 #welcome{
-    font-size: 10px;
+    font-size: 30px;
 }
 
 #ciudad{
@@ -147,8 +149,14 @@ body {
 
 #contenido-tarjetas{
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
+    width: 90%;
+    margin: auto;
+    padding: 50px;
+    gap: 30px;
+    background-color: white;
 }
 
 #actividades-recomendadas{
@@ -156,6 +164,8 @@ body {
     flex-direction: column;
     gap: 20px;
     justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 #actividades-recomendadas ul{
@@ -168,7 +178,11 @@ body {
 #info-1{
     display: flex;
     flex-direction: column;
-    gap: 50px;
+    margin: 20px 0;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 #info-2{
@@ -308,7 +322,23 @@ main{
     position: relative;
     width: 100%;
     height: 100vh;
-    overflow: auto;
-    scroll-snap-type: y mandatory;
-    
+}
+
+.seccion-1-tarjetas{
+    display: flex;
+    height: 100%;
+    padding: 50px;
+}
+
+footer{
+    display: flex;
+    background-color: #679c93;
+    width: 100%;
+    height: 30px;
+    font-size: 20px;
+    justify-content: center;
+    color: white;
+    position: fixed;
+    bottom: 0;
+    margin: 10px 0 0;
 }
