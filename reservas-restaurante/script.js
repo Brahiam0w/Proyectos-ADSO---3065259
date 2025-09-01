@@ -1,296 +1,341 @@
-
-// Variables globales
-let mesas = [];
-let contadorMesas = 1;
-
-// Función para generar ID único automático
-function generarIdMesa() {
-    return `MESA-${String(contadorMesas).padStart(3, '0')}`;
-}
-
-// Función para obtener clases de Tailwind según el estado
-function getClasesTailwind(estado) {
-    switch (estado) {
-        case 'Disponible':
-            return 'bg-green-50 border-green-200 text-green-800 hover:bg-green-100';
-        case 'Ocupada':
-            return 'bg-red-50 border-red-200 text-red-800 hover:bg-red-100';
-        case 'Deshabilitada':
-            return 'bg-gray-50 border-gray-200 text-gray-800 hover:bg-gray-100';
-        default:
-            return 'bg-blue-50 border-blue-200 text-blue-800 hover:bg-blue-100';
+if (document.getElementById('pagina-mesas')) {
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("mesaForm");
+    const grid = document.getElementById("gridMesas");
+    const editarMesaForm = document.getElementById("editarMesaForm");
+    let contenedorMesas = document.getElementById("contenedorMesas");
+    if (!contenedorMesas && grid) {
+      contenedorMesas = document.createElement("div");
+      contenedorMesas.id = "contenedorMesas";
+      contenedorMesas.className = "contents";
+      grid.appendChild(contenedorMesas);
     }
-}
-
-// Función para obtener el color del badge de Bootstrap
-function getBadgeBootstrap(estado) {
-    switch (estado) {
-        case 'Disponible':
-            return 'bg-success';
-        case 'Ocupada':
-            return 'bg-danger';
-        case 'Deshabilitada':
-            return 'bg-secondary';
-        default:
-            return 'bg-primary';
-    }
-}
-
-// Función para crear el HTML de una mesa (combinando Tailwind + Bootstrap)
-function crearTarjetaMesa(mesa) {
-    const clasesTailwind = getClasesTailwind(mesa.estado);
-    const badgeBootstrap = getBadgeBootstrap(mesa.estado);
-
-    return `
-                <div class="border-2 rounded-xl p-4 transition-all duration-300 transform hover:scale-105 hover:shadow-lg ${clasesTailwind}">
-                    <div class="flex justify-between items-start mb-3">
-                        <h5 class="text-xl font-bold">${mesa.id}</h5>
-                        <span class="badge ${badgeBootstrap} rounded-pill px-3 py-2">${mesa.estado}</span>
-                    </div>
-                    
-                    <div class="space-y-2 mb-4">
-                        <div class="flex items-center">
-                            <span class="text-2xl mr-2">👥</span>
-                            <span class="font-medium">Capacidad:</span>
-                            <span class="ml-1 font-bold">${mesa.capacidad} personas</span>
-                        </div>
-                        
-                        <div class="flex items-center">
-                            <span class="text-2xl mr-2">📍</span>
-                            <span class="font-medium">Ubicación:</span>
-                            <span class="ml-1">${mesa.ubicacion}</span>
-                        </div>
-                        
-                        <div class="flex items-center text-sm text-gray-600">
-                            <span class="text-lg mr-2">🕐</span>
-                            <span>Creada: ${mesa.fechaCreacion}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex gap-2 pt-3 border-t border-current border-opacity-20">
-                        <button 
-                            class="btn btn-sm btn-outline-primary rounded-lg flex-1 hover:scale-105 transition-transform"
-                            onclick="editarMesa('${mesa.id}')">
-                            ✏️ Editar
-                        </button>
-                        <button 
-                            class="btn btn-sm btn-outline-danger rounded-lg flex-1 hover:scale-105 transition-transform"
-                            onclick="eliminarMesa('${mesa.id}')">
-                            🗑️ Eliminar
-                        </button>
-                    </div>
-                </div>
-            `;
-}
-
-// Función para renderizar todas las mesas
-function renderizarMesas() {
-    const container = document.getElementById('mesasContainer');
-    const emptyState = document.getElementById('emptyState');
-
-    if (mesas.length === 0) {
-        container.innerHTML = `
-                    <div id="emptyState" class="col-span-full text-center py-12 cursor-pointer">
-                        <div class="text-gray-600" >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mx-auto h-20 w-20 mb-4" fill="none" viewBox="0 0 20 20">
-                                <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
-                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-                                </svg>
-                        </div>
-                        <h3 class="text-lg font-medium text-gray-500 mb-2">No hay mesas registradas</h3>
-                        <p class="text-gray-400">Haz clic en "AÑADIR MESA" para comenzar</p>
-                    </div>
-                `;
-    } else {
-        container.innerHTML = mesas.map(mesa => crearTarjetaMesa(mesa)).join('');
-    }
-}
-
-// Función para añadir una nueva mesa
-function anadirMesa(evento) {
-    console.log('🔄 Función anadirMesa ejecutada');
-    evento.preventDefault();
-    evento.stopPropagation();
-
-    // Obtener valores del formulario
-    const capacidadInput = document.getElementById('capacidadMesa');
-    const ubicacionSelect = document.getElementById('ubicacionMesa');
-    const estadoSelect = document.getElementById('estadoMesa');
-
-    if (!capacidadInput || !ubicacionSelect || !estadoSelect) {
-        console.error('❌ No se encontraron los elementos del formulario');
-        mostrarNotificacion('❌ Error: No se pudieron encontrar los campos del formulario', 'danger');
-        return;
-    }
-
-    const capacidad = parseInt(capacidadInput.value);
-    const ubicacion = ubicacionSelect.value;
-    const estado = estadoSelect.value;
-
-    console.log('📊 Datos del formulario:', { capacidad, ubicacion, estado });
-
-    // Validación
-    if (!capacidad || !ubicacion || !estado) {
-        console.warn('⚠️ Validación fallida: campos vacíos');
-        mostrarNotificacion('⚠️ Por favor, completa todos los campos', 'warning');
-        return;
-    }
-
-    if (capacidad < 1 || capacidad > 20) {
-        console.warn('⚠️ Validación fallida: capacidad fuera de rango');
-        mostrarNotificacion('⚠️ La capacidad debe estar entre 1 y 20 personas', 'warning');
-        return;
-    }
-
-    // Crear nueva mesa
-    const nuevaMesa = {
-        id: generarIdMesa(),
-        capacidad: capacidad,
-        ubicacion: ubicacion,
-        estado: estado,
-        fechaCreacion: new Date().toLocaleString('es-ES', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit'
-        })
-    };
-
-    console.log('✨ Nueva mesa creada:', nuevaMesa);
-
-    // Añadir a la lista
-    mesas.push(nuevaMesa);
-    contadorMesas++;
-
-    // Limpiar formulario
-    const form = document.getElementById('formMesa');
+    if (!grid) return;
+    let mesas = JSON.parse(localStorage.getItem("mesas")) || [];
+    let contadorMesas = mesas.length ? Math.max(...mesas.map(m => m.id)) + 1 : 1;
+    actualizarMesas();
     if (form) {
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const capacidad = document.getElementById("capacidad").value;
+        const ubicacion = document.getElementById("ubicacion").value;
+        const estado = document.getElementById("estado").value;
+
+        const nuevaMesa = {
+          id: contadorMesas++,
+          capacidad,
+          ubicacion,
+          estado
+        };
+
+        mesas.push(nuevaMesa);
+        localStorage.setItem("mesas", JSON.stringify(mesas));
+        renderMesa(nuevaMesa);
         form.reset();
+        const modal = document.getElementById("miModal");
+        const modalInstance = modal ? (bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal)) : null;
+        if (modalInstance) modalInstance.hide();
+      });
     }
+    if (editarMesaForm) {
+      editarMesaForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const id = parseInt(document.getElementById("editMesaId").value);
+        const capacidad = document.getElementById("editCapacidad").value;
+        const ubicacion = document.getElementById("editUbicacion").value;
+        const estado = document.getElementById("editEstado").value;
 
-    // Cerrar modal
-    const modalElement = document.getElementById('modalMesa');
-    const modalInstance = bootstrap.Modal.getInstance(modalElement);
-    if (modalInstance) {
-        modalInstance.hide();
-    } else {
-        // Crear nueva instancia si no existe
-        const newModal = new bootstrap.Modal(modalElement);
-        newModal.hide();
-    }
-
-    // Renderizar mesas actualizadas
-    renderizarMesas();
-
-    // Mostrar notificación de éxito
-    mostrarNotificacion(`✅ Mesa ${nuevaMesa.id} añadida exitosamente`, 'success');
-
-    console.log('✅ Mesa añadida exitosamente. Total de mesas:', mesas.length);
-}
-
-// Función para eliminar mesa
-function eliminarMesa(id) {
-    // Confirmación personalizada con SweetAlert-like
-    if (confirm(`🗑️ ¿Estás seguro de que deseas eliminar la mesa ${id}?\n\nEsta acción no se puede deshacer.`)) {
-        const index = mesas.findIndex(mesa => mesa.id === id);
-        if (index !== -1) {
-            mesas.splice(index, 1);
-            renderizarMesas();
-            mostrarNotificacion(`🗑️ Mesa ${id} eliminada exitosamente`, 'danger');
+        const mesa = mesas.find(m => m.id === id);
+        if (mesa) {
+          mesa.capacidad = capacidad;
+          mesa.ubicacion = ubicacion;
+          mesa.estado = estado;
+          localStorage.setItem("mesas", JSON.stringify(mesas));
+          actualizarMesas();
         }
+
+        const modal = document.getElementById("modalEditarMesa");
+        const inst = modal ? (bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal)) : null;
+        if (inst) inst.hide();
+      });
     }
-}
+    function renderMesa(mesaData) {
+      let bgColor = "";
+      if (mesaData.estado === "Disponible") bgColor = "bg-green-200";
+      else if (mesaData.estado === "Ocupada") bgColor = "bg-blue-200";
+      else if (mesaData.estado === "Deshabilitada") bgColor = "bg-black text-white";
 
-// Función para editar mesa (placeholder mejorado)
-function editarMesa(id) {
-    const mesa = mesas.find(m => m.id === id);
-    if (mesa) {
-        alert(`✏️ Editar Mesa: ${mesa.id}\n\n` +
-            `📊 Capacidad actual: ${mesa.capacidad} personas\n` +
-            `📍 Ubicación actual: ${mesa.ubicacion}\n` +
-            `🔄 Estado actual: ${mesa.estado}\n` +
-            `🕐 Creada el: ${mesa.fechaCreacion}\n\n` +
-            `💡 Esta funcionalidad se puede implementar con otro modal similar.`);
-    }
-}
+      const mesaEl = document.createElement("div");
+      mesaEl.className = `card ${bgColor} shadow-xl p-4 flex flex-col justify-between items-center text-center rounded-2xl relative`;
+      mesaEl.dataset.id = mesaData.id;
 
-// Función para mostrar notificaciones (usando Tailwind + Bootstrap)
-function mostrarNotificacion(mensaje, tipo = 'info') {
-    const container = document.getElementById('notificationContainer');
-
-    // Limpiar notificaciones anteriores
-    container.innerHTML = '';
-
-    // Mapear tipos a clases de Bootstrap y colores de Tailwind
-    const tiposConfig = {
-        'success': { bootstrap: 'alert-success', tailwind: 'bg-green-100 border-green-400 text-green-700' },
-        'danger': { bootstrap: 'alert-danger', tailwind: 'bg-red-100 border-red-400 text-red-700' },
-        'warning': { bootstrap: 'alert-warning', tailwind: 'bg-yellow-100 border-yellow-400 text-yellow-700' },
-        'info': { bootstrap: 'alert-info', tailwind: 'bg-blue-100 border-blue-400 text-blue-700' }
-    };
-
-    const config = tiposConfig[tipo] || tiposConfig['info'];
-
-    // Crear elemento de notificación
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert ${config.bootstrap} alert-dismissible fade show shadow-lg rounded-xl border-l-4 max-w-md`;
-    alertDiv.innerHTML = `
-                <div class="font-medium">${mensaje}</div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            `;
-
-    container.appendChild(alertDiv);
-
-    // Auto-remover después de 5 segundos
-    setTimeout(() => {
-        if (alertDiv && alertDiv.parentNode) {
-            alertDiv.classList.remove('show');
-            setTimeout(() => alertDiv.remove(), 150);
+      mesaEl.innerHTML = `
+        <h2 class="text-lg font-bold mb-2">Mesa ${mesaData.id}</h2>
+        <div class="flex flex-col gap-1 text-sm mb-3">
+          <p><span class="font-semibold">Capacidad:</span> ${mesaData.capacidad} personas</p>
+          <p><span class="font-semibold">Ubicación:</span> ${mesaData.ubicacion}</p>
+          <p><span class="font-semibold">Estado:</span> ${mesaData.estado}</p>
+        </div>
+        <div class="flex gap-2">
+          <button class="btn btn-sm btn-warning btn-editar">✏️ Editar</button>
+          <button class="btn btn-sm btn-primary btn-reservar">📅 Reservar</button>
+          <button class="btn btn-sm btn-danger btn-eliminar">❌ Eliminar</button>
+        </div>
+      `;
+      mesaEl.querySelector(".btn-editar").addEventListener("click", () => {
+        document.getElementById("editMesaId").value = mesaData.id;
+        document.getElementById("editCapacidad").value = mesaData.capacidad;
+        document.getElementById("editUbicacion").value = mesaData.ubicacion;
+        document.getElementById("editEstado").value = mesaData.estado;
+        const modal = document.getElementById("modalEditarMesa");
+        if (modal) new bootstrap.Modal(modal).show();
+      });
+      mesaEl.querySelector(".btn-reservar").addEventListener("click", () => {
+        localStorage.setItem("mesaPreseleccionada", mesaData.id);
+        window.location.href = "reservas.html";
+      });
+      mesaEl.querySelector(".btn-eliminar").addEventListener("click", () => {
+        if (confirm(`¿Deseas eliminar la Mesa ${mesaData.id}?`)) {
+          mesas = mesas.filter(m => m.id !== mesaData.id);
+          localStorage.setItem("mesas", JSON.stringify(mesas));
+          actualizarMesas();
         }
-    }, 5000);
+      });
+
+      (contenedorMesas || grid).appendChild(mesaEl);
+    }
+    function actualizarMesas() {
+      if (contenedorMesas) {
+        contenedorMesas.innerHTML = "";
+        mesas.forEach(m => renderMesa(m));
+      } else {
+        const btnAdd = document.getElementById("btnAddMesa");
+        grid.innerHTML = "";
+        if (btnAdd) grid.appendChild(btnAdd);
+        mesas.forEach(m => renderMesa(m));
+      }
+    }
+  });
 }
 
-// Event listeners principales
-document.addEventListener('DOMContentLoaded', function () {
-    console.log('🚀 Sistema de Mesas iniciado correctamente');
 
-    // Event listener para el formulario
-    const form = document.getElementById('formMesa');
+
+if (document.getElementById('pagina-reservas')) {
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("reservaForm");
+    const grid = document.getElementById("gridReservas");
+    const mesaSelect = document.getElementById("mesaAsignada");
+    let contenedorReservas = document.getElementById("contenedorReservas");
+    if (!contenedorReservas && grid) {
+      contenedorReservas = document.createElement("div");
+      contenedorReservas.id = "contenedorReservas";
+      contenedorReservas.className = "contents";
+      grid.appendChild(contenedorReservas);
+    }
+    if (!grid) return;
+
+    let reservas = JSON.parse(localStorage.getItem("reservas")) || [];
+    let mesas = JSON.parse(localStorage.getItem("mesas")) || [];
+    let contadorReservas = reservas.length ? Math.max(...reservas.map(r => r.idReserva)) + 1 : 1;
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const fechaInput = document.getElementById("fechaReserva");
+    if (fechaInput) fechaInput.min = tomorrow.toISOString().split('T')[0];
+    function cargarMesasEnSelect(selectedMesaId = null) {
+      if (!mesaSelect) return;
+      mesaSelect.innerHTML = '<option value="">Seleccionar mesa...</option>';
+      mesas = JSON.parse(localStorage.getItem("mesas")) || [];
+      mesas.forEach(mesa => {
+        if (mesa.estado === "Disponible" || (selectedMesaId !== null && mesa.id === selectedMesaId)) {
+          const option = document.createElement("option");
+          option.value = mesa.id;
+          option.textContent = `Mesa ${mesa.id} - ${mesa.capacidad} personas (${mesa.ubicacion})${mesa.estado !== "Disponible" ? ' — ' + mesa.estado : ''}`;
+          mesaSelect.appendChild(option);
+        }
+      });
+    }
+    function renderReserva(reservaData) {
+      const reservaCard = document.createElement("div");
+      reservaCard.className = "card shadow-sm p-2.5 rounded-2xl relative";
+
+      let bgColor = "";
+      switch (reservaData.estado) {
+        case "Pendiente": bgColor = "bg-yellow-100"; break;
+        case "Confirmada": bgColor = "bg-green-100"; break;
+        case "Cancelada": bgColor = "bg-red-100"; break;
+        case "Finalizada": bgColor = "bg-gray-300"; break;
+        case "No Show": bgColor = "bg-purple-100"; break;
+      }
+      reservaCard.classList.add(bgColor);
+
+      const mesa = mesas.find(m => m.id === reservaData.idMesaAsignada);
+      const nombreMesa = mesa ? `Mesa ${mesa.id}` : `Mesa ${reservaData.idMesaAsignada}`;
+
+      let img = "";
+      if (reservaData.ocasionEspecial) {
+        img = `<img src="img/${reservaData.ocasionEspecial.toLowerCase().replace(/ /g,'_')}.png" 
+                  class="mx-auto mb-2 w-16 h-16">`;
+      }
+
+      reservaCard.innerHTML = `
+        <div class="text-center">
+          ${img}
+          <h3 class="text-lg font-bold mb-2">Reserva #${reservaData.idReserva}</h3>
+          <div class="text-sm space-y-1">
+            <p><b>Cliente:</b> ${reservaData.nombreCliente}</p>
+            <p><b>Personas:</b> ${reservaData.numeroPersonas}</p>
+            <p><b>Fecha:</b> ${reservaData.fechaReserva}</p>
+            <p><b>Hora:</b> ${reservaData.horaReserva}</p>
+            <p><b>Mesa:</b> ${nombreMesa}</p>
+            <p><b>Estado:</b> ${reservaData.estado}</p>
+          </div>
+        </div>
+        <div class="flex justify-around mt-2">
+          <button class="btn btn-sm btn-warning btn-editar">✏️ Editar</button>
+          <button class="btn btn-sm btn-success btn-pagar">💲 Pagar</button>
+          <button class="btn btn-sm btn-danger btn-eliminar">❌ Eliminar</button>
+        </div>
+      `;
+      reservaCard.querySelector(".btn-eliminar").addEventListener("click", () => {
+        if (confirm(`¿Eliminar la reserva de ${reservaData.nombreCliente}?`)) {
+          reservas = reservas.filter(r => r.idReserva !== reservaData.idReserva);
+          localStorage.setItem("reservas", JSON.stringify(reservas));
+          actualizarReservas();
+        }
+      });
+      reservaCard.querySelector(".btn-editar").addEventListener("click", () => {
+        cargarMesasEnSelect(reservaData.idMesaAsignada);
+
+        document.getElementById("editReservaId").value = reservaData.idReserva;
+        document.getElementById("nombreCliente").value = reservaData.nombreCliente;
+        document.getElementById("numeroPersonas").value = reservaData.numeroPersonas;
+        document.getElementById("fechaReserva").value = reservaData.fechaReserva;
+        document.getElementById("horaReserva").value = reservaData.horaReserva;
+        document.getElementById("ocasionEspecial").value = reservaData.ocasionEspecial || "";
+        document.getElementById("notasAdicionales").value = reservaData.notasAdicionales || "";
+        if (document.getElementById("mesaAsignada")) document.getElementById("mesaAsignada").value = reservaData.idMesaAsignada || "";
+        if (document.getElementById("estadoReserva")) document.getElementById("estadoReserva").value = reservaData.estado || "Pendiente";
+
+        const modal = document.getElementById("modalReserva");
+        if (modal) new bootstrap.Modal(modal).show();
+      });
+      reservaCard.querySelector(".btn-pagar").addEventListener("click", () => {
+        if (!confirm("Marcar reserva como FINALIZADA?")) return;
+        reservaData.estado = "Finalizada";
+        mesas = JSON.parse(localStorage.getItem("mesas")) || [];
+        const mesa = mesas.find(m => m.id === reservaData.idMesaAsignada);
+        if (mesa) {
+          mesa.estado = "Disponible";
+          localStorage.setItem("mesas", JSON.stringify(mesas));
+        }
+        localStorage.setItem("reservas", JSON.stringify(reservas));
+        actualizarReservas();
+      });
+
+      contenedorReservas.appendChild(reservaCard);
+    }
+    function actualizarReservas() {
+      contenedorReservas.innerHTML = "";
+      reservas.forEach(r => renderReserva(r));
+    }
+    function validarFormulario() {
+      let esValido = true;
+      document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+      const nombre = document.getElementById("nombreCliente");
+      const numero = document.getElementById("numeroPersonas");
+      if (!nombre || !numero) return false;
+      if (!nombre.value.trim()) {
+        mostrarError("nombreCliente", "El nombre es obligatorio");
+        esValido = false;
+      }
+      const personas = parseInt(numero.value);
+      if (!personas || personas <= 0) {
+        mostrarError("numeroPersonas", "Número inválido");
+        esValido = false;
+      }
+      return esValido;
+    }
+    function mostrarError(campoId, mensaje) {
+      const campo = document.getElementById(campoId);
+      if (!campo) return;
+      campo.classList.add('is-invalid');
+      const feedback = campo.nextElementSibling;
+      if (feedback && feedback.classList.contains('invalid-feedback')) {
+        feedback.textContent = mensaje;
+      }
+    }
+    actualizarReservas();
+    cargarMesasEnSelect();
+    const mesaPreseleccionada = localStorage.getItem("mesaPreseleccionada");
+    if (mesaPreseleccionada && document.getElementById("mesaAsignada")) {
+      cargarMesasEnSelect(parseInt(mesaPreseleccionada));
+      document.getElementById("mesaAsignada").value = mesaPreseleccionada;
+      localStorage.removeItem("mesaPreseleccionada");
+    }
     if (form) {
-        form.addEventListener('submit', function (evento) {
-            console.log('📝 Formulario enviado');
-            anadirMesa(evento);
-        });
-        console.log('✅ Event listener del formulario configurado');
-    } else {
-        console.error('❌ No se encontró el formulario');
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (!validarFormulario()) return;
+        reservas = JSON.parse(localStorage.getItem("reservas")) || reservas;
+        mesas = JSON.parse(localStorage.getItem("mesas")) || mesas;
+
+        const editId = document.getElementById("editReservaId").value;
+        if (editId) {
+          
+          const reserva = reservas.find(r => r.idReserva == editId);
+          if (reserva) {
+            reserva.nombreCliente = document.getElementById("nombreCliente").value.trim();
+            reserva.numeroPersonas = parseInt(document.getElementById("numeroPersonas").value);
+            reserva.fechaReserva = document.getElementById("fechaReserva").value;
+            reserva.horaReserva = document.getElementById("horaReserva").value;
+            reserva.ocasionEspecial = document.getElementById("ocasionEspecial").value || null;
+            reserva.notasAdicionales = document.getElementById("notasAdicionales").value.trim() || null;
+            reserva.idMesaAsignada = parseInt(document.getElementById("mesaAsignada").value) || null;
+            
+            reserva.estado = document.getElementById("estadoReserva") ? document.getElementById("estadoReserva").value : reserva.estado;
+          }
+        } else {
+          const nuevaReserva = {
+            idReserva: contadorReservas++,
+            nombreCliente: document.getElementById("nombreCliente").value.trim(),
+            numeroPersonas: parseInt(document.getElementById("numeroPersonas").value),
+            fechaReserva: document.getElementById("fechaReserva").value,
+            horaReserva: document.getElementById("horaReserva").value,
+            ocasionEspecial: document.getElementById("ocasionEspecial").value || null,
+            notasAdicionales: document.getElementById("notasAdicionales").value.trim() || null,
+            idMesaAsignada: parseInt(document.getElementById("mesaAsignada").value),
+            estado: document.getElementById("estadoReserva") ? document.getElementById("estadoReserva").value : "Pendiente"
+          };
+          reservas.push(nuevaReserva);
+          mesas = JSON.parse(localStorage.getItem("mesas")) || mesas;
+          const mesaSeleccionada = mesas.find(m => m.id === nuevaReserva.idMesaAsignada);
+          if (mesaSeleccionada) {
+            mesaSeleccionada.estado = "Ocupada";
+            localStorage.setItem("mesas", JSON.stringify(mesas));
+          }
+        }
+
+        localStorage.setItem("reservas", JSON.stringify(reservas));
+        actualizarReservas();
+        form.reset();
+        document.getElementById("editReservaId").value = "";
+        cargarMesasEnSelect();
+        const modal = document.getElementById("modalReserva");
+        const inst = modal ? (bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal)) : null;
+        if (inst) inst.hide();
+      });
     }
-
-    // Event listener alternativo para el botón de submit
-    const submitBtn = document.querySelector('#formMesa button[type="submit"]');
-    if (submitBtn) {
-        submitBtn.addEventListener('click', function (evento) {
-            console.log('🖱️ Botón submit clickeado');
-            evento.preventDefault();
-            anadirMesa(evento);
-        });
+    const btnFiltrar = document.getElementById("btnFiltrar");
+    if (btnFiltrar) {
+      btnFiltrar.addEventListener("click", () => {
+        const fechaFiltro = document.getElementById("filtroFecha").value;
+        const estadoFiltro = document.getElementById("filtroEstado").value;
+        contenedorReservas.innerHTML = "";
+        reservas
+          .filter(r => (!fechaFiltro || r.fechaReserva === fechaFiltro))
+          .filter(r => (!estadoFiltro || r.estado === estadoFiltro))
+          .forEach(r => renderReserva(r));
+      });
     }
-
-    // Renderizar estado inicial
-    renderizarMesas();
-
-    // Event listener para cuando se abre el modal
-    const modalElement = document.getElementById('modalMesa');
-    if (modalElement) {
-        modalElement.addEventListener('shown.bs.modal', function () {
-            // Focus en el primer campo cuando se abre el modal
-            const capacidadInput = document.getElementById('capacidadMesa');
-            if (capacidadInput) {
-                capacidadInput.focus();
-            }
-        });
-    }
-
-    console.log('Sistema completamente inicializado');
-});
+  });
+}

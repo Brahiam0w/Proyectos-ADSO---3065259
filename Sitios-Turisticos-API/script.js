@@ -40,6 +40,7 @@ if (document.getElementById('pagina-tarjetas')) {
         <div id="contenido-tarjetas">
             <div class="seccion-1-tarjetas">
                 
+                
                 <div id="info-1">
                     <p id="welcome">WELCOME TO</p>
                     <p id="ciudad">${lugar.ciudad}</p>
@@ -49,7 +50,9 @@ if (document.getElementById('pagina-tarjetas')) {
                 <div>
                     <img id="imagen-tarjeta" src=${lugar.url_imagen} alt="imagen-${lugar.nombre}">
                 </div>
-                
+                <div>
+                    <h1>${lugar.nombre}</h1>
+                </div>
             </div>
            <div>
             <div id="actividades-recomendadas">
