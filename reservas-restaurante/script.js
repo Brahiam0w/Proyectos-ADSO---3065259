@@ -1,19 +1,44 @@
+function mostrarConfirmacion(mensaje, callback) {
+  const modal = document.getElementById('modalConfirmacion');
+  const mensajeElement = document.getElementById('mensajeConfirmacion');
+  const btnConfirmar = document.getElementById('btnConfirmarAccion');
+
+  mensajeElement.textContent = mensaje;
+
+  const nuevoBtn = btnConfirmar.cloneNode(true);
+  btnConfirmar.parentNode.replaceChild(nuevoBtn, btnConfirmar);
+
+  nuevoBtn.addEventListener('click', () => {
+    callback();
+    const modalInstance = bootstrap.Modal.getInstance(modal);
+    if (modalInstance) modalInstance.hide();
+  });
+
+  const modalInstance = new bootstrap.Modal(modal);
+  modalInstance.show();
+}
+
 if (document.getElementById('pagina-mesas')) {
   document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("mesaForm");
     const grid = document.getElementById("gridMesas");
     const editarMesaForm = document.getElementById("editarMesaForm");
     let contenedorMesas = document.getElementById("contenedorMesas");
+
     if (!contenedorMesas && grid) {
       contenedorMesas = document.createElement("div");
       contenedorMesas.id = "contenedorMesas";
       contenedorMesas.className = "contents";
       grid.appendChild(contenedorMesas);
     }
+
     if (!grid) return;
+
     let mesas = JSON.parse(localStorage.getItem("mesas")) || [];
     let contadorMesas = mesas.length ? Math.max(...mesas.map(m => m.id)) + 1 : 1;
+
     actualizarMesas();
+
     if (form) {
       form.addEventListener("submit", (e) => {
         e.preventDefault();
@@ -37,6 +62,7 @@ if (document.getElementById('pagina-mesas')) {
         if (modalInstance) modalInstance.hide();
       });
     }
+
     if (editarMesaForm) {
       editarMesaForm.addEventListener("submit", (e) => {
         e.preventDefault();
@@ -59,6 +85,7 @@ if (document.getElementById('pagina-mesas')) {
         if (inst) inst.hide();
       });
     }
+
     function renderMesa(mesaData) {
       let bgColor = "";
       if (mesaData.estado === "Disponible") bgColor = "bg-green-200";
@@ -77,11 +104,12 @@ if (document.getElementById('pagina-mesas')) {
           <p><span class="font-semibold">Estado:</span> ${mesaData.estado}</p>
         </div>
         <div class="flex gap-2">
-          <button class="btn btn-sm btn-warning btn-editar">✏️ Editar</button>
-          <button class="btn btn-sm btn-primary btn-reservar">📅 Reservar</button>
+          <button class="btn btn-sm btn-warning btn-editar">✍️ Editar</button>
+          <button class="btn btn-sm btn-primary btn-reservar">🗓️ Reservar</button>
           <button class="btn btn-sm btn-danger btn-eliminar">❌ Eliminar</button>
         </div>
       `;
+
       mesaEl.querySelector(".btn-editar").addEventListener("click", () => {
         document.getElementById("editMesaId").value = mesaData.id;
         document.getElementById("editCapacidad").value = mesaData.capacidad;
@@ -90,20 +118,26 @@ if (document.getElementById('pagina-mesas')) {
         const modal = document.getElementById("modalEditarMesa");
         if (modal) new bootstrap.Modal(modal).show();
       });
+
       mesaEl.querySelector(".btn-reservar").addEventListener("click", () => {
         localStorage.setItem("mesaPreseleccionada", mesaData.id);
         window.location.href = "reservas.html";
       });
+
       mesaEl.querySelector(".btn-eliminar").addEventListener("click", () => {
-        if (confirm(`¿Deseas eliminar la Mesa ${mesaData.id}?`)) {
-          mesas = mesas.filter(m => m.id !== mesaData.id);
-          localStorage.setItem("mesas", JSON.stringify(mesas));
-          actualizarMesas();
-        }
+        mostrarConfirmacion(
+          `¿Está seguro de que desea eliminar la Mesa ${mesaData.id}?`,
+          () => {
+            mesas = mesas.filter(m => m.id !== mesaData.id);
+            localStorage.setItem("mesas", JSON.stringify(mesas));
+            actualizarMesas();
+          }
+        );
       });
 
       (contenedorMesas || grid).appendChild(mesaEl);
     }
+
     function actualizarMesas() {
       if (contenedorMesas) {
         contenedorMesas.innerHTML = "";
@@ -118,29 +152,31 @@ if (document.getElementById('pagina-mesas')) {
   });
 }
 
-
-
 if (document.getElementById('pagina-reservas')) {
   document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("reservaForm");
     const grid = document.getElementById("gridReservas");
     const mesaSelect = document.getElementById("mesaAsignada");
     let contenedorReservas = document.getElementById("contenedorReservas");
+
     if (!contenedorReservas && grid) {
       contenedorReservas = document.createElement("div");
       contenedorReservas.id = "contenedorReservas";
       contenedorReservas.className = "contents";
       grid.appendChild(contenedorReservas);
     }
+
     if (!grid) return;
 
     let reservas = JSON.parse(localStorage.getItem("reservas")) || [];
     let mesas = JSON.parse(localStorage.getItem("mesas")) || [];
     let contadorReservas = reservas.length ? Math.max(...reservas.map(r => r.idReserva)) + 1 : 1;
+
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const fechaInput = document.getElementById("fechaReserva");
     if (fechaInput) fechaInput.min = tomorrow.toISOString().split('T')[0];
+
     function cargarMesasEnSelect(selectedMesaId = null) {
       if (!mesaSelect) return;
       mesaSelect.innerHTML = '<option value="">Seleccionar mesa...</option>';
@@ -154,6 +190,7 @@ if (document.getElementById('pagina-reservas')) {
         }
       });
     }
+
     function renderReserva(reservaData) {
       const reservaCard = document.createElement("div");
       reservaCard.className = "card shadow-sm p-2.5 rounded-2xl relative";
@@ -172,9 +209,21 @@ if (document.getElementById('pagina-reservas')) {
       const nombreMesa = mesa ? `Mesa ${mesa.id}` : `Mesa ${reservaData.idMesaAsignada}`;
 
       let img = "";
-      if (reservaData.ocasionEspecial) {
-        img = `<img src="img/${reservaData.ocasionEspecial.toLowerCase().replace(/ /g,'_')}.png" 
-                  class="mx-auto mb-2 w-16 h-16">`;
+      if (reservaData.ocasionEspecial && reservaData.ocasionEspecial !== "Ninguna") {
+        const imagenes = {
+          "Cumpleaños": "cumpleaños.jpg",
+          "Aniversario": "aniversario.jpg",
+          "Reunión de Negocios": "reunion_negocios.png",
+          "Graduación": "graduacion.jpg",
+          "Boda": "boda.jpg",
+          "Cena Romántica": "cena_romantica.webp",
+          "Despedida": "despedida.jpg"
+        };
+
+        const nombreImagen = imagenes[reservaData.ocasionEspecial];
+        if (nombreImagen) {
+          img = `<img src="img/${nombreImagen}" alt="${reservaData.ocasionEspecial}" class="mx-auto mb-2 w-32 h-32 rounded-2xl object-cover">`;
+        }
       }
 
       reservaCard.innerHTML = `
@@ -191,18 +240,23 @@ if (document.getElementById('pagina-reservas')) {
           </div>
         </div>
         <div class="flex justify-around mt-2">
-          <button class="btn btn-sm btn-warning btn-editar">✏️ Editar</button>
-          <button class="btn btn-sm btn-success btn-pagar">💲 Pagar</button>
+          <button class="btn btn-sm btn-warning btn-editar">✍️ Editar</button>
+          <button class="btn btn-sm btn-success btn-pagar">💸 Pagar</button>
           <button class="btn btn-sm btn-danger btn-eliminar">❌ Eliminar</button>
         </div>
       `;
+
       reservaCard.querySelector(".btn-eliminar").addEventListener("click", () => {
-        if (confirm(`¿Eliminar la reserva de ${reservaData.nombreCliente}?`)) {
-          reservas = reservas.filter(r => r.idReserva !== reservaData.idReserva);
-          localStorage.setItem("reservas", JSON.stringify(reservas));
-          actualizarReservas();
-        }
+        mostrarConfirmacion(
+          `¿Está seguro de que desea eliminar la reserva de ${reservaData.nombreCliente}?`,
+          () => {
+            reservas = reservas.filter(r => r.idReserva !== reservaData.idReserva);
+            localStorage.setItem("reservas", JSON.stringify(reservas));
+            actualizarReservas();
+          }
+        );
       });
+
       reservaCard.querySelector(".btn-editar").addEventListener("click", () => {
         cargarMesasEnSelect(reservaData.idMesaAsignada);
 
@@ -219,42 +273,54 @@ if (document.getElementById('pagina-reservas')) {
         const modal = document.getElementById("modalReserva");
         if (modal) new bootstrap.Modal(modal).show();
       });
+
       reservaCard.querySelector(".btn-pagar").addEventListener("click", () => {
-        if (!confirm("Marcar reserva como FINALIZADA?")) return;
-        reservaData.estado = "Finalizada";
-        mesas = JSON.parse(localStorage.getItem("mesas")) || [];
-        const mesa = mesas.find(m => m.id === reservaData.idMesaAsignada);
-        if (mesa) {
-          mesa.estado = "Disponible";
-          localStorage.setItem("mesas", JSON.stringify(mesas));
-        }
-        localStorage.setItem("reservas", JSON.stringify(reservas));
-        actualizarReservas();
+        mostrarConfirmacion(
+          "¿Está seguro de marcar esta reserva como FINALIZADA?",
+          () => {
+            reservaData.estado = "Finalizada";
+            mesas = JSON.parse(localStorage.getItem("mesas")) || [];
+            const mesa = mesas.find(m => m.id === reservaData.idMesaAsignada);
+            if (mesa) {
+              mesa.estado = "Disponible";
+              localStorage.setItem("mesas", JSON.stringify(mesas));
+            }
+            localStorage.setItem("reservas", JSON.stringify(reservas));
+            actualizarReservas();
+          }
+        );
       });
 
       contenedorReservas.appendChild(reservaCard);
     }
+
     function actualizarReservas() {
       contenedorReservas.innerHTML = "";
       reservas.forEach(r => renderReserva(r));
     }
+
     function validarFormulario() {
       let esValido = true;
       document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
       const nombre = document.getElementById("nombreCliente");
       const numero = document.getElementById("numeroPersonas");
       if (!nombre || !numero) return false;
+
       if (!nombre.value.trim()) {
         mostrarError("nombreCliente", "El nombre es obligatorio");
         esValido = false;
       }
+
       const personas = parseInt(numero.value);
       if (!personas || personas <= 0) {
         mostrarError("numeroPersonas", "Número inválido");
         esValido = false;
       }
+
       return esValido;
     }
+
     function mostrarError(campoId, mensaje) {
       const campo = document.getElementById(campoId);
       if (!campo) return;
@@ -264,24 +330,27 @@ if (document.getElementById('pagina-reservas')) {
         feedback.textContent = mensaje;
       }
     }
+
     actualizarReservas();
     cargarMesasEnSelect();
+
     const mesaPreseleccionada = localStorage.getItem("mesaPreseleccionada");
     if (mesaPreseleccionada && document.getElementById("mesaAsignada")) {
       cargarMesasEnSelect(parseInt(mesaPreseleccionada));
       document.getElementById("mesaAsignada").value = mesaPreseleccionada;
       localStorage.removeItem("mesaPreseleccionada");
     }
+
     if (form) {
       form.addEventListener("submit", (e) => {
         e.preventDefault();
         if (!validarFormulario()) return;
+
         reservas = JSON.parse(localStorage.getItem("reservas")) || reservas;
         mesas = JSON.parse(localStorage.getItem("mesas")) || mesas;
 
         const editId = document.getElementById("editReservaId").value;
         if (editId) {
-          
           const reserva = reservas.find(r => r.idReserva == editId);
           if (reserva) {
             reserva.nombreCliente = document.getElementById("nombreCliente").value.trim();
@@ -291,7 +360,6 @@ if (document.getElementById('pagina-reservas')) {
             reserva.ocasionEspecial = document.getElementById("ocasionEspecial").value || null;
             reserva.notasAdicionales = document.getElementById("notasAdicionales").value.trim() || null;
             reserva.idMesaAsignada = parseInt(document.getElementById("mesaAsignada").value) || null;
-            
             reserva.estado = document.getElementById("estadoReserva") ? document.getElementById("estadoReserva").value : reserva.estado;
           }
         } else {
@@ -307,6 +375,7 @@ if (document.getElementById('pagina-reservas')) {
             estado: document.getElementById("estadoReserva") ? document.getElementById("estadoReserva").value : "Pendiente"
           };
           reservas.push(nuevaReserva);
+
           mesas = JSON.parse(localStorage.getItem("mesas")) || mesas;
           const mesaSeleccionada = mesas.find(m => m.id === nuevaReserva.idMesaAsignada);
           if (mesaSeleccionada) {
@@ -320,16 +389,19 @@ if (document.getElementById('pagina-reservas')) {
         form.reset();
         document.getElementById("editReservaId").value = "";
         cargarMesasEnSelect();
+
         const modal = document.getElementById("modalReserva");
         const inst = modal ? (bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal)) : null;
         if (inst) inst.hide();
       });
     }
+
     const btnFiltrar = document.getElementById("btnFiltrar");
     if (btnFiltrar) {
       btnFiltrar.addEventListener("click", () => {
         const fechaFiltro = document.getElementById("filtroFecha").value;
         const estadoFiltro = document.getElementById("filtroEstado").value;
+
         contenedorReservas.innerHTML = "";
         reservas
           .filter(r => (!fechaFiltro || r.fechaReserva === fechaFiltro))
