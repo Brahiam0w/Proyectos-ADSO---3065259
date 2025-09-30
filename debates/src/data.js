@@ -5,8 +5,6 @@ const personaje2 = "adolfo hitler"
 
 const debate = "tema aleatorio que los haga debatir"
 
-// En tu archivo data.js
-
 const prompt = `
 Actúa como un moderador llamado Deivi. 
 Inicia un debate breve entre dos personas:
@@ -59,18 +57,36 @@ async function generateContent() {
     }
 }
 
- 
-generateContent();
 
 
 function limpiarChat(){
-    document.getElementById("chat").value ="";
+    document.getElementById("chat").innerHTML = "";
 }
 
 
 function pintarDatos(texto){
-const nuevoMensaje = document.createElement("div")
-nuevoMensaje.innerHTML = texto;
-chatContainer.appendChild(nuevoMensaje)
-chatContainer.scrollTop = chatContainer.scrollHeight;
+    const nuevoMensaje = document.createElement("div");
+    
+    // Procesar el texto para agregar las clases de Tailwind
+    let contenidoHTML = texto.replace(/<p>/g, (match, offset) => {
+        const baseClasses = "mx-4 my-2 p-3 rounded-lg max-w-[80%] break-words";
+        if (texto.substring(offset, offset + 15).includes("Deivi:")) {
+            // Mensaje del moderador (centrado)
+            return `<p class="${baseClasses} bg-gray-200 text-center mx-auto max-w-[60%]">`;
+        } else if (texto.substring(offset, offset + 20).includes("Gustavo Petro:")) {
+            // Mensajes de Personaje 1 (alineados a la derecha)
+            return `<p class="${baseClasses} bg-green-100 ml-auto">`;
+        } else if (texto.substring(offset, offset + 20).includes("adolfo hitler:")) {
+            // Mensajes de Personaje 2 (alineados a la izquierda)
+            return `<p class="${baseClasses} bg-white shadow-sm mr-auto">`;
+        }
+        return match;
+    });
+
+    // Estilizar los nombres en negrita
+    contenidoHTML = contenidoHTML.replace(/<b>/g, '<b class="text-gray-700 font-medium block mb-1">');
+    
+    nuevoMensaje.innerHTML = contenidoHTML;
+    chatContainer.appendChild(nuevoMensaje);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
 }
