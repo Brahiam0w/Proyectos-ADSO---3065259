@@ -1,0 +1,21 @@
+---
+import Welcome from "../components/Welcome.astro";
+import Layout from "../layouts/Layout.astro";
+import "../styles/global.css";
+---
+
+<Layout>
+	<Welcome />
+	<main>
+		<section
+			class="h-screen w-full bg-[url('/img/Fondo-Entrada.webp')] bg-cover flex items-center justify-center"
+			style="background-position: 50% 1%;"
+		>
+			<button
+				class="px-9 py-4 bg-yellow-500 text-black text-2xl rounded-lg shadow-lg cursor-pointer"
+			>
+				JUGAR
+			</button>
+		</section>
+	</main>
+</Layout>
