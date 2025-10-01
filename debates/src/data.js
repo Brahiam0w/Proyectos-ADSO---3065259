@@ -1,7 +1,7 @@
 const API_KEY = "AIzaSyAYxosLe9ts62wxwRESgaSxrLcL8CuOs78";
 const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 const personaje1 = "Gustavo Petro, Presidente de Colombia"
-const personaje2 = "adolfo hitler" 
+const personaje2 = "Adolf Hitler" 
 
 const debate = "tema aleatorio que los haga debatir"
 
@@ -71,19 +71,19 @@ function pintarDatos(texto){
     let contenidoHTML = texto.replace(/<p>/g, (match, offset) => {
         const baseClasses = "mx-4 my-2 p-3 rounded-lg max-w-[80%] break-words";
         if (texto.substring(offset, offset + 15).includes("Deivi:")) {
-            // Mensaje del moderador (centrado)
+            // Mensaje del moderador
             return `<p class="${baseClasses} bg-gray-200 text-center mx-auto max-w-[60%]">`;
         } else if (texto.substring(offset, offset + 20).includes("Gustavo Petro:")) {
-            // Mensajes de Personaje 1 (alineados a la derecha)
+            // Mensajes de Personaje 1
             return `<p class="${baseClasses} bg-green-100 ml-auto">`;
-        } else if (texto.substring(offset, offset + 20).includes("adolfo hitler:")) {
-            // Mensajes de Personaje 2 (alineados a la izquierda)
+        } else if (texto.substring(offset, offset + 20).includes("Adolf Hitler:")) {
+            // Mensajes de Personaje 2
             return `<p class="${baseClasses} bg-white shadow-sm mr-auto">`;
         }
         return match;
     });
 
-    // Estilizar los nombres en negrita
+    // Estiliza los nombres en negrita
     contenidoHTML = contenidoHTML.replace(/<b>/g, '<b class="text-gray-700 font-medium block mb-1">');
     
     nuevoMensaje.innerHTML = contenidoHTML;
