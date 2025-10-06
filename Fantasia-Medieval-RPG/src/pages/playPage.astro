@@ -1,0 +1,67 @@
+---
+import Welcome from "../components/Welcome.astro";
+import Layout from "../layouts/Layout.astro";
+import "../styles/global.css";
+---
+
+<Layout>
+	<Welcome />
+	<main>
+		<section
+		
+			class="relative h-screen w-full bg-[url('/img/Elementos/pantallazo-play.png')] bg-cover flex flex-col items-center justify-center"
+			style="background-position: 50% 1%;"
+		>
+		
+			<img
+				class="-translate-y-36"
+				src="/img/Elementos/logo.png"
+				alt="Logo-play"
+			/>
+			
+			<div class="relative z-10 text-center space-y-8 animate-fadeIn">
+				<button
+					class="hover-sound-btn group relative px-12 py-5 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black text-2xl md:text-3xl font-bold rounded-lg shadow-2xl cursor-pointer transform transition-all duration-300 -translate-y-40 hover:scale-110 hover:shadow-[0_0_40px_rgba(234,179,8,0.8)] active:scale-95 overflow-hidden"
+				>
+					<span class="relative z-10 flex items-center gap-3">
+						⚔️ JUGAR ⚔️
+					</span>
+					<div
+						class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"
+					>
+					</div>
+				</button>
+			</div>
+		</section>
+	</main>
+
+	<!-- Script -->
+	<script type="text/javascript" defer>
+		document.addEventListener("DOMContentLoaded", () => {
+			const button = document.querySelector(".hover-sound-btn");
+			if (button) {
+				const sound = new Audio("/sounds/sonido-boton-jugar.mp3"); // asegúrate de que este path existe en "public/sounds/"
+
+				button.addEventListener("click", () => {
+					sound.currentTime = 0;
+					sound
+						.play()
+						.then(() => {
+							// Espera 500ms y luego redirige (puedes cambiar el tiempo)
+							setTimeout(() => {
+								window.location.href = "/SelectRol"; // cambia "/juego" por tu ruta/página real
+							}, 1200);
+						})
+						.catch((err) => {
+							console.error(
+								"Error reproduciendo el sonido:",
+								err,
+							);
+							// Si no suena, de todas formas redirige
+							window.location.href = "/SelectRol";
+						});
+				});
+			}
+		});
+	</script>
+</Layout>

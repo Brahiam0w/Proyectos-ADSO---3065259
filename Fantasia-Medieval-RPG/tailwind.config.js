@@ -15,3 +15,15 @@ module.exports = {
   plugins: [],
 };
 
+// tailwind.config.js
+export default {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ["'Medieval Sharp'", 'system-ui', 'sans-serif'],
+      },
+    },
+  },
+  // ...resto de la config
+}
+

@@ -1,0 +1,107 @@
+---
+// src/components/IntroVideo.astro
+const videoSrc = "/Video/Trailer-Home.mp4";
+const poster = "/images/video-poster.jpg";
+---
+
+<style>
+  /* Animación del botón saltar */
+  .skip-button {
+    animation: fadeIn 1s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<!-- Container general del intro (OCULTO inicialmente) -->
+<div
+  id="introContainer"
+  class="fixed inset-0 z-50 opacity-0 pointer-events-none transition-opacity duration-700"
+>
+  <!-- Video de fondo -->
+  <video
+    id="introVideo"
+    preload="none"
+    playsinline
+    class="w-full h-full object-cover fixed inset-0"
+    poster={poster}
+  >
+    <source src={videoSrc} type="video/mp4" />
+    Tu navegador no soporta video.
+  </video>
+
+  <!-- Botón SALTAR -->
+  <button
+    id="skipBtn"
+    class="skip-button fixed top-6 right-6 z-50
+      px-6 py-3
+      bg-black/70 hover:bg-black/90
+      text-yellow-400
+      border-2 border-yellow-500/50 hover:border-yellow-500
+      rounded-lg
+      font-semibold text-sm md:text-base
+      transition-all duration-300
+      hover:scale-105
+      shadow-lg hover:shadow-yellow-500/30
+      focus:outline-none focus:ring-2 focus:ring-yellow-400
+      cursor-pointer"
+    aria-label="Saltar intro"
+  >
+    Saltar ⏭
+  </button>
+</div>
+
+<!-- Script inline para manejar la funcionalidad -->
+<script is:inline>
+  (function () {
+    const skipBtn = document.getElementById("skipBtn");
+    const video = document.getElementById("introVideo");
+    const introContainer = document.getElementById("introContainer");
+
+    // NO iniciar el video automáticamente, esperar señal del StartScreen
+
+    // Función para saltar el intro
+    function skipIntro() {
+      window.location.href = "/playPage";
+    }
+
+    // Función cuando el video termina (REDIRECCIÓN AUTOMÁTICA)
+    function endIntro() {
+      window.location.href = "/playPage";
+    }
+
+    // Click en botón "Saltar"
+    skipBtn.addEventListener("click", skipIntro);
+
+    // Cuando el video termina, redirigir automáticamente
+    video.addEventListener("ended", endIntro);
+
+    // Soporte de teclado: presionar Escape para saltar
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        skipIntro();
+      }
+    });
+
+    // Accesibilidad
+    skipBtn.tabIndex = 0;
+
+    // Escuchar evento custom para iniciar el video
+    window.addEventListener("startIntroVideo", () => {
+      introContainer.classList.remove("opacity-0", "pointer-events-none");
+      video.load();
+      video.play().catch(() => {
+        console.log("Error al reproducir video intro");
+      });
+    });
+  })();
+</script>

@@ -6,9 +6,96 @@ import "../styles/global.css";
 
 <Layout>
     <Welcome />
-    <main class="flex overflow-hidden">
-        <div class="h-screen w-full bg-[url('/img/texture-paper-background-parchment.webp')] bg-cover bg-center flex items-center justify-center">
-            <h1 class="font-f">hola</h1>
+    <main class="flex overflow-hidden"></main>
+    <body
+        class="bg-background-light dark:bg-background-dark font-display text-neutral-text-light dark:text-neutral-text-dark"
+    >
+        <div
+            class="relative flex flex-col min-h-screen w-full items-center justify-center overflow-hidden p-4 md:p-8"
+        >
+            <p class="z-10 border-amber-50 p-2 text-2xl text-center">
+                Dos bandos dividen el mundo: la **Alianza**, guardiana del
+                orden, y la **Horda**, forjada en fuego y libertad. Elige tu
+                lealtad y escribe tu leyenda en una guerra donde cada victoria
+                cambia el destino del reino.
+            </p>
+            <div class="absolute inset-0 z-0">
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-alliance-bg-dark/80 to-horde-bg-dark/80 dark:from-alliance-bg-dark/90 dark:to-horde-bg-dark/90"
+                >
+                </div>
+
+                <div
+                    class="absolute inset-0 bg-cover bg-center"
+                    style="background-image: url('/img/Elementos/texture-fondo.webp'); mix-blend-overlay;"
+                >
+                </div>
+            </div>
+
+            <div
+                class="z-10 flex w-full max-w-7xl flex-col items-center justify-center space-y-8 text-center lg:flex-row lg:items-stretch lg:space-y-0 lg:space-x-8 m-10"
+            >
+                <!-- Alianza -->
+                <a
+                    id="BtnAlianza"
+                    class="faction-card group flex w-full max-w-lg flex-col rounded-lg bg-alliance-bg-light dark:bg-alliance-bg-dark"
+                    href="/Alianza"
+                >
+                    <div
+                        class="faction-banner relative flex justify-center items-center p-2"
+                    >
+                        <img
+                            src="/img/Elementos/Alianza-escudo.png"
+                            alt="Alianza"
+                            class="max-w-full h-auto object-contain rounded-2xl"
+                        />
+                    </div>
+                </a>
+                <!-- Horda -->
+                <a
+                    class="faction-card group flex w-full max-w-lg flex-col rounded-lg bg-horde-bg-light dark:bg-horde-bg-dark"
+                    href="/Horda"
+                >
+                    <div
+                        class="faction-banner relative flex justify-center items-center p-2"
+                    >
+                        <img
+                            src="/img/Elementos/Horda-escudo.png"
+                            alt="Horda"
+                            class="max-w-full h-auto object-contain rounded-2xl"
+                        />
+                    </div>
+                </a>
+            </div>
         </div>
-    </main>
+    </body>
+    <style>
+        .faction-card {
+            transition:
+                transform 0.3s ease-in-out,
+                box-shadow 0.3s ease-in-out;
+        }
+        .faction-card:hover {
+            transform: translateY(-10px);
+            box-shadow:
+                0 20px 25px -5px rgba(0, 0, 0, 0.2),
+                0 10px 10px -5px rgba(0, 0, 0, 0.1);
+        }
+        .faction-card .faction-banner {
+            transition: transform 0.3s ease-in-out;
+        }
+        .faction-card:hover .faction-banner {
+            transform: scale(1.05);
+        }
+    </style>
+    <script is:inline>
+        (function () {
+            const BtnAlianza = document.getElementById("BtnAlianza");
+
+            // Función para saltar el intro
+            function skipIntro() {
+                window.location.href = "/playPage";
+            }
+        })();
+    </script>
 </Layout>

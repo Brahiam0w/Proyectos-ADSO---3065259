@@ -1,0 +1,328 @@
+---
+import Layout from "../layouts/Layout.astro";
+import "../styles/global.css";
+---
+
+<Layout>
+   
+</Layout>
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-white selection:bg-primary selection:text-white"
+>
+    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+        <header
+            class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-white/10 bg-background-dark/50 px-10 py-4 backdrop-blur-md"
+        >
+            <div class="flex items-center gap-4">
+                <button
+                    class="flex min-w-[90px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white transition-transform hover:scale-105"
+                >
+                    <span class="truncate">Play Now</span>
+                </button>
+            </div>
+        </header>
+        <main
+            class="flex flex-1 flex-col items-center px-4 py-12 sm:px-6 lg:px-8"
+        >
+            <div class="w-full max-w-7xl">
+                <div class="text-center">
+                    <p class="mx-auto mt-4 max-w-2xl text-lg text-white/70">
+                        Select a champion from your faction to lead your forces.
+                        Each champion possesses unique strengths and abilities
+                        that will shape your strategy on the battlefield.
+                    </p>
+                </div>
+                <div class="mt-12 space-y-16">
+                    <div>
+                        <h3
+                            class="mb-6 text-3xl font-bold tracking-tight text-white/90"
+                        >
+                            Alliance
+                        </h3>
+                        <div
+                            class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 lg:grid-cols-5"
+                        >
+                            <div
+                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
+                                data-character="amelia"
+                            >
+                                <div
+                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
+                                >
+                                    <img
+                                        alt="Lady Amelia Stoneheart"
+                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBznKU36IJuOjA7gquIdIvdq-uTxalDqWGuVEpwei0dkBjJKBdw_mh20xZqhOV9pVXaMaLGs7fEg6vCxblRdRBkpYVbcS_RwWhPG1PsICe0Bq5b_E6j3xYANOHrdN0vM6RUiNn2BxIvi2xJCmpc7GFMLf-5WOQyxgcyIM_36Lx33E-1YeF9cNM6GEld3I6Q14_nSu8k52no10kGbKn1_xJnRo6JH6NujJNVJ_gJFnNFDojsGKFZMqKpiT3eOQ-N1eMmIH8IEsS-GcA"
+                                    />
+                                </div>
+                                <div class="mt-4">
+                                    <h4 class="text-base font-bold text-white">
+                                        Lady Amelia Stoneheart
+                                    </h4>
+                                    <p class="mt-1 text-sm text-white/60">
+                                        A seasoned warrior with unmatched combat
+                                        prowess.
+                                    </p>
+                                </div>
+                            </div>
+                            <div
+                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
+                                data-character="borin"
+                            >
+                                <div
+                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
+                                >
+                                    <img
+                                        alt="Lord Borin Ironfist"
+                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPbIRzK6Jpc3LoT7SfxlfQszqFL9R72oh0gIUMLKhHaPLzUQvDpUTDimN77TKOgK3KWNKx6SG9G3huWeBtzSvcQ4RFSA-SsgFiPl0GAUAasBL1pStDYWUOKiTIIXzEYfBERsazl2sAJ5d7d7VJidSP6_4XUABxE_6Sl9ioDS9ifRV3kmayN3rBSyZTD1TTqHadrmu-xJA1jQfP9Ar9FO77QDZw5GURbdPsL9AxJnxj8IR7REukxusmlpmWWFhqUsiNz_mIYeZtDOw"
+                                    />
+                                </div>
+                                <div class="mt-4">
+                                    <h4 class="text-base font-bold text-white">
+                                        Lord Borin Ironfist
+                                    </h4>
+                                    <p class="mt-1 text-sm text-white/60">
+                                        A stalwart paladin, a beacon of hope and
+                                        justice.
+                                    </p>
+                                </div>
+                            </div>
+                            <div
+                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
+                                data-character="elara"
+                            >
+                                <div
+                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
+                                >
+                                    <img
+                                        alt="Sister Elara Moonwhisper"
+                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuATOadwSgR1M_RMvoAjcnmopLEyqt9r6zXpYRd6lqluE5iETbgn0E2RyUghM2s91kDOaCdqZJmkyjuu0nJT7hHbsOTrpq4aSGwoivEgHu14D6DddKYYrq6wN77u7yPXzHT-ozs9XkbMzvdaDtGDCANqMF3etMvEH0eTkvUf3ItlcGDz0oq_B_oz49nvxaNffWXxp_DZDsFykUmUx4acBVyZqV23c0ByLdrJATED6o1DG4mLP-Sk6TXn_WiORQGuFcJXO19DVG0hkIw"
+                                    />
+                                </div>
+                                <div class="mt-4">
+                                    <h4 class="text-base font-bold text-white">
+                                        Sister Elara Moonwhisper
+                                    </h4>
+                                    <p class="mt-1 text-sm text-white/60">
+                                        A mystical druid, attuned to the balance
+                                        of nature.
+                                    </p>
+                                </div>
+                            </div>
+                            <div
+                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
+                                data-character="fizzle"
+                            >
+                                <div
+                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
+                                >
+                                    <img
+                                        alt="Master Fizzle Geargrind"
+                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtIGVi5HLOcBQm6LCR8LVMFhsP0PSXSJG8FOW76xPNWjGPM3CRz_hmCr88VSP0LFW1_QdcuOxI2W823uhLvu03RZFc3R-5Jbpyj4qyQ4yIcb7oFam-kySM7uUnWPARqA27ow2APpmopFA2igxmoYJoGPtN4gBxefN4nW_7MCCDc-eiBQa9KvxFj-GfVIyXl0WJbZAvvs8URvbmrXp4O8vnuKX9ZZn28guwBBHjzNRIroSqgHoaW-EE1AcZ_J5ndljNKKSN0-ZCqQg"
+                                    />
+                                </div>
+                                <div class="mt-4">
+                                    <h4 class="text-base font-bold text-white">
+                                        Master Fizzle Geargrind
+                                    </h4>
+                                    <p class="mt-1 text-sm text-white/60">
+                                        A brilliant mage, wielding arcane power
+                                        with precision.
+                                    </p>
+                                </div>
+                            </div>
+                            <div
+                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
+                                data-character="lyra"
+                            >
+                                <div
+                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
+                                >
+                                    <img
+                                        alt="Prophetess Lyra Starweaver"
+                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3OtvvxqKMCmDlVKmUU4S1Rm2mi4LMKjPOLJDrYT4IjXO3vpEsXluYqZuj5qu7aOu6GPFH5uusfRdlT9UItwGlEpw3DVcuRCzSn5ADCz8g4U4teqmPNjFVc7OZdi4TjhI2lwZzJbnMAnzeZlcQzD71KceJ6cVvsylerNV_Ox3HLSODufxzBik1bXf-uPaPGnfRWDPjo_krb49-XB-e9M2aMffTu-0KanBC4kBwSn20EdJba3lexPpDGjMxKX8JH_eIkzAKUIS52e8"
+                                    />
+                                </div>
+                                <div class="mt-4">
+                                    <h4 class="text-base font-bold text-white">
+                                        Prophetess Lyra Starweaver
+                                    </h4>
+                                    <p class="mt-1 text-sm text-white/60">
+                                        A devoted priestess, channeling divine
+                                        light to heal and protect.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3
+                            class="mb-6 text-3xl font-bold tracking-tight text-white/90"
+                        >
+                            Horde
+                        </h3>
+                        <div
+                            class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 lg:grid-cols-5"
+                        >
+                            <div
+                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
+                                data-character="grok"
+                            >
+                                <div
+                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
+                                >
+                                    <img
+                                        alt="Chieftain Grok Bloodfury"
+                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0R2HRrnDu367jC9wJpNtJl0NW6lkVLhLGnDlcKSK-pXcRJrJ6oLeIB42YxRtezGo9iXGukCf7bqAaaVzOUUDhOYapo84cbMX40PgaxX3YBQN_dlLAIA_CqfbdEgfwDv79duXocKJvzGNlDOGwcd18-EBgz6CZtLKgRLsRXPFtuhlI7vCekmwhtrJE0sT789m9QYhkGvnaBPC_xnPrFENGhzh1VHzjExllvh2swWyW5a6rRgeTnFeW8E6wF8EApGDH8TCOAmZsyd8"
+                                    />
+                                </div>
+                                <div class="mt-4">
+                                    <h4 class="text-base font-bold text-white">
+                                        Chieftain Grok Bloodfury
+                                    </h4>
+                                    <p class="mt-1 text-sm text-white/60">
+                                        A fierce orc warrior, driven by honor
+                                        and strength.
+                                    </p>
+                                </div>
+                            </div>
+                            <div
+                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
+                                data-character="sylvanas"
+                            >
+                                <div
+                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
+                                >
+                                    <img
+                                        alt="Lady Sylvanas Shadowveil"
+                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJQdW3pzph9KPEQd46pn-H9IFp1Kp7QElAecn80lJe8JsCr0K5L_jl18cLy4KjypxV4bYmYPWwoxyx7rD69CAcKguFn85xWS_UGCLveeNl_hWkuB0zBfXO-9kokfutSbGu4jd5Ox_hcsGDVgGmhu9KY3tpRPU80vc6eDagkHG9JqUohnenAJfYimV9BxCBrbBUVCdIMe48vl7i5bdD3SeOJ2GDMOJ-zhrTpiuUWTQUfBD0Ls_KWqtCxt032SBoo6kSOVhxT9dHMIk"
+                                    />
+                                </div>
+                                <div class="mt-4">
+                                    <h4 class="text-base font-bold text-white">
+                                        Lady Sylvanas Shadowveil
+                                    </h4>
+                                    <p class="mt-1 text-sm text-white/60">
+                                        A cunning undead rogue, master of
+                                        shadows and deception.
+                                    </p>
+                                </div>
+                            </div>
+                            <div
+                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
+                                data-character="kael"
+                            >
+                                <div
+                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
+                                >
+                                    <img
+                                        alt="Spiritwalker Kael Earthsong"
+                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnYh9y0oawATe-dFZp3dsVqfzrIYeJyABqd5XJK8sszVJH4p2ForNAvRiHWG2sN6PecgIcvPjAuYFzpQivgd_qVEG9HfdT5l5xRNjjrJNHSdUEPHe363HD708-sDX42KY-d3gzzXmZmqeyfQ_jazfZvchMalf4_auUYetOwGju3wq8MBeF8XA2j1L0bzH434icpOR8nqLFrnadu2qY-PB7nmJWYnq2MDj9wTXhH5k1JHnIcDaCKp7Pkf4K5pVhPFDH1CZvnz5p7gI"
+                                    />
+                                </div>
+                                <div class="mt-4">
+                                    <h4 class="text-base font-bold text-white">
+                                        Spiritwalker Kael Earthsong
+                                    </h4>
+                                    <p class="mt-1 text-sm text-white/60">
+                                        A wise tauren shaman, connected to the
+                                        spirits of the land.
+                                    </p>
+                                </div>
+                            </div>
+                            <div
+                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
+                                data-character="zalajin"
+                            >
+                                <div
+                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
+                                >
+                                    <img
+                                        alt="Huntress Zala'jin"
+                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9hdpfQn-dOhiadEB9ri37YMkv0lZ-NumMwrZj9L5pzmOX8JPy2UAgGpenY768VROS6-6Yi0fkEQb3Mub0Gy0REZMQK8-IUgTZSrSAFwMo31iavBxaJd2jfRgNVMkwkw4SRDqhQAwcC_Hr4VDM9shxN5AgLLSRGbPM3QU51lRdOq5OI3_GzzxsKoN0itjUiQjqTC3bdGrTAsXqIohN72s4GrpovEbqkoKfeE1iqpf6aZL3jYltUpHajEPOy7DmoJ3PiTG9M3fqr6w"
+                                    />
+                                </div>
+                                <div class="mt-4">
+                                    <h4 class="text-base font-bold text-white">
+                                        Huntress Zala'jin
+                                    </h4>
+                                    <p class="mt-1 text-sm text-white/60">
+                                        A skilled troll hunter, deadly with bow
+                                        and beast.
+                                    </p>
+                                </div>
+                            </div>
+                            <div
+                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
+                                data-character="theron"
+                            >
+                                <div
+                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
+                                >
+                                    <img
+                                        alt="Archmage Theron Sunstrider"
+                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCEZhajzYiHt5hJf-66ja1eFnRzS87gKEHq1LmQLf6vOBlXG7Ebqc9DwP6vvGCV0wd4Pl6cB7fOqf-66al7SPiCGxymHTpUOBvSVJs8U7lGY3G0MzP1taNYZde5zmo0n68B0AgPiJvFeYaLy7eAeukODktOzoHe1NLjgvcFyp5IVNzmV6pR_z6mS_xHnzlVciJBbul1LXtpGaol8jf4a5aKwk3rGbQOsMrfliVkiJnUJHfwuF1bq8pC0Z2zFhmlA98g8GIb_4eQag"
+                                    />
+                                </div>
+                                <div class="mt-4">
+                                    <h4 class="text-base font-bold text-white">
+                                        Archmage Theron Sunstrider
+                                    </h4>
+                                    <p class="mt-1 text-sm text-white/60">
+                                        A powerful blood elf warlock, commanding
+                                        dark magic.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-16 flex justify-center">
+                    <button
+                        class="flex min-w-[200px] max-w-xs cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary px-8 py-3 text-lg font-bold text-white shadow-lg shadow-primary/30 transition-all hover:scale-105 hover:shadow-primary/50"
+                    >
+                        <span class="truncate">Continue</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+        <div class="heroic-showcase" id="heroicShowcase">
+            <div class="heroic-showcase-content">
+                <div class="character-portrait-full">
+                    <img
+                        alt="Selected Character Portrait"
+                        id="showcasePortrait"
+                        src=""
+                    />
+                </div>
+                <div class="character-details-full">
+                    <h2
+                        class="text-5xl font-bold mb-4 text-primary"
+                        id="showcaseName"
+                    >
+                    </h2>
+                    <p
+                        class="text-lg text-white/80 leading-relaxed mb-6"
+                        id="showcaseLore"
+                    >
+                    </p>
+                    <button
+                        class="flex min-w-[150px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary px-6 py-2 text-base font-bold text-white shadow-lg shadow-primary/30 transition-all hover:scale-105 hover:shadow-primary/50 self-start"
+                        id="closeShowcase"
+                    >
+                        <span class="truncate">Return</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

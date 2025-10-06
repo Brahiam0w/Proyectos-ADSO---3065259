@@ -1,0 +1,91 @@
+---
+// StartScreen.astro - Pantalla inicial con botón de inicio
+---
+
+<div
+    id="start-screen"
+    class="fixed inset-0 w-full h-full bg-black z-50 flex items-center justify-center transition-opacity duration-700"
+>
+    <div class="text-center space-y-8 animate-fadeIn">
+        <!-- Logo o título (opcional) -->
+        <div class="mb-12">
+            <h1
+                class="text-6xl md:text-8xl font-bold text-yellow-500 tracking-wider drop-shadow-[0_0_30px_rgba(234,179,8,0.6)]"
+            >
+                BIENVENIDO
+            </h1>
+        </div>
+
+        <!-- Botón de inicio -->
+        <button
+            id="start-button"
+            class="group relative px-16 py-6 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black text-3xl md:text-4xl font-bold rounded-lg shadow-2xl cursor-pointer transform transition-all duration-300 hover:scale-110 hover:shadow-[0_0_50px_rgba(234,179,8,0.9)] active:scale-95 overflow-hidden"
+        >
+            <span class="relative z-10 flex items-center gap-4">
+                🎮 INICIAR 🎮
+            </span>
+            <div
+                class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"
+            >
+            </div>
+        </button>
+
+        <!-- Texto adicional (opcional) -->
+        <p class="text-gray-400 text-lg mt-8 animate-pulse">
+            Presiona para comenzar la experiencia
+        </p>
+    </div>
+</div>
+
+<style>
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fadeIn {
+        animation: fadeIn 1s ease-out;
+    }
+
+    .fade-out {
+        opacity: 0;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const startScreen = document.getElementById("start-screen");
+        const startButton = document.getElementById("start-button");
+
+        // Sonido opcional al hacer clic
+        const clickSound = new Audio("/sounds/sonido-boton-jugar.mp3");
+
+        if (startButton && startScreen) {
+            startButton.addEventListener("click", () => {
+                // Reproduce el sonido (opcional)
+                clickSound.currentTime = 0;
+                clickSound.play().catch((err) => {
+                    console.log("No se pudo reproducir el sonido:", err);
+                });
+
+                // Fade out de la pantalla
+                startScreen.classList.add("fade-out");
+
+                // Espera a que termine la animación
+                setTimeout(() => {
+                    startScreen.style.display = "none";
+
+                    // Dispara evento para iniciar el IntroVideo
+                    window.dispatchEvent(new Event("startIntroVideo"));
+                }, 700);
+            });
+        }
+    });
+</script>
