@@ -23,5 +23,3 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
-# Ignorar video pesado
-public/Video/Trailer-Home.mp4
