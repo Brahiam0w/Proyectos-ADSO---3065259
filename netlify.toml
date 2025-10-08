@@ -1,6 +1,7 @@
 [build]
-  command = "cd Fantasia-Medieval-RPG && npm ci && npm run build"
-  publish = "Fantasia-Medieval-RPG/dist"
+  base = "Fantasia-Medieval-RPG"
+  command = "npm ci && npm run build"
+  publish = "dist"
 
 [[redirects]]
   from = "/*"
