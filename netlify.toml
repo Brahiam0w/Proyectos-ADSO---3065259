@@ -1,0 +1,8 @@
+[build]
+  command = "cd Fantasia-Medieval-RPG && npm ci && npm run build"
+  publish = "Fantasia-Medieval-RPG/dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
