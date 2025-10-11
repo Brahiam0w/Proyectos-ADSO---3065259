@@ -1,14 +1,11 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import "../styles/global.css";
+import Welcome from "../components/Welcome.astro";
 ---
 
 <Layout>
-    
-</Layout>
-<body
-    class="bg-background-light dark:bg-background-dark font-display text-white selection:bg-primary selection:text-white"
->
+    <Welcome />
     <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
         <header
             class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-white/10 bg-background-dark/50 px-10 py-4 backdrop-blur-md"
@@ -325,4 +322,4 @@ import "../styles/global.css";
             </div>
         </div>
     </div>
-</body>
+</Layout>

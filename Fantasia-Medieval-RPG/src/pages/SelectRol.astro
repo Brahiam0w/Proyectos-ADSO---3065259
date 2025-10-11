@@ -6,39 +6,54 @@ import "../styles/global.css";
 
 <Layout>
     <Welcome />
+
     <main class="flex overflow-hidden"></main>
+
     <body
-        class="bg-background-light dark:bg-background-dark font-display text-neutral-text-light dark:text-neutral-text-dark"
+        class="bg-background-light dark:bg-background-dark font-display text-neutral-text-light dark:text-neutral-text-dark overflow-hidden"
     >
         <div
-            class="relative flex flex-col min-h-screen w-full items-center justify-center overflow-hidden p-4 md:p-8"
+            class="relative flex flex-col h-screen w-full items-center justify-center overflow-hidden p-4 md:p-8"
         >
-            <p class="z-10 border-amber-50 p-2 text-2xl text-center">
-                Dos bandos dividen el mundo: la **Alianza**, guardiana del
-                orden, y la **Horda**, forjada en fuego y libertad. Elige tu
-                lealtad y escribe tu leyenda en una guerra donde cada victoria
-                cambia el destino del reino.
-            </p>
+            <!-- Título principal -->
+            <div class="z-10 flex flex-col items-center text-center mb-6 mt-2">
+                <h1
+                    class="wow-title relative px-6 py-4 text-3xl md:text-5xl font-extrabold font-[Cinzel] tracking-wide text-yellow-300"
+                >
+                    Dos bandos dividen el mundo
+                </h1>
+                <p
+                    class="subtitle text-base md:text-lg text-gray-200 mt-3 max-w-2xl bg-black/40 rounded-lg px-4 py-2"
+                >
+                    La <span class="text-cyan-400 font-semibold">Alianza</span>, guardiana del orden, y la
+                    <span class="text-red-500 font-semibold">Horda</span>, forjada en fuego y libertad.  
+                    <br />
+                    <span class="text-yellow-200">Elige tu lealtad y escribe tu leyenda.</span>
+                </p>
+            </div>
+
+            <!-- Fondo -->
             <div class="absolute inset-0 z-0">
                 <div
                     class="absolute inset-0 bg-gradient-to-r from-alliance-bg-dark/80 to-horde-bg-dark/80 dark:from-alliance-bg-dark/90 dark:to-horde-bg-dark/90"
-                >
-                </div>
+                ></div>
 
                 <div
                     class="absolute inset-0 bg-cover bg-center"
-                    style="background-image: url('/img/Elementos/texture-fondo.webp'); mix-blend-overlay;"
-                >
-                </div>
+                    style="background-image: url('/img/Elementos/Fondo-seleccion-bando.png'); mix-blend-mode: overlay;"
+                ></div>
             </div>
 
+            <!-- Tarjetas -->
             <div
-                class="z-10 flex w-full max-w-7xl flex-col items-center justify-center space-y-8 text-center lg:flex-row lg:items-stretch lg:space-y-0 lg:space-x-8 m-10"
+                class="z-10 flex w-full max-w-7xl flex-col items-center text-center lg:flex-row lg:items-stretch lg:space-y-0 lg:space-x-8 m-6 gap-x-64 justify-center"
             >
                 <!-- Alianza -->
                 <a
                     id="BtnAlianza"
-                    class="faction-card group flex w-full max-w-lg flex-col rounded-lg bg-alliance-bg-light dark:bg-alliance-bg-dark"
+                    class="faction-card alliance-card group flex
+                    w-72 max-w-lg flex-col rounded-lg bg-alliance-bg-light
+                    dark:bg-alliance-bg-dark"
                     href="/Alianza"
                 >
                     <div
@@ -47,13 +62,15 @@ import "../styles/global.css";
                         <img
                             src="/img/Elementos/Alianza-escudo.png"
                             alt="Alianza"
-                            class="max-w-full h-auto object-contain rounded-2xl"
+                            class="faction-image max-w-full h-auto object-contain rounded-2xl"
                         />
                     </div>
                 </a>
+
                 <!-- Horda -->
                 <a
-                    class="faction-card group flex w-full max-w-lg flex-col rounded-lg bg-horde-bg-light dark:bg-horde-bg-dark"
+                    class="faction-card horde-card group flex w-72 max-w-lg flex-col
+                    rounded-lg bg-horde-bg-light dark:bg-horde-bg-dark"
                     href="/Horda"
                 >
                     <div
@@ -62,37 +79,101 @@ import "../styles/global.css";
                         <img
                             src="/img/Elementos/Horda-escudo.png"
                             alt="Horda"
-                            class="max-w-full h-auto object-contain rounded-2xl"
+                            class="faction-image max-w-full h-auto object-contain rounded-2xl"
                         />
                     </div>
                 </a>
             </div>
         </div>
     </body>
+
     <style>
-        .faction-card {
-            transition:
-                transform 0.3s ease-in-out,
-                box-shadow 0.3s ease-in-out;
+        @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap");
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
         }
-        .faction-card:hover {
-            transform: translateY(-10px);
+
+        /* Título principal estilo épico */
+        .wow-title {
+            color: #ffd86b;
+            text-shadow:
+                0 0 5px rgba(255, 222, 120, 0.9),
+                0 0 15px rgba(255, 180, 40, 0.8),
+                0 0 35px rgba(255, 150, 0, 0.6);
+            border: 2px solid rgba(255, 220, 130, 0.4);
+            border-radius: 12px;
+            background: radial-gradient(circle at top, rgba(255, 200, 50, 0.15), rgba(0, 0, 0, 0.4));
             box-shadow:
-                0 20px 25px -5px rgba(0, 0, 0, 0.2),
-                0 10px 10px -5px rgba(0, 0, 0, 0.1);
+                0 0 20px rgba(255, 210, 100, 0.3),
+                inset 0 0 10px rgba(255, 220, 120, 0.2);
+            animation: title-glow 3s ease-in-out infinite;
         }
+
+        @keyframes title-glow {
+            0%, 100% {
+                text-shadow:
+                    0 0 5px rgba(255, 222, 120, 0.9),
+                    0 0 15px rgba(255, 180, 40, 0.8),
+                    0 0 35px rgba(255, 150, 0, 0.6);
+                box-shadow:
+                    0 0 15px rgba(255, 230, 130, 0.3),
+                    inset 0 0 8px rgba(255, 240, 180, 0.2);
+            }
+            50% {
+                text-shadow:
+                    0 0 8px rgba(255, 250, 200, 1),
+                    0 0 30px rgba(255, 210, 100, 1),
+                    0 0 60px rgba(255, 180, 0, 0.8);
+                box-shadow:
+                    0 0 25px rgba(255, 240, 150, 0.4),
+                    inset 0 0 10px rgba(255, 220, 100, 0.3);
+            }
+        }
+
+        .subtitle {
+            font-family: "Cinzel", serif;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
         .faction-card .faction-banner {
             transition: transform 0.3s ease-in-out;
         }
+
         .faction-card:hover .faction-banner {
             transform: scale(1.05);
         }
+
+        .faction-image {
+            transition: filter 0.3s ease-in-out;
+        }
+
+        .alliance-card:hover .faction-image {
+            filter: drop-shadow(0 0 20px rgb(59 130 246 / 0.8))
+                drop-shadow(0 0 40px rgb(59 130 246 / 0.6));
+        }
+
+        .horde-card:hover .faction-image {
+            filter: drop-shadow(0 0 20px rgb(239 68 68 / 0.8))
+                drop-shadow(0 0 40px rgb(239 68 68 / 0.6));
+        }
+
+        @media (max-width: 640px) {
+            .wow-title {
+                font-size: 1.6rem;
+                padding: 0.5rem 1rem;
+            }
+            .subtitle {
+                font-size: 0.9rem;
+            }
+        }
     </style>
+
     <script is:inline>
         (function () {
             const BtnAlianza = document.getElementById("BtnAlianza");
-
-            // Función para saltar el intro
             function skipIntro() {
                 window.location.href = "/playPage";
             }

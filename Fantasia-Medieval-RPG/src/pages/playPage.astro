@@ -6,62 +6,104 @@ import "../styles/global.css";
 
 <Layout>
 	<Welcome />
-	<main>
+
+	<main class="overflow-hidden">
 		<section
-		
-			class="relative h-screen w-full bg-[url('/img/Elementos/pantallazo-play.png')] bg-cover flex flex-col items-center justify-center"
+			class="relative h-screen w-full overflow-hidden bg-[url('/img/Elementos/fondo-play.png')] bg-cover bg-center"
 			style="background-position: 50% 1%;"
+			aria-label="Pantalla de inicio"
 		>
-		
+			<!-- Iluminación central suave -->
+			<div
+				class="absolute inset-0 pointer-events-none"
+				style="background: radial-gradient(circle at center, rgba(255,220,140,0.10) 0%, rgba(0,0,0,0) 45%); mix-blend-mode: overlay;"
+				aria-hidden="true"
+			></div>
+
+			<!-- Viñeta lateral -->
+			<div
+				class="absolute inset-0 pointer-events-none"
+				style="background: linear-gradient(90deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 15%, rgba(0,0,0,0) 85%, rgba(0,0,0,0.45) 100%);"
+				aria-hidden="true"
+			></div>
+
+			<!-- Ajuste de brillo y contraste -->
+			<div class="absolute inset-0 pointer-events-none brightness-[0.92] contrast-[1.05] saturate-[1.08]" aria-hidden="true"></div>
+
+			<!-- Logo: colocado arriba, sin afectar flujo; NO recibe eventos pointer -->
 			<img
-				class="-translate-y-36"
 				src="/img/Elementos/logo.png"
 				alt="Logo-play"
+				class="absolute left-1/2 transform -translate-x-1/2 top-8 md:top-10 w-11/12 max-w-[900px] object-contain z-20 pointer-events-none"
 			/>
-			
-			<div class="relative z-10 text-center space-y-8 animate-fadeIn">
+
+			<!-- Botón: centrado horizontalmente y a 60% vertical para que no tape el logo.
+                 z-40 para garantizar que reciba los clicks -->
+			<div class="absolute left-1/2 z-40 w-2/4 flex items-center justify-center" style="top:70%; transform: translateX(-50%);">
 				<button
-					class="hover-sound-btn group relative px-12 py-5 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black text-2xl md:text-3xl font-bold rounded-lg shadow-2xl cursor-pointer transform transition-all duration-300 -translate-y-40 hover:scale-110 hover:shadow-[0_0_40px_rgba(234,179,8,0.8)] active:scale-95 overflow-hidden"
+					id="play-button"
+					class="group relative px-16 md:px-24 py-4 md:py-6 border-[3px] border-yellow-600 text-yellow-200 text-2xl md:text-3xl font-bold rounded-xl shadow-[0_0_28px_rgba(234,179,8,0.28)] cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-[0_0_60px_rgba(234,179,8,0.8)] active:scale-95 overflow-hidden font-[Cinzel] bg-black/30 backdrop-blur-[2px] max-w-[520px] w-11/12"
+					aria-label="Iniciar juego"
 				>
-					<span class="relative z-10 flex items-center gap-3">
-						⚔️ JUGAR ⚔️
+					<span class="relative z-50 tracking-wider">JUGAR</span>
+
+					<!-- Brillo animado -->
+					<span class="absolute inset-0 block opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+						<span class="block absolute -left-20 top-0 w-[28%] h-full transform rotate-12 bg-gradient-to-r from-transparent via-white/18 to-transparent"
+							style="filter: blur(6px); animation: slide 1.2s forwards;"></span>
 					</span>
-					<div
-						class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"
-					>
-					</div>
+
+					<!-- Anillo decorativo -->
+					<span class="absolute inset-0 rounded-xl ring-1 ring-yellow-400/30 group-hover:ring-yellow-300/50 transition-all duration-400 pointer-events-none"></span>
 				</button>
 			</div>
 		</section>
 	</main>
 
-	<!-- Script -->
 	<script type="text/javascript" defer>
 		document.addEventListener("DOMContentLoaded", () => {
-			const button = document.querySelector(".hover-sound-btn");
+			const button = document.getElementById("play-button");
 			if (button) {
-				const sound = new Audio("/sounds/sonido-boton-jugar.mp3"); // asegúrate de que este path existe en "public/sounds/"
-
+				const sound = new Audio("/sounds/sonido-boton-jugar.mp3");
 				button.addEventListener("click", () => {
 					sound.currentTime = 0;
-					sound
-						.play()
-						.then(() => {
-							// Espera 500ms y luego redirige (puedes cambiar el tiempo)
-							setTimeout(() => {
-								window.location.href = "/SelectRol"; // cambia "/juego" por tu ruta/página real
-							}, 1200);
-						})
-						.catch((err) => {
-							console.error(
-								"Error reproduciendo el sonido:",
-								err,
-							);
-							// Si no suena, de todas formas redirige
-							window.location.href = "/SelectRol";
-						});
+					sound.play().catch(() => {});
+					setTimeout(() => {
+						window.location.href = "/SelectRol";
+					}, 950);
 				});
 			}
 		});
 	</script>
+
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap');
+
+		html, body {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			overflow: hidden;
+		}
+
+		/* Animación de entrada */
+		@keyframes fadeIn {
+			from { opacity: 0; transform: translateY(28px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
+		.animate-fadeIn { animation: fadeIn 900ms ease-out; }
+
+		/* Efecto de brillo cruzando */
+		@keyframes slide {
+			from { transform: translateX(-100%) rotate(12deg); opacity: 0; }
+			50% { opacity: 1; }
+			to { transform: translateX(300%) rotate(12deg); opacity: 0; }
+		}
+
+		/* Ajustes responsivos */
+		@media (max-width: 768px) {
+			img { max-width: 85%; }
+			button { font-size: 1.6rem; padding-left: 2rem; padding-right: 2rem; }
+		}
+	</style>
 </Layout>
