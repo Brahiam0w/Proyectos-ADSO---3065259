@@ -12,6 +12,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@fontsource/medievalsharp": "^5.2.8",
     "@tailwindcss/vite": "^4.1.14",
     "astro": "^5.13.11",
     "tailwindcss": "^4.1.14"

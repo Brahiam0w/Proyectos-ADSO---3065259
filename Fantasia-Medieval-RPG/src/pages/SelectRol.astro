@@ -18,17 +18,21 @@ import "../styles/global.css";
             <!-- Título principal -->
             <div class="z-10 flex flex-col items-center text-center mb-6 mt-2">
                 <h1
-                    class="wow-title relative px-6 py-4 text-3xl md:text-5xl font-extrabold font-[Cinzel] tracking-wide text-yellow-300"
+                    class="wow-title group relative px-6 py-4 text-3xl md:text-5xl font-extrabold font-[Cinzel] tracking-wide text-yellow-300"
                 >
                     Dos bandos dividen el mundo
                 </h1>
                 <p
-                    class="subtitle text-base md:text-lg text-gray-200 mt-3 max-w-2xl bg-black/40 rounded-lg px-4 py-2"
+                    class="group text-base md:text-lg text-gray-200 mt-3 max-w-2xl bg-black/40 rounded-lg px-4 py-2"
                 >
-                    La <span class="text-cyan-400 font-semibold">Alianza</span>, guardiana del orden, y la
-                    <span class="text-red-500 font-semibold">Horda</span>, forjada en fuego y libertad.  
+                    La <span class="text-cyan-400 font-semibold">Alianza</span>,
+                    guardiana del orden, y la
+                    <span class="text-red-500 font-semibold">Horda</span>,
+                    forjada en fuego y libertad.
                     <br />
-                    <span class="text-yellow-200">Elige tu lealtad y escribe tu leyenda.</span>
+                    <span class="text-yellow-200"
+                        >Elige tu lealtad y escribe tu leyenda.</span
+                    >
                 </p>
             </div>
 
@@ -36,12 +40,14 @@ import "../styles/global.css";
             <div class="absolute inset-0 z-0">
                 <div
                     class="absolute inset-0 bg-gradient-to-r from-alliance-bg-dark/80 to-horde-bg-dark/80 dark:from-alliance-bg-dark/90 dark:to-horde-bg-dark/90"
-                ></div>
+                >
+                </div>
 
                 <div
                     class="absolute inset-0 bg-cover bg-center"
                     style="background-image: url('/img/Elementos/Fondo-seleccion-bando.png'); mix-blend-mode: overlay;"
-                ></div>
+                >
+                </div>
             </div>
 
             <!-- Tarjetas -->
@@ -60,7 +66,7 @@ import "../styles/global.css";
                         class="faction-banner relative flex justify-center items-center p-2"
                     >
                         <img
-                            src="/img/Elementos/Alianza-escudo.png"
+                            src="https://res.cloudinary.com/do6g7cjx4/image/upload/v1760224454/Alianza-escudo_cnsh0t.png"
                             alt="Alianza"
                             class="faction-image max-w-full h-auto object-contain rounded-2xl"
                         />
@@ -69,6 +75,7 @@ import "../styles/global.css";
 
                 <!-- Horda -->
                 <a
+                    id="BtnHorda"
                     class="faction-card horde-card group flex w-72 max-w-lg flex-col
                     rounded-lg bg-horde-bg-light dark:bg-horde-bg-dark"
                     href="/Horda"
@@ -77,7 +84,7 @@ import "../styles/global.css";
                         class="faction-banner relative flex justify-center items-center p-2"
                     >
                         <img
-                            src="/img/Elementos/Horda-escudo.png"
+                            src="https://res.cloudinary.com/do6g7cjx4/image/upload/v1760224454/Horda-escudo_bbsrwt.png"
                             alt="Horda"
                             class="faction-image max-w-full h-auto object-contain rounded-2xl"
                         />
@@ -88,13 +95,15 @@ import "../styles/global.css";
     </body>
 
     <style>
-        @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap");
-
-        html, body {
+        html,
+        body {
             height: 100%;
             overflow: hidden;
         }
 
+        .group{
+            font-family: "MedievalSharp";
+        }
         /* Título principal estilo épico */
         .wow-title {
             color: #ffd86b;
@@ -104,7 +113,11 @@ import "../styles/global.css";
                 0 0 35px rgba(255, 150, 0, 0.6);
             border: 2px solid rgba(255, 220, 130, 0.4);
             border-radius: 12px;
-            background: radial-gradient(circle at top, rgba(255, 200, 50, 0.15), rgba(0, 0, 0, 0.4));
+            background: radial-gradient(
+                circle at top,
+                rgba(255, 200, 50, 0.15),
+                rgba(0, 0, 0, 0.4)
+            );
             box-shadow:
                 0 0 20px rgba(255, 210, 100, 0.3),
                 inset 0 0 10px rgba(255, 220, 120, 0.2);
@@ -112,7 +125,8 @@ import "../styles/global.css";
         }
 
         @keyframes title-glow {
-            0%, 100% {
+            0%,
+            100% {
                 text-shadow:
                     0 0 5px rgba(255, 222, 120, 0.9),
                     0 0 15px rgba(255, 180, 40, 0.8),
@@ -133,7 +147,7 @@ import "../styles/global.css";
         }
 
         .subtitle {
-            font-family: "Cinzel", serif;
+            font-family: "MedievalSharp", serif;
             font-weight: 500;
             line-height: 1.5;
         }
@@ -173,10 +187,45 @@ import "../styles/global.css";
 
     <script is:inline>
         (function () {
+            const BtnHorda = document.getElementById("BtnHorda");
+
+            // Cargar el sonido
+            const sonidoHorda = new Audio("/sounds/horda-sonido.mp3");
+
+            // Hacer que el sonido se repita mientras el mouse esté encima (opcional)
+            sonidoAlianza.loop = true;
+
+            // Cuando el mouse entra al elemento
+            BtnHorda.addEventListener("mouseenter", () => {
+                sonidoHorda.currentTime = 0; // Reinicia desde el inicio
+                sonidoHorda.play();
+            });
+
+            // Cuando el mouse sale del elemento
+            BtnHorda.addEventListener("mouseleave", () => {
+                sonidoHorda.pause();
+                sonidoHorda.currentTime = 0; // Reinicia para la próxima vez
+            });
+
             const BtnAlianza = document.getElementById("BtnAlianza");
-            function skipIntro() {
-                window.location.href = "/playPage";
-            }
+
+            // Cargar el sonido
+            const sonidoAlianza = new Audio("/sounds/alianza-sonido.mp3");
+
+            // Hacer que el sonido se repita mientras el mouse esté encima (opcional)
+            sonidoAlianza.loop = true;
+
+            // Cuando el mouse entra al elemento
+            BtnAlianza.addEventListener("mouseenter", () => {
+                sonidoAlianza.currentTime = 0; // Reinicia desde el inicio
+                sonidoAlianza.play();
+            });
+
+            // Cuando el mouse sale del elemento
+            BtnAlianza.addEventListener("mouseleave", () => {
+                sonidoAlianza.pause();
+                sonidoAlianza.currentTime = 0; // Reinicia para la próxima vez
+            });
         })();
     </script>
 </Layout>

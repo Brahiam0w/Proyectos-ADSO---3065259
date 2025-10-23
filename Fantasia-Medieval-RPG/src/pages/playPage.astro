@@ -42,7 +42,7 @@ import "../styles/global.css";
 			<div class="absolute left-1/2 z-40 w-2/4 flex items-center justify-center" style="top:70%; transform: translateX(-50%);">
 				<button
 					id="play-button"
-					class="group relative px-16 md:px-24 py-4 md:py-6 border-[3px] border-yellow-600 text-yellow-200 text-2xl md:text-3xl font-bold rounded-xl shadow-[0_0_28px_rgba(234,179,8,0.28)] cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-[0_0_60px_rgba(234,179,8,0.8)] active:scale-95 overflow-hidden font-[Cinzel] bg-black/30 backdrop-blur-[2px] max-w-[520px] w-11/12"
+					class="group relative px-16 md:px-24 py-4 md:py-6 border-[3px] border-yellow-600 text-yellow-200 text-2xl md:text-3xl font-bold rounded-xl shadow-[0_0_28px_rgba(234,179,8,0.28)] cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-[0_0_60px_rgba(234,179,8,0.8)] active:scale-95 overflow-hidden font-[Cinzel] bg-black/30 backdrop-blur-[2px] max-w-[520px] w-2/4"
 					aria-label="Iniciar juego"
 				>
 					<span class="relative z-50 tracking-wider">JUGAR</span>
@@ -77,13 +77,16 @@ import "../styles/global.css";
 	</script>
 
 	<style>
-		@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap');
 
 		html, body {
 			margin: 0;
 			padding: 0;
 			height: 100%;
 			overflow: hidden;
+		}
+
+		.group{
+			font-family: "MedievalSharp";
 		}
 
 		/* Animación de entrada */

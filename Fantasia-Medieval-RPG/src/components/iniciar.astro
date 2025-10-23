@@ -5,7 +5,7 @@
     <!-- Fondo místico -->
     <div
         class="absolute inset-0 bg-cover bg-center brightness-[0.8] contrast-[1.1] saturate-[1.2]"
-        style="background-image: url('/img/Elementos/fondo-inicio.png');"
+        style="background-image: url(https://res.cloudinary.com/do6g7cjx4/image/upload/v1760224540/fondo-inicio_rzlhym.png);"
     >
     </div>
 
@@ -33,7 +33,7 @@
     <div class="relative text-center space-y-12 animate-fadeIn z-10">
         <div>
             <h1
-                class="text-6xl md:text-8xl font-bold text-yellow-400 tracking-widest drop-shadow-[0_0_50px_rgba(234,179,8,0.8)] font-[Cinzel]"
+                class="group text-6xl md:text-8xl font-bold text-yellow-400 tracking-widest drop-shadow-[0_0_50px_rgba(234,179,8,0.8)]"
             >
                 BIENVENIDO
             </h1>
@@ -42,9 +42,9 @@
         <!-- Botón medieval -->
         <button
             id="start-button"
-            class="group relative px-20 py-6  bg-cover bg-center border-[3px] border-yellow-600 text-yellow-200 text-3xl md:text-4xl font-bold rounded-xl shadow-[0_0_25px_rgba(234,179,8,0.3)] cursor-pointer transform transition-all duration-300 hover:scale-110 hover:shadow-[0_0_60px_rgba(234,179,8,0.8)] active:scale-95 overflow-hidden font-[Cinzel]"
+            class="group relative px-20 py-6 bg-cover bg-center border-[3px] border-yellow-600 text-yellow-200 text-3xl md:text-4xl font-bold rounded-xl shadow-[0_0_25px_rgba(234,179,8,0.3)] cursor-pointer transform transition-all duration-300 hover:scale-110 hover:shadow-[0_0_60px_rgba(234,179,8,0.8)] active:scale-95 overflow-hidden"
         >
-            <span class="relative z-10 flex items-center gap-4">
+            <span class="group relative z-10 flex items-center gap-4">
                 ⚜️ INICIAR ⚜️
             </span>
 
@@ -67,40 +67,17 @@
             </div>
         </button>
 
-        <p
-            class="text-gray-300 text-lg mt-8 animate-pulse font-[Cinzel] tracking-widest"
-        >
+        <p  class="group text-gray-300 text-lg mt-8 animate-pulse tracking-widest">
             PRESIONA PARA COMENZAR LA EXPERIENCIA
         </p>
     </div>
 </div>
 
 <style>
-    @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap");
-    @keyframes fadeIn {
-			from { opacity: 0; transform: translateY(28px); }
-			to { opacity: 1; transform: translateY(0); }
-		}
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(40px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .group{
+        font-family: "MedievalSharp";
     }
-
-    .animate-fadeIn {
-        animation: fadeIn 1s ease-out;
-    }
-
-    .fade-out {
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.8s ease-out;
-    }
+    
 </style>
 
 <script>

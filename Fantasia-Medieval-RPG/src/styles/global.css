@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-
-
 @font-face {
   font-family: 'Medieval Sharp';
   src: url('/assets/fonts/MedievalSharp-Regular.woff2') format('woff2');
@@ -13,10 +11,246 @@
 /* variables CSS válidas */
 :root {
   --fonts-sans: 'Medieval Sharp', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --alliance-gold: #ffd700;
+  --alliance-blue: #0057b7;
+  --alliance-light-blue: #00a3ff;
+  --alliance-white: #ffffff;
 }
 
 /* ejemplo: aplicar por defecto */
 html,
 body {
   font-family: var(--fonts-sans);
+  background: radial-gradient(circle at center, var(--alliance-blue) 0%, #002351 100%);
+  background-attachment: fixed;
+}
+
+/* Estilos específicos para la Alianza */
+.alliance-header {
+  background: linear-gradient(to bottom, rgba(0, 87, 183, 0.9), rgba(0, 35, 81, 0.9));
+  border-bottom: 2px solid var(--alliance-gold);
+}
+
+.character-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(0, 87, 183, 0.2) 100%);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.character-card:hover {
+  border-color: var(--alliance-gold);
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+}
+
+.character-card h4 {
+  color: var(--alliance-gold);
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.character-card p {
+  color: var(--alliance-white);
+}
+
+.heroic-showcase {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.heroic-showcase.active {
+  display: flex;
+}
+
+.heroic-showcase-content {
+  display: flex;
+  gap: 2rem;
+  max-width: 1200px;
+  background: linear-gradient(135deg, rgba(0, 87, 183, 0.95) 0%, rgba(0, 35, 81, 0.95) 100%);
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 2px solid var(--alliance-gold);
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+  backdrop-filter: blur(20px);
+}
+
+.character-portrait-full {
+  flex: 0 0 auto;
+  width: 400px;
+}
+
+.character-portrait-full img {
+  width: 100%;
+  height: 600px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+
+.character-details-full {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.character-abilities {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.ability-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(0, 87, 183, 0.2) 100%);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.ability-card {
+  background: linear-gradient(135deg, rgba(0, 35, 81, 0.5) 0%, rgba(0, 18, 42, 0.5) 100%);
+  border: 1px solid rgba(255, 215, 0, 0.1);
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.ability-card:hover {
+  border-color: var(--alliance-gold);
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.15);
+}
+
+/* Scrollbar personalizada */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 35, 81, 0.3);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 215, 0, 0.3);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 215, 0, 0.5);
+}
+
+/* Animaciones */
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
+  50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.4); }
+}
+
+/* Selección de tarjeta */
+.character-card.selected {
+  outline: 3px solid rgba(255, 215, 0, 0.25);
+  box-shadow: 0 8px 30px rgba(255, 215, 0, 0.12);
+  transform: translateY(-6px) scale(1.02);
+}
+
+/* Panel derecho (detalles) */
+#panelPortrait {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* estilos específicos para aside se manejan directamente en el HTML */
+
+/* Secciones de razas */
+.race-section {
+  border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+}
+
+.race-section:last-child {
+  border-bottom: none;
+}
+
+/* Panel derecho (detalles) optimizado */
+.character-details {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  max-height: calc(100vh - 4rem);
+}
+
+/* Estilos de raza */
+.race-title {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.5rem;
+  color: var(--alliance-gold);
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.race-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--alliance-gold), transparent);
+}
+
+/* Mejoras visuales para las tarjetas */
+.character-card {
+  background: linear-gradient(135deg, rgba(0, 35, 81, 0.4) 0%, rgba(0, 18, 42, 0.4) 100%);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.character-card:hover {
+  background: linear-gradient(135deg, rgba(0, 35, 81, 0.6) 0%, rgba(0, 18, 42, 0.6) 100%);
+  border-color: var(--alliance-gold);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 0 15px rgba(255, 215, 0, 0.2);
+}
+
+.character-card.selected {
+  background: linear-gradient(135deg, rgba(0, 35, 81, 0.8) 0%, rgba(0, 18, 42, 0.8) 100%);
+  border-color: var(--alliance-gold);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  transform: scale(1.02);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .lg\:col-span-2 { grid-column: auto; }
+  .lg\:col-span-1 { grid-column: auto; }
+  .grid-cols-1 { grid-template-columns: 1fr; }
+  
+  .character-details {
+    max-height: none;
+  }
+}
+
+.ability-card h3 {
+  color: #e2e8f0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.ability-card p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  line-height: 1.4;
 }

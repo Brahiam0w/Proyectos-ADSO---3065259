@@ -4,292 +4,224 @@ import "../styles/global.css";
 import Welcome from "../components/Welcome.astro";
 ---
 
+<script src="../scripts/characters.js"></script>
+
 <Layout>
     <Welcome />
     <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
         <header
-            class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-white/10 bg-background-dark/50 px-10 py-4 backdrop-blur-md"
+            class="alliance-header sticky top-0 z-50 flex items-center justify-between whitespace-nowrap px-10 py-4 backdrop-blur-md bg-gradient-to-r from-[#00234f]/80 to-[#001428]/80 border-b border-[#ffd700]/10"
         >
             <div class="flex items-center gap-4">
-                <button
-                    class="flex min-w-[90px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white transition-transform hover:scale-105"
-                >
-                    <span class="truncate">Play Now</span>
-                </button>
+                <h1 class="text-[#ffd700] font-bold text-xl">Alianza</h1>
             </div>
         </header>
         <main
-            class="flex flex-1 flex-col items-center px-4 py-12 sm:px-6 lg:px-8"
+            class="container relative mx-auto px-4 py-12 sm:px-6 lg:px-8 max-w-[1600px]"
         >
-            <div class="w-full max-w-7xl">
+            <div class="w-full relative">
                 <div class="text-center">
-                    <p class="mx-auto mt-4 max-w-2xl text-lg text-white/70">
-                        Select a champion from your faction to lead your forces.
-                        Each champion possesses unique strengths and abilities
-                        that will shape your strategy on the battlefield.
+                    <h2 class="text-4xl font-bold text-[#ffd700] mb-4 tracking-wide">La Alianza te necesita</h2>
+                    <p class="mx-auto mt-4 max-w-2xl text-lg text-white drop-shadow-lg" style="text-shadow: 0 0 10px rgba(0, 163, 255, 0.5);">
+                        Elige a tu campeón para liderar las fuerzas de la Alianza.
+                        Cada héroe posee habilidades únicas y poderes extraordinarios
+                        que definirán el destino de nuestras tierras.
                     </p>
                 </div>
-                <div class="mt-12 space-y-16">
-                    <div>
-                        <h3
-                            class="mb-6 text-3xl font-bold tracking-tight text-white/90"
-                        >
-                            Alliance
-                        </h3>
-                        <div
-                            class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 lg:grid-cols-5"
-                        >
-                            <div
-                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
-                                data-character="amelia"
-                            >
-                                <div
-                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
-                                >
-                                    <img
-                                        alt="Lady Amelia Stoneheart"
-                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBznKU36IJuOjA7gquIdIvdq-uTxalDqWGuVEpwei0dkBjJKBdw_mh20xZqhOV9pVXaMaLGs7fEg6vCxblRdRBkpYVbcS_RwWhPG1PsICe0Bq5b_E6j3xYANOHrdN0vM6RUiNn2BxIvi2xJCmpc7GFMLf-5WOQyxgcyIM_36Lx33E-1YeF9cNM6GEld3I6Q14_nSu8k52no10kGbKn1_xJnRo6JH6NujJNVJ_gJFnNFDojsGKFZMqKpiT3eOQ-N1eMmIH8IEsS-GcA"
-                                    />
+                <div class="mt-12">
+                    <!-- Contenedor principal con grid -->
+                        <div class="max-w-6xl mx-auto">
+                            <h3 class="mb-8 text-3xl font-bold tracking-tight text-[#ffd700] text-center"
+                                style="text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);">
+                                Campeones de la Alianza
+                            </h3>
+                            <div class="space-y-8">
+                                <!-- Elfos -->
+                                <div class="mb-12">
+                                    <h4 class="text-xl font-bold text-[#ffd700] mb-6 text-center">Elfos de la Noche</h4>
+                                    <div class="grid grid-cols-4 gap-6 max-w-4xl mx-auto">
+                                        <div class="character-card relative group cursor-pointer rounded-xl bg-white/5 p-3" data-character="elfo1">
+                                            <div class="aspect-square w-full overflow-hidden rounded-xl">
+                                                <img alt="Aethel Silvermoon" class="h-[150%] w-full object-cover transition-transform group-hover:scale-110" style="object-position: center 25%; margin-top: -25%;" src="/img/Buenos/Elfo1.png" />
+                                            </div>
+                                            <div class="absolute inset-x-3 bottom-3 p-2 bg-gradient-to-t from-black/90 to-transparent rounded-lg">
+                                                <h4 class="text-sm font-bold text-[#ffd700] truncate">Aethel Silvermoon</h4>
+                                                <p class="text-xs text-white/60 truncate">Archimago de Quel'thalas</p>
+                                            </div>
+                                        </div>
+                                        <div class="character-card relative group cursor-pointer rounded-xl bg-white/5 p-3" data-character="elfo2">
+                                            <div class="aspect-square w-full overflow-hidden rounded-xl">
+                                                <img alt="Lyandra Dawnweaver" class="h-[150%] w-full object-cover transition-transform group-hover:scale-110" style="object-position: center 25%; margin-top: -25%;" src="/img/Buenos/Elfo2.png" />
+                                            </div>
+                                            <div class="absolute inset-x-3 bottom-3 p-2 bg-gradient-to-t from-black/90 to-transparent rounded-lg">
+                                                <h4 class="text-sm font-bold text-[#ffd700] truncate">Lyandra Dawnweaver</h4>
+                                                <p class="text-xs text-white/60 truncate">Guardiana del Bosque Eterno</p>
+                                            </div>
+                                        </div>
+                                        <div class="character-card relative group cursor-pointer rounded-xl bg-white/5 p-3" data-character="elfo3">
+                                            <div class="aspect-square w-full overflow-hidden rounded-xl">
+                                                <img alt="Theron Starwhisper" class="h-[150%] w-full object-cover transition-transform group-hover:scale-110" style="object-position: center 25%; margin-top: -25%;" src="/img/Buenos/Elfo3.png" />
+                                            </div>
+                                            <div class="absolute inset-x-3 bottom-3 p-2 bg-gradient-to-t from-black/90 to-transparent rounded-lg">
+                                                <h4 class="text-sm font-bold text-[#ffd700] truncate">Theron Starwhisper</h4>
+                                                <p class="text-xs text-white/60 truncate">Sacerdote de la Luna</p>
+                                            </div>
+                                        </div>
+                                        <div class="character-card relative group cursor-pointer rounded-xl bg-white/5 p-3" data-character="elfo4">
+                                            <div class="aspect-square w-full overflow-hidden rounded-xl">
+                                                <img alt="Sylvanas Windrunner" class="h-[150%] w-full object-cover transition-transform group-hover:scale-110" style="object-position: center 25%; margin-top: -25%;" src="/img/Buenos/Elfo4.png" />
+                                            </div>
+                                            <div class="absolute inset-x-3 bottom-3 p-2 bg-gradient-to-t from-black/90 to-transparent rounded-lg">
+                                                <h4 class="text-sm font-bold text-[#ffd700] truncate">Sylvanas Windrunner</h4>
+                                                <p class="text-xs text-white/60 truncate">Capitana de los Forestales</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="mt-4">
-                                    <h4 class="text-base font-bold text-white">
-                                        Lady Amelia Stoneheart
-                                    </h4>
-                                    <p class="mt-1 text-sm text-white/60">
-                                        A seasoned warrior with unmatched combat
-                                        prowess.
-                                    </p>
+
+                                <!-- Enanos -->
+                                <div class="mb-12">
+                                    <h4 class="text-xl font-bold text-[#ffd700] mb-6 text-center">Enanos</h4>
+                                    <div class="grid grid-cols-4 gap-6 max-w-4xl mx-auto">
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="enano1">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Thorin Steelbeard" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Enano1.png" />
+                                            </div>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Thorin Steelbeard</h4>
+                                                <p class="mt-1 text-sm text-white/60">Señor de la Forja</p>
+                                            </div>
+                                        </div>
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="enano2">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Moira Thaurissan" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Enano2.png" />
+                                            </div>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Moira Thaurissan</h4>
+                                                <p class="mt-1 text-sm text-white/60">Reina Regente</p>
+                                            </div>
+                                        </div>
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="enano3">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Bromm Ironfist" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Enano3.png" />
+                                            </div>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Bromm Ironfist</h4>
+                                                <p class="mt-1 text-sm text-white/60">Maestro de Rifles</p>
+                                            </div>
+                                        </div>
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="enano4">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Dagmar Stoneheart" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Enano4.png" />
+                                            </div>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Dagmar Stoneheart</h4>
+                                                <p class="mt-1 text-sm text-white/60">Guardián de las Runas</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div
-                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
-                                data-character="borin"
-                            >
-                                <div
-                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
-                                >
-                                    <img
-                                        alt="Lord Borin Ironfist"
-                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPbIRzK6Jpc3LoT7SfxlfQszqFL9R72oh0gIUMLKhHaPLzUQvDpUTDimN77TKOgK3KWNKx6SG9G3huWeBtzSvcQ4RFSA-SsgFiPl0GAUAasBL1pStDYWUOKiTIIXzEYfBERsazl2sAJ5d7d7VJidSP6_4XUABxE_6Sl9ioDS9ifRV3kmayN3rBSyZTD1TTqHadrmu-xJA1jQfP9Ar9FO77QDZw5GURbdPsL9AxJnxj8IR7REukxusmlpmWWFhqUsiNz_mIYeZtDOw"
-                                    />
-                                </div>
-                                <div class="mt-4">
-                                    <h4 class="text-base font-bold text-white">
-                                        Lord Borin Ironfist
-                                    </h4>
-                                    <p class="mt-1 text-sm text-white/60">
-                                        A stalwart paladin, a beacon of hope and
-                                        justice.
-                                    </p>
-                                </div>
-                            </div>
-                            <div
-                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
-                                data-character="elara"
-                            >
-                                <div
-                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
-                                >
-                                    <img
-                                        alt="Sister Elara Moonwhisper"
-                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuATOadwSgR1M_RMvoAjcnmopLEyqt9r6zXpYRd6lqluE5iETbgn0E2RyUghM2s91kDOaCdqZJmkyjuu0nJT7hHbsOTrpq4aSGwoivEgHu14D6DddKYYrq6wN77u7yPXzHT-ozs9XkbMzvdaDtGDCANqMF3etMvEH0eTkvUf3ItlcGDz0oq_B_oz49nvxaNffWXxp_DZDsFykUmUx4acBVyZqV23c0ByLdrJATED6o1DG4mLP-Sk6TXn_WiORQGuFcJXO19DVG0hkIw"
-                                    />
-                                </div>
-                                <div class="mt-4">
-                                    <h4 class="text-base font-bold text-white">
-                                        Sister Elara Moonwhisper
-                                    </h4>
-                                    <p class="mt-1 text-sm text-white/60">
-                                        A mystical druid, attuned to the balance
-                                        of nature.
-                                    </p>
-                                </div>
-                            </div>
-                            <div
-                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
-                                data-character="fizzle"
-                            >
-                                <div
-                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
-                                >
-                                    <img
-                                        alt="Master Fizzle Geargrind"
-                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtIGVi5HLOcBQm6LCR8LVMFhsP0PSXSJG8FOW76xPNWjGPM3CRz_hmCr88VSP0LFW1_QdcuOxI2W823uhLvu03RZFc3R-5Jbpyj4qyQ4yIcb7oFam-kySM7uUnWPARqA27ow2APpmopFA2igxmoYJoGPtN4gBxefN4nW_7MCCDc-eiBQa9KvxFj-GfVIyXl0WJbZAvvs8URvbmrXp4O8vnuKX9ZZn28guwBBHjzNRIroSqgHoaW-EE1AcZ_J5ndljNKKSN0-ZCqQg"
-                                    />
-                                </div>
-                                <div class="mt-4">
-                                    <h4 class="text-base font-bold text-white">
-                                        Master Fizzle Geargrind
-                                    </h4>
-                                    <p class="mt-1 text-sm text-white/60">
-                                        A brilliant mage, wielding arcane power
-                                        with precision.
-                                    </p>
-                                </div>
-                            </div>
-                            <div
-                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
-                                data-character="lyra"
-                            >
-                                <div
-                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
-                                >
-                                    <img
-                                        alt="Prophetess Lyra Starweaver"
-                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3OtvvxqKMCmDlVKmUU4S1Rm2mi4LMKjPOLJDrYT4IjXO3vpEsXluYqZuj5qu7aOu6GPFH5uusfRdlT9UItwGlEpw3DVcuRCzSn5ADCz8g4U4teqmPNjFVc7OZdi4TjhI2lwZzJbnMAnzeZlcQzD71KceJ6cVvsylerNV_Ox3HLSODufxzBik1bXf-uPaPGnfRWDPjo_krb49-XB-e9M2aMffTu-0KanBC4kBwSn20EdJba3lexPpDGjMxKX8JH_eIkzAKUIS52e8"
-                                    />
-                                </div>
-                                <div class="mt-4">
-                                    <h4 class="text-base font-bold text-white">
-                                        Prophetess Lyra Starweaver
-                                    </h4>
-                                    <p class="mt-1 text-sm text-white/60">
-                                        A devoted priestess, channeling divine
-                                        light to heal and protect.
-                                    </p>
+
+                                <!-- Humanos -->
+                                <div class="mb-12">
+                                    <h4 class="text-xl font-bold text-[#ffd700] mb-6 text-center">Humanos</h4>
+                                    <div class="grid grid-cols-4 gap-6 max-w-4xl mx-auto">
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="humano1">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Marcus Shadowblade" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Humano1.png" />
+                                            </div>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Marcus Shadowblade</h4>
+                                                <p class="mt-1 text-sm text-white/60">Maestro Asesino</p>
+                                            </div>
+                                        </div>
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="humano2">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Katarina Lightbringer" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Humano2.png" />
+                                            </div>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Katarina Lightbringer</h4>
+                                                <p class="mt-1 text-sm text-white/60">Alta Inquisidora</p>
+                                            </div>
+                                        </div>
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="humano3">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Gabriel Brightweave" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Humano3.png" />
+                                            </div>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Gabriel Brightweave</h4>
+                                                <p class="mt-1 text-sm text-white/60">Archimago de Dalaran</p>
+                                            </div>
+                                        </div>
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="humano4">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Elena Stormwind" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Humano4.png" />
+                                            </div>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Elena Stormwind</h4>
+                                                <p class="mt-1 text-sm text-white/60">Capitana de la Guardia</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div>
-                        <h3
-                            class="mb-6 text-3xl font-bold tracking-tight text-white/90"
-                        >
-                            Horde
-                        </h3>
-                        <div
-                            class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 lg:grid-cols-5"
-                        >
-                            <div
-                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
-                                data-character="grok"
-                            >
-                                <div
-                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
-                                >
-                                    <img
-                                        alt="Chieftain Grok Bloodfury"
-                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0R2HRrnDu367jC9wJpNtJl0NW6lkVLhLGnDlcKSK-pXcRJrJ6oLeIB42YxRtezGo9iXGukCf7bqAaaVzOUUDhOYapo84cbMX40PgaxX3YBQN_dlLAIA_CqfbdEgfwDv79duXocKJvzGNlDOGwcd18-EBgz6CZtLKgRLsRXPFtuhlI7vCekmwhtrJE0sT789m9QYhkGvnaBPC_xnPrFENGhzh1VHzjExllvh2swWyW5a6rRgeTnFeW8E6wF8EApGDH8TCOAmZsyd8"
-                                    />
-                                </div>
-                                <div class="mt-4">
-                                    <h4 class="text-base font-bold text-white">
-                                        Chieftain Grok Bloodfury
-                                    </h4>
-                                    <p class="mt-1 text-sm text-white/60">
-                                        A fierce orc warrior, driven by honor
-                                        and strength.
-                                    </p>
-                                </div>
-                            </div>
-                            <div
-                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
-                                data-character="sylvanas"
-                            >
-                                <div
-                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
-                                >
-                                    <img
-                                        alt="Lady Sylvanas Shadowveil"
-                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJQdW3pzph9KPEQd46pn-H9IFp1Kp7QElAecn80lJe8JsCr0K5L_jl18cLy4KjypxV4bYmYPWwoxyx7rD69CAcKguFn85xWS_UGCLveeNl_hWkuB0zBfXO-9kokfutSbGu4jd5Ox_hcsGDVgGmhu9KY3tpRPU80vc6eDagkHG9JqUohnenAJfYimV9BxCBrbBUVCdIMe48vl7i5bdD3SeOJ2GDMOJ-zhrTpiuUWTQUfBD0Ls_KWqtCxt032SBoo6kSOVhxT9dHMIk"
-                                    />
-                                </div>
-                                <div class="mt-4">
-                                    <h4 class="text-base font-bold text-white">
-                                        Lady Sylvanas Shadowveil
-                                    </h4>
-                                    <p class="mt-1 text-sm text-white/60">
-                                        A cunning undead rogue, master of
-                                        shadows and deception.
-                                    </p>
-                                </div>
-                            </div>
-                            <div
-                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
-                                data-character="kael"
-                            >
-                                <div
-                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
-                                >
-                                    <img
-                                        alt="Spiritwalker Kael Earthsong"
-                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnYh9y0oawATe-dFZp3dsVqfzrIYeJyABqd5XJK8sszVJH4p2ForNAvRiHWG2sN6PecgIcvPjAuYFzpQivgd_qVEG9HfdT5l5xRNjjrJNHSdUEPHe363HD708-sDX42KY-d3gzzXmZmqeyfQ_jazfZvchMalf4_auUYetOwGju3wq8MBeF8XA2j1L0bzH434icpOR8nqLFrnadu2qY-PB7nmJWYnq2MDj9wTXhH5k1JHnIcDaCKp7Pkf4K5pVhPFDH1CZvnz5p7gI"
-                                    />
-                                </div>
-                                <div class="mt-4">
-                                    <h4 class="text-base font-bold text-white">
-                                        Spiritwalker Kael Earthsong
-                                    </h4>
-                                    <p class="mt-1 text-sm text-white/60">
-                                        A wise tauren shaman, connected to the
-                                        spirits of the land.
-                                    </p>
-                                </div>
-                            </div>
-                            <div
-                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
-                                data-character="zalajin"
-                            >
-                                <div
-                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
-                                >
-                                    <img
-                                        alt="Huntress Zala'jin"
-                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9hdpfQn-dOhiadEB9ri37YMkv0lZ-NumMwrZj9L5pzmOX8JPy2UAgGpenY768VROS6-6Yi0fkEQb3Mub0Gy0REZMQK8-IUgTZSrSAFwMo31iavBxaJd2jfRgNVMkwkw4SRDqhQAwcC_Hr4VDM9shxN5AgLLSRGbPM3QU51lRdOq5OI3_GzzxsKoN0itjUiQjqTC3bdGrTAsXqIohN72s4GrpovEbqkoKfeE1iqpf6aZL3jYltUpHajEPOy7DmoJ3PiTG9M3fqr6w"
-                                    />
-                                </div>
-                                <div class="mt-4">
-                                    <h4 class="text-base font-bold text-white">
-                                        Huntress Zala'jin
-                                    </h4>
-                                    <p class="mt-1 text-sm text-white/60">
-                                        A skilled troll hunter, deadly with bow
-                                        and beast.
-                                    </p>
-                                </div>
-                            </div>
-                            <div
-                                class="character-card group cursor-pointer rounded-xl bg-white/5 p-4"
-                                data-character="theron"
-                            >
-                                <div
-                                    class="aspect-[3/4] w-full overflow-hidden rounded-lg"
-                                >
-                                    <img
-                                        alt="Archmage Theron Sunstrider"
-                                        class="h-full w-full object-cover object-center transition-transform group-hover:scale-110"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCEZhajzYiHt5hJf-66ja1eFnRzS87gKEHq1LmQLf6vOBlXG7Ebqc9DwP6vvGCV0wd4Pl6cB7fOqf-66al7SPiCGxymHTpUOBvSVJs8U7lGY3G0MzP1taNYZde5zmo0n68B0AgPiJvFeYaLy7eAeukODktOzoHe1NLjgvcFyp5IVNzmV6pR_z6mS_xHnzlVciJBbul1LXtpGaol8jf4a5aKwk3rGbQOsMrfliVkiJnUJHfwuF1bq8pC0Z2zFhmlA98g8GIb_4eQag"
-                                    />
-                                </div>
-                                <div class="mt-4">
-                                    <h4 class="text-base font-bold text-white">
-                                        Archmage Theron Sunstrider
-                                    </h4>
-                                    <p class="mt-1 text-sm text-white/60">
-                                        A powerful blood elf warlock, commanding
-                                        dark magic.
-                                    </p>
+
+                        <!-- Modal de detalles del personaje -->
+                        <div id="characterModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
+                            <div class="relative w-full max-w-4xl bg-gradient-to-br from-[#00234f]/90 to-[#00132a]/90 rounded-xl border border-[#ffd700]/20 shadow-xl shadow-[#00234f]/30 mx-4" style="height: 32rem;">
+                                <div class="grid grid-cols-2 h-full">
+                                    <!-- Columna izquierda con imagen -->
+                                    <div class="relative overflow-hidden rounded-l-xl bg-gradient-to-br from-[#001428] to-[#00234f] h-full">
+                                        <img id="panelPortrait" src="" alt="Portrait" class="object-contain w-full h-full" style="object-position: center;" />
+                                        <!-- Botón de cerrar -->
+                                        <button id="closeModal" class="absolute top-4 right-4 p-2 hover:bg-black/20 rounded-lg transition-colors z-30">
+                                            <svg class="w-6 h-6 text-white/80 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Columna derecha con información -->
+                                    <div class="flex flex-col h-full">
+                                        <!-- Encabezado -->
+                                        <div class="p-4 border-b border-[#ffd700]/10">
+                                            <h2 id="panelName" class="text-2xl font-bold text-[#ffd700] drop-shadow-lg mb-1">Selecciona un campeón</h2>
+                                            <p id="panelTitle" class="text-base text-white/90 italic leading-snug">Título</p>
+                                        </div>
+                                        
+                                        <!-- Contenido principal -->
+                                        <div class="p-4 flex flex-col gap-4">
+                                            <!-- Historia con borde decorativo -->
+                                            <div class="relative bg-[#001428]/30 p-4 rounded-xl border-l-4 border-[#ffd700]/30">
+                                                <h3 class="text-base font-semibold text-[#ffd700] mb-2">Historia</h3>
+                                                <p id="panelLore" class="text-sm text-white/80 leading-relaxed">Las características del personaje aparecerán aquí al seleccionarlo.</p>
+                                            </div>
+
+                                            <!-- Habilidades con scroll -->
+                                            <div class="bg-[#001428]/30 rounded-xl border-l-4 border-[#ffd700]/30 flex flex-col">
+                                                <div class="p-4">
+                                                    <h3 class="text-base font-semibold text-[#ffd700] mb-2">Habilidades</h3>
+                                                    <div id="panelAbilities" class="grid grid-cols-1 gap-3 max-h-[8rem] overflow-y-auto pr-2 custom-scrollbar">
+                                                        <!-- Las habilidades se insertarán aquí dinámicamente -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Botón de selección -->
+                                        <div class="mt-auto p-4 bg-[#001428]/50 border-t border-[#ffd700]/10 rounded-br-xl">
+                                            <button id="panelSelect" class="w-full py-3 px-6 bg-gradient-to-r from-[#ffd700] to-[#ffc000] rounded-lg text-lg font-bold text-[#00234f] transition-all hover:shadow-lg hover:shadow-[#ffd700]/20 hover:scale-[1.02]">
+                                                ¡Por la Alianza!
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="mt-16 flex justify-center">
-                    <button
-                        class="flex min-w-[200px] max-w-xs cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary px-8 py-3 text-lg font-bold text-white shadow-lg shadow-primary/30 transition-all hover:scale-105 hover:shadow-primary/50"
-                    >
-                        <span class="truncate">Continue</span>
-                    </button>
-                </div>
+
             </div>
         </main>
         <div class="heroic-showcase" id="heroicShowcase">
@@ -322,4 +254,10 @@ import Welcome from "../components/Welcome.astro";
             </div>
         </div>
     </div>
+
+    <style>
+        body{
+            font-family: "MedievalSharp";
+        }
+    </style>
 </Layout>

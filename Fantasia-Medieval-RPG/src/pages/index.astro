@@ -2,18 +2,16 @@
 import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
 import IntroVideo from "../components/IntroVideo.astro";
-import StartScreen from "../components/iniciar.astro";
+import Iniciar from "../components/iniciar.astro";
 import "../styles/global.css";
 ---
 
 <Layout>
 	<Welcome />
 	<IntroVideo />
+	
+	<Iniciar />
 
-	<!-- Pantalla de inicio que aparece primero -->
-	<StartScreen />
-
-	<!-- Video de fondo (detenido hasta que se presione el botón) -->
 	<section class="fixed inset-0 w-full h-full">
 		<video
 			id="main-video"
