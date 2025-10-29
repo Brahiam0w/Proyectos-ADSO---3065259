@@ -3,40 +3,29 @@
     <div class="flex flex-col bg-white justify-center align-middle m-10 rounded-3xl p-[3%] w-[25%]">
       <p class="font-bold uppercase text-4xl text-center">{{ pokemon.name }}</p>
 
-      <img
-        v-if="pokemon.sprites"
-        :src="pokemon.sprites.front_default"
-        :alt="pokemon.name"
-        class="w-72 h-72 justify-center align-middle self-center"
-      />
+      <div v-if="pokemon.types?.length" class="rounded-2xl flex justify-center align-middle" :style="gradientStyle">
+        <img v-if="pokemon.sprites" :src="pokemon.sprites.front_default" :alt="pokemon.name"
+          class="w-72 h-72 justify-center align-middle self-center" />
+      </div>
+
 
       <div class="flex justify-between m-4">
         <p class="font-bold uppercase text-center">altura: {{ pokemon.height / 10 }}m</p>
         <p class="font-bold uppercase text-center">Peso: {{ pokemon.weight / 10 }}Kg</p>
       </div>
-
-      <div v-if="pokemon.types?.length" class="h-10 rounded-2xl" :style="gradientStyle"></div>
     </div>
 
     <div class="flex flex-col w-[35%] p-4 justify-center gap-5">
-      <p
-        class="text-7xl uppercase text-black mb-6 bg-blue-200 p-2 rounded-2xl text-center w-full font-bold mx-auto"
-      >
+      <p class="text-7xl uppercase text-black mb-6 bg-blue-200 p-2 rounded-2xl text-center w-full font-bold mx-auto">
         #{{ pokemon.id }}
       </p>
 
-      <input
-        v-model="BusquedaNombreID"
-        @keydown.enter="cargarPokemon"
-        class="rounded-[5px] h-14 bg-white uppercase p-4 w-full text-center font-bold mx-auto"
-        type="text"
-        placeholder="Buscar pokemon por nombre o ID"
-      />
+      <input v-model="BusquedaNombreID" @keydown.enter="cargarPokemon"
+        class="rounded-[5px] h-14 bg-white uppercase p-4 w-full text-center font-bold mx-auto" type="text"
+        placeholder="Buscar pokemon por nombre o ID" />
 
-      <button
-        @click="cargarPokemon"
-        class="cursor-pointer bg-emerald-500 m-4 h-12 w-[50%] justify-center flex flex-col mx-auto self-center rounded-2xl uppercase text-white text-xl text-center font-bold hover:scale-110 transition-transform duration-300"
-      >
+      <button @click="cargarPokemon"
+        class="cursor-pointer bg-emerald-500 m-4 h-12 w-[50%] justify-center flex flex-col mx-auto self-center rounded-2xl uppercase text-white text-xl text-center font-bold hover:scale-110 transition-transform duration-300">
         buscar
       </button>
 
@@ -44,12 +33,8 @@
         <p class="text-white uppercase text-2xl self-center m-2 font-bold">tipos del pokemon</p>
 
         <p class="flex gap-3 justify-center align-middle flex-wrap">
-          <span
-            v-for="t in pokemon.types || []"
-            :key="t.slot"
-            :class="tipo(t.type.name)"
-            class="px-6 p-3 rounded-full font-bold text-sm uppercase shadow-sm hover:scale-110 transition-transform duration-300 cursor-pointer"
-          >
+          <span v-for="t in pokemon.types || []" :key="t.slot" :class="tipo(t.type.name)"
+            class="px-6 p-3 rounded-full font-bold text-sm uppercase shadow-sm hover:scale-110 transition-transform duration-300 cursor-pointer">
             {{ t.type.name }}
           </span>
         </p>
@@ -57,12 +42,8 @@
         <p class="text-white uppercase self-center m-2 text-2xl font-bold">debilidades del pokemon</p>
 
         <div class="flex gap-3 flex-wrap justify-center m-4 self-center">
-          <span
-            v-for="w in weaknesses"
-            :key="w"
-            :class="tipo(w)"
-            class="px-4 py-2 rounded-full font-bold text-sm uppercase hover:scale-110 transition-transform duration-300 cursor-pointer"
-          >
+          <span v-for="w in weaknesses" :key="w" :class="tipo(w)"
+            class="px-4 py-2 rounded-full font-bold text-sm uppercase hover:scale-110 transition-transform duration-300 cursor-pointer">
             {{ w }}
           </span>
           <span v-if="weaknesses.length === 0" class="text-gray-500"></span>
@@ -74,73 +55,67 @@
       <div class="flex flex-col gap-4 bg-white p-10 rounded-2xl">
         <div class="hover:scale-110 transition-transform duration-300 cursor-pointer">
           <p class="font-bold uppercase mb-1">
-            HP: {{ pokemon.stats?.find(i => i.stat.name === 'hp')?.base_stat || 0 }}/255
+            HP: {{pokemon.stats?.find(i => i.stat.name === 'hp')?.base_stat || 0}}/255
           </p>
           <div class="w-full bg-gray-200 rounded-xl h-5">
-            <div
-              class="bg-green-500 h-5 rounded-xl transition-all duration-500"
-              :style="{ width: ((pokemon.stats?.find(i => i.stat.name === 'hp')?.base_stat || 0) / 255 * 100) + '%' }"
-            ></div>
+            <div class="bg-green-500 h-5 rounded-xl transition-all duration-500"
+              :style="{ width: ((pokemon.stats?.find(i => i.stat.name === 'hp')?.base_stat || 0) / 255 * 100) + '%' }">
+            </div>
           </div>
         </div>
 
         <div class="hover:scale-110 transition-transform duration-300 cursor-pointer">
           <p class="font-bold uppercase text-black mb-1">
-            Attack: {{ pokemon.stats?.find(i => i.stat.name === 'attack')?.base_stat || 0 }}/255
+            Attack: {{pokemon.stats?.find(i => i.stat.name === 'attack')?.base_stat || 0}}/255
           </p>
           <div class="w-full bg-gray-200 rounded-xl h-5">
-            <div
-              class="bg-orange-500 h-5 rounded-xl transition-all duration-500"
-              :style="{ width: ((pokemon.stats?.find(i => i.stat.name === 'attack')?.base_stat || 0) / 255 * 100) + '%' }"
-            ></div>
+            <div class="bg-orange-500 h-5 rounded-xl transition-all duration-500"
+              :style="{ width: ((pokemon.stats?.find(i => i.stat.name === 'attack')?.base_stat || 0) / 255 * 100) + '%' }">
+            </div>
           </div>
         </div>
 
         <div class="hover:scale-110 transition-transform duration-300 cursor-pointer">
           <p class="font-bold uppercase text-black mb-1">
-            Defense: {{ pokemon.stats?.find(i => i.stat.name === 'defense')?.base_stat || 0 }}/255
+            Defense: {{pokemon.stats?.find(i => i.stat.name === 'defense')?.base_stat || 0}}/255
           </p>
           <div class="w-full bg-gray-200 rounded-xl h-5">
-            <div
-              class="bg-yellow-400 h-5 rounded-xl transition-all duration-500"
-              :style="{ width: ((pokemon.stats?.find(i => i.stat.name === 'defense')?.base_stat || 0) / 255 * 100) + '%' }"
-            ></div>
+            <div class="bg-yellow-400 h-5 rounded-xl transition-all duration-500"
+              :style="{ width: ((pokemon.stats?.find(i => i.stat.name === 'defense')?.base_stat || 0) / 255 * 100) + '%' }">
+            </div>
           </div>
         </div>
 
         <div class="hover:scale-110 transition-transform duration-300 cursor-pointer">
           <p class="font-bold uppercase text-black mb-1">
-            Sp. Attack: {{ pokemon.stats?.find(i => i.stat.name === 'special-attack')?.base_stat || 0 }}/255
+            Sp. Attack: {{pokemon.stats?.find(i => i.stat.name === 'special-attack')?.base_stat || 0}}/255
           </p>
           <div class="w-full bg-gray-200 rounded-xl h-5">
-            <div
-              class="bg-red-400 h-5 rounded-xl transition-all duration-500"
-              :style="{ width: ((pokemon.stats?.find(i => i.stat.name === 'special-attack')?.base_stat || 0) / 255 * 100) + '%' }"
-            ></div>
+            <div class="bg-red-400 h-5 rounded-xl transition-all duration-500"
+              :style="{ width: ((pokemon.stats?.find(i => i.stat.name === 'special-attack')?.base_stat || 0) / 255 * 100) + '%' }">
+            </div>
           </div>
         </div>
 
         <div class="hover:scale-110 transition-transform duration-300 cursor-pointer">
           <p class="font-bold uppercase text-black mb-1">
-            Sp. Defense: {{ pokemon.stats?.find(i => i.stat.name === 'special-defense')?.base_stat || 0 }}/255
+            Sp. Defense: {{pokemon.stats?.find(i => i.stat.name === 'special-defense')?.base_stat || 0}}/255
           </p>
           <div class="w-full bg-gray-200 rounded-xl h-5">
-            <div
-              class="bg-blue-400 h-5 rounded-xl transition-all duration-500"
-              :style="{ width: ((pokemon.stats?.find(i => i.stat.name === 'special-defense')?.base_stat || 0) / 255 * 100) + '%' }"
-            ></div>
+            <div class="bg-blue-400 h-5 rounded-xl transition-all duration-500"
+              :style="{ width: ((pokemon.stats?.find(i => i.stat.name === 'special-defense')?.base_stat || 0) / 255 * 100) + '%' }">
+            </div>
           </div>
         </div>
 
         <div class="hover:scale-110 transition-transform duration-300 cursor-pointer">
           <p class="font-bold uppercase text-black mb-1">
-            Speed: {{ pokemon.stats?.find(i => i.stat.name === 'speed')?.base_stat || 0 }}/255
+            Speed: {{pokemon.stats?.find(i => i.stat.name === 'speed')?.base_stat || 0}}/255
           </p>
           <div class="w-full bg-gray-200 rounded-xl h-5">
-            <div
-              class="bg-purple-500 h-5 rounded-xl transition-all duration-500"
-              :style="{ width: ((pokemon.stats?.find(i => i.stat.name === 'speed')?.base_stat || 0) / 255 * 100) + '%' }"
-            ></div>
+            <div class="bg-purple-500 h-5 rounded-xl transition-all duration-500"
+              :style="{ width: ((pokemon.stats?.find(i => i.stat.name === 'speed')?.base_stat || 0) / 255 * 100) + '%' }">
+            </div>
           </div>
         </div>
       </div>
