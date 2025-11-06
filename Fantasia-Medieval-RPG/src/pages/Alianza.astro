@@ -8,12 +8,12 @@ import Welcome from "../components/Welcome.astro";
 
 <Layout>
     <Welcome />
-    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden" style="background: url('/img/Elementos/fondo-alianza.png') center center / cover no-repeat fixed;">
         <header
             class="alliance-header sticky top-0 z-50 flex items-center justify-between whitespace-nowrap px-10 py-4 backdrop-blur-md bg-gradient-to-r from-[#00234f]/80 to-[#001428]/80 border-b border-[#ffd700]/10"
         >
             <div class="flex items-center gap-4">
-                <h1 class="text-[#ffd700] font-bold text-xl">Alianza</h1>
+                <a href="/SelectRol" class="text-[#ffd700] font-bold text-xl hover:scale-110 transition-transform">Atrás</a    >
             </div>
         </header>
         <main
@@ -21,59 +21,65 @@ import Welcome from "../components/Welcome.astro";
         >
             <div class="w-full relative">
                 <div class="text-center">
-                    <h2 class="text-4xl font-bold text-[#ffd700] mb-4 tracking-wide">La Alianza te necesita</h2>
-                    <p class="mx-auto mt-4 max-w-2xl text-lg text-white drop-shadow-lg" style="text-shadow: 0 0 10px rgba(0, 163, 255, 0.5);">
-                        Elige a tu campeón para liderar las fuerzas de la Alianza.
-                        Cada héroe posee habilidades únicas y poderes extraordinarios
-                        que definirán el destino de nuestras tierras.
-                    </p>
+                    <div class="relative mx-auto max-w-3xl rounded-xl bg-gradient-to-br from-[#00234f]/80 to-[#001428]/90 p-8 backdrop-blur-sm border border-[#ffd700]/20 shadow-xl">
+                        <h2 class="text-4xl font-bold text-[#ffd700] mb-4 tracking-wide">La Alianza te necesita</h2>
+                        <p class="mx-auto mt-4 max-w-2xl text-lg text-white/90" style="text-shadow: 0 0 10px rgba(0, 163, 255, 0.25);">
+                            Elige a tu campeón para liderar las fuerzas de la Alianza.
+                            Cada héroe posee habilidades únicas y poderes extraordinarios
+                            que definirán el destino de nuestras tierras.
+                        </p>
+                    </div>
                 </div>
                 <div class="mt-12">
                     <!-- Contenedor principal con grid -->
                         <div class="max-w-6xl mx-auto">
-                            <h3 class="mb-8 text-3xl font-bold tracking-tight text-[#ffd700] text-center"
-                                style="text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);">
-                                Campeones de la Alianza
-                            </h3>
+                            <div class="relative mx-auto max-w-3xl rounded-xl bg-gradient-to-br from-[#00234f]/70 to-[#001428]/80 p-4 backdrop-blur-sm border border-[#ffd700]/20 shadow-xl mb-12">
+                                <h3 class="text-3xl font-bold tracking-tight text-[#ffd700] text-center"
+                                    style="text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);">
+                                    Campeones de la Alianza
+                                </h3>
+                            </div>
                             <div class="space-y-8">
                                 <!-- Elfos -->
                                 <div class="mb-12">
-                                    <h4 class="text-xl font-bold text-[#ffd700] mb-6 text-center">Elfos de la Noche</h4>
+                                    <div class="relative mx-auto max-w-xl rounded-xl bg-gradient-to-br from-[#00234f]/60 to-[#001428]/70 p-3 backdrop-blur-sm border border-[#ffd700]/10 shadow-lg mb-6">
+                                        <h4 class="text-xl font-bold text-[#ffd700] text-center">Elfos</h4>
+                                    </div>
                                     <div class="grid grid-cols-4 gap-6 max-w-4xl mx-auto">
-                                        <div class="character-card relative group cursor-pointer rounded-xl bg-white/5 p-3" data-character="elfo1">
-                                            <div class="aspect-square w-full overflow-hidden rounded-xl">
-                                                <img alt="Aethel Silvermoon" class="h-[150%] w-full object-cover transition-transform group-hover:scale-110" style="object-position: center 25%; margin-top: -25%;" src="/img/Buenos/Elfo1.png" />
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="elfo1">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Aethel Silvermoon" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Elfo1.png" />
                                             </div>
-                                            <div class="absolute inset-x-3 bottom-3 p-2 bg-gradient-to-t from-black/90 to-transparent rounded-lg">
-                                                <h4 class="text-sm font-bold text-[#ffd700] truncate">Aethel Silvermoon</h4>
-                                                <p class="text-xs text-white/60 truncate">Archimago de Quel'thalas</p>
-                                            </div>
-                                        </div>
-                                        <div class="character-card relative group cursor-pointer rounded-xl bg-white/5 p-3" data-character="elfo2">
-                                            <div class="aspect-square w-full overflow-hidden rounded-xl">
-                                                <img alt="Lyandra Dawnweaver" class="h-[150%] w-full object-cover transition-transform group-hover:scale-110" style="object-position: center 25%; margin-top: -25%;" src="/img/Buenos/Elfo2.png" />
-                                            </div>
-                                            <div class="absolute inset-x-3 bottom-3 p-2 bg-gradient-to-t from-black/90 to-transparent rounded-lg">
-                                                <h4 class="text-sm font-bold text-[#ffd700] truncate">Lyandra Dawnweaver</h4>
-                                                <p class="text-xs text-white/60 truncate">Guardiana del Bosque Eterno</p>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Aethel Silvermoon</h4>
+                                                <p class="mt-1 text-sm text-white/60">Archimago de Quel'thalas</p>
                                             </div>
                                         </div>
-                                        <div class="character-card relative group cursor-pointer rounded-xl bg-white/5 p-3" data-character="elfo3">
-                                            <div class="aspect-square w-full overflow-hidden rounded-xl">
-                                                <img alt="Theron Starwhisper" class="h-[150%] w-full object-cover transition-transform group-hover:scale-110" style="object-position: center 25%; margin-top: -25%;" src="/img/Buenos/Elfo3.png" />
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="elfo2">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Lyandra Dawnweaver" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Elfo2.png" />
                                             </div>
-                                            <div class="absolute inset-x-3 bottom-3 p-2 bg-gradient-to-t from-black/90 to-transparent rounded-lg">
-                                                <h4 class="text-sm font-bold text-[#ffd700] truncate">Theron Starwhisper</h4>
-                                                <p class="text-xs text-white/60 truncate">Sacerdote de la Luna</p>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Lyandra Dawnweaver</h4>
+                                                <p class="mt-1 text-sm text-white/60">Guardiana del Bosque Eterno</p>
                                             </div>
                                         </div>
-                                        <div class="character-card relative group cursor-pointer rounded-xl bg-white/5 p-3" data-character="elfo4">
-                                            <div class="aspect-square w-full overflow-hidden rounded-xl">
-                                                <img alt="Sylvanas Windrunner" class="h-[150%] w-full object-cover transition-transform group-hover:scale-110" style="object-position: center 25%; margin-top: -25%;" src="/img/Buenos/Elfo4.png" />
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="elfo3">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Theron Starwhisper" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Elfo3.png" />
                                             </div>
-                                            <div class="absolute inset-x-3 bottom-3 p-2 bg-gradient-to-t from-black/90 to-transparent rounded-lg">
-                                                <h4 class="text-sm font-bold text-[#ffd700] truncate">Sylvanas Windrunner</h4>
-                                                <p class="text-xs text-white/60 truncate">Capitana de los Forestales</p>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Theron Starwhisper</h4>
+                                                <p class="mt-1 text-sm text-white/60">Sacerdote de la Luna</p>
+                                            </div>
+                                        </div>
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="elfo4">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Sylvanas Windrunner" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Elfo4.png" />
+                                            </div>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Sylvanas Windrunner</h4>
+                                                <p class="mt-1 text-sm text-white/60">Capitana de los Forestales</p>
                                             </div>
                                         </div>
                                     </div>
@@ -81,7 +87,9 @@ import Welcome from "../components/Welcome.astro";
 
                                 <!-- Enanos -->
                                 <div class="mb-12">
-                                    <h4 class="text-xl font-bold text-[#ffd700] mb-6 text-center">Enanos</h4>
+                                    <div class="relative mx-auto max-w-xl rounded-xl bg-gradient-to-br from-[#00234f]/60 to-[#001428]/70 p-3 backdrop-blur-sm border border-[#ffd700]/10 shadow-lg mb-6">
+                                        <h4 class="text-xl font-bold text-[#ffd700] text-center">Enanos</h4>
+                                    </div>
                                     <div class="grid grid-cols-4 gap-6 max-w-4xl mx-auto">
                                         <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="enano1">
                                             <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
@@ -124,7 +132,9 @@ import Welcome from "../components/Welcome.astro";
 
                                 <!-- Humanos -->
                                 <div class="mb-12">
-                                    <h4 class="text-xl font-bold text-[#ffd700] mb-6 text-center">Humanos</h4>
+                                    <div class="relative mx-auto max-w-xl rounded-xl bg-gradient-to-br from-[#00234f]/60 to-[#001428]/70 p-3 backdrop-blur-sm border border-[#ffd700]/10 shadow-lg mb-6">
+                                        <h4 class="text-xl font-bold text-[#ffd700] text-center">Humanos</h4>
+                                    </div>
                                     <div class="grid grid-cols-4 gap-6 max-w-4xl mx-auto">
                                         <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="humano1">
                                             <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
@@ -169,11 +179,11 @@ import Welcome from "../components/Welcome.astro";
 
                         <!-- Modal de detalles del personaje -->
                         <div id="characterModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
-                            <div class="relative w-full max-w-4xl bg-gradient-to-br from-[#00234f]/90 to-[#00132a]/90 rounded-xl border border-[#ffd700]/20 shadow-xl shadow-[#00234f]/30 mx-4" style="height: 32rem;">
+                            <div class="relative w-full max-w-5xl bg-gradient-to-br from-[#00234f]/90 to-[#00132a]/90 rounded-xl border border-[#ffd700]/20 shadow-xl shadow-[#00234f]/30 mx-4" style="min-height: 32rem; max-height: 90vh;">
                                 <div class="grid grid-cols-2 h-full">
                                     <!-- Columna izquierda con imagen -->
-                                    <div class="relative overflow-hidden rounded-l-xl bg-gradient-to-br from-[#001428] to-[#00234f] h-full">
-                                        <img id="panelPortrait" src="" alt="Portrait" class="object-contain w-full h-full" style="object-position: center;" />
+                                    <div class="relative overflow-hidden rounded-l-xl bg-gradient-to-br from-[#001428] to-[#00234f] h-full flex items-center justify-center p-4">
+                                        <img id="panelPortrait" src="" alt="Portrait" class="max-w-full max-h-[80vh] object-contain" style="object-position: center;" />
                                         <!-- Botón de cerrar -->
                                         <button id="closeModal" class="absolute top-4 right-4 p-2 hover:bg-black/20 rounded-lg transition-colors z-30">
                                             <svg class="w-6 h-6 text-white/80 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

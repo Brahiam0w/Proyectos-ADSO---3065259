@@ -255,6 +255,154 @@ const characterData = {
             }
         ]
     }
+    ,
+    // Horda - Orcos
+    orco1: {
+        name: "Gorak Bloodaxe",
+        title: "Guerrero de la Horda",
+        legion: "Clan Sangreax",
+        race: "Orco",
+        lore: "Un guerrero brutal que lidera embestidas con una sed insaciable de batalla.",
+        abilities: [
+            { name: "Aplastamiento", description: "Golpea el suelo con su hacha causando daño en área.", icon: "/img/Elementos/Horda-escudo.png" },
+            { name: "Furia Sangrienta", description: "Entra en furia aumentando daño y velocidad de ataque por un corto tiempo.", icon: "/img/Elementos/logo.png" },
+            { name: "Grito de Guerra", description: "Inspira a los aliados cercanos, aumentando su ataque temporalmente.", icon: "/img/Elementos/Horda-escudo.png" }
+        ]
+    },
+    orco2: {
+        name: "Razh Skullcrusher",
+        title: "Berserker tribal",
+        legion: "Horda Salvaje",
+        race: "Orco",
+        lore: "Un berserker implacable que devora la vanguardia enemiga con su furia desenfrenada.",
+        abilities: [
+            { name: "Carga Brutal", description: "Embiste a un enemigo, aturdiéndolo.", icon: "/img/Elementos/Horda-escudo.png" },
+            { name: "Ráfaga de Hachas", description: "Lanza una serie de cortes que atraviesan armaduras.", icon: "/img/Elementos/logo.png" },
+            { name: "Resistencia Bestial", description: "Reduce el daño recibido por un breve periodo.", icon: "/img/Elementos/Horda-escudo.png" }
+        ]
+    },
+    orco3: {
+        name: "Korgash the Crusher",
+        title: "Campeón de la vanguardia",
+        legion: "Legión del Cráneo",
+        race: "Orco",
+        lore: "Sus golpes convierten escudos en polvo; la vanguardia se abre a su paso.",
+        abilities: [
+            { name: "Aplastamiento Colosal", description: "Un golpe devastador que aplasta a su objetivo.", icon: "/img/Elementos/Horda-escudo.png" },
+            { name: "Terremoto", description: "Provoca una onda que desequilibra a los enemigos cercanos.", icon: "/img/Elementos/logo.png" },
+            { name: "Guardia Implacable", description: "Reduce críticamente el daño a aliados cercanos.", icon: "/img/Elementos/Horda-escudo.png" }
+        ]
+    },
+    orco4: {
+        name: "Thok Ironjaw",
+        title: "Líder de asalto",
+        legion: "Horda de Hierro",
+        race: "Orco",
+        lore: "Comandante imponente que rompe formaciones y dirige asaltos coordinados.",
+        abilities: [
+            { name: "Orden de Asalto", description: "Aumenta temporalmente la velocidad de movimiento de sus tropas.", icon: "/img/Elementos/Horda-escudo.png" },
+            { name: "Rugido Terrenal", description: "Provoca miedo en los enemigos cercanos.", icon: "/img/Elementos/logo.png" },
+            { name: "Impacto de Balda", description: "Un ataque que derriba defensas enemigas.", icon: "/img/Elementos/Horda-escudo.png" }
+        ]
+    },
+    // Trolls
+    troll1: {
+        name: "Zul'Gar",
+        title: "Chamán de Guerra",
+        legion: "Tribu Zul'gar",
+        race: "Troll",
+        lore: "Un chamán conectado a los espíritus que convoca tormentas y maldiciones.",
+        abilities: [
+            { name: "Relámpago Venenoso", description: "Invoca relámpagos que envenenan a los enemigos.", icon: "/img/Elementos/logo.png" },
+            { name: "Maldición Antigua", description: "Debilita las defensas del enemigo con magia tribal.", icon: "/img/Elementos/Horda-escudo.png" },
+            { name: "Sanación de Raíz", description: "Cura lentamente a los aliados cercanos.", icon: "/img/Elementos/logo.png" }
+        ]
+    },
+    troll2: {
+        name: "Bal'rok",
+        title: "Cazador de la tribu",
+        legion: "Manada Bal'rok",
+        race: "Troll",
+        lore: "Rápido y letal, Bal'rok acecha y aniquila objetivos antes de que reaccionen.",
+        abilities: [
+            { name: "Disparo Puntiagudo", description: "Un disparo que ignora parte de la armadura.", icon: "/img/Elementos/Horda-escudo.png" },
+            { name: "Camuflaje Selvático", description: "Se oculta en la maleza, volviéndose difícil de detectar.", icon: "/img/Elementos/logo.png" },
+            { name: "Trampa de Lianas", description: "Atrapa a los enemigos y los deja inmóviles.", icon: "/img/Elementos/Horda-escudo.png" }
+        ]
+    },
+    troll3: {
+        name: "Rhok'thar",
+        title: "Aplastador de huesos",
+        legion: "Trituradores de Rhok",
+        race: "Troll",
+        lore: "Fuerte y sin piedad, su presencia en el campo de batalla destruye la moral enemiga.",
+        abilities: [
+            { name: "Golpe Aplastante", description: "Un ataque que aplasta la armadura enemiga.", icon: "/img/Elementos/Horda-escudo.png" },
+            { name: "Rugido Intimidante", description: "Reduce la precisión de los enemigos cercanos.", icon: "/img/Elementos/logo.png" },
+            { name: "Embate Brutal", description: "Carga y derriba a múltiples enemigos.", icon: "/img/Elementos/Horda-escudo.png" }
+        ]
+    },
+    troll4: {
+        name: "Hexa'zul",
+        title: "Lanzador de maldiciones",
+        legion: "Círculo Oscuro",
+        race: "Troll",
+        lore: "Sus maldiciones corrompen la tierra y debilitan a todo aquel que se enfrenta a ellas.",
+        abilities: [
+            { name: "Nube Corrupta", description: "Crea una nube que drena la vida de los enemigos.", icon: "/img/Elementos/logo.png" },
+            { name: "Sombra Encadenada", description: "Atrapa a un enemigo en sombras que lo incapacitan.", icon: "/img/Elementos/Horda-escudo.png" },
+            { name: "Consume Almas", description: "Roba una porción de vida y la transfiere al lanzador.", icon: "/img/Elementos/logo.png" }
+        ]
+    },
+    // Magos Oscuros
+    mago1: {
+        name: "Malakar Nightfall",
+        title: "Hechicero sombrío",
+        legion: "Consejo de la Noche",
+        race: "Mago Oscuro",
+        lore: "Un maestro de las artes prohibidas que manipula las sombras a su voluntad.",
+        abilities: [
+            { name: "Sombra Devastadora", description: "Invoca sombras que consumen la energía vital de los enemigos.", icon: "/img/Elementos/logo.png" },
+            { name: "Portal Tenebroso", description: "Crea portales que desplazan a sus enemigos a otra dimensión temporal.", icon: "/img/Elementos/Horda-escudo.png" },
+            { name: "Manto de Oscuridad", description: "Vuelve invisibles a los aliados seleccionados por un corto periodo.", icon: "/img/Elementos/logo.png" }
+        ]
+    },
+    mago2: {
+        name: "Zeroth the Black",
+        title: "Invoker de lo prohibido",
+        legion: "Círculo Negro",
+        race: "Mago Oscuro",
+        lore: "Su conocimiento de lo arcano desata horrores que pocos entienden.",
+        abilities: [
+            { name: "Llama Negra", description: "Una llama que quema incluso la esencia del oponente.", icon: "/img/Elementos/Horda-escudo.png" },
+            { name: "Corriente de Caos", description: "Lanza una oleada caótica que desorienta a los enemigos.", icon: "/img/Elementos/logo.png" },
+            { name: "Vínculo de Dolor", description: "Conecta la vida de los enemigos para compartir el daño.", icon: "/img/Elementos/Horda-escudo.png" }
+        ]
+    },
+    mago3: {
+        name: "Vor'kul",
+        title: "Maestro de sombras",
+        legion: "Orden Umbría",
+        race: "Mago Oscuro",
+        lore: "Controla los velos entre dimensiones para manipular el campo de batalla.",
+        abilities: [
+            { name: "Cuchilla de Sombras", description: "Invoca cuchillas que atraviesan a los enemigos.", icon: "/img/Elementos/logo.png" },
+            { name: "Velo Confuso", description: "Crea ilusiones que engañan a los enemigos.", icon: "/img/Elementos/Horda-escudo.png" },
+            { name: "Absorción", description: "Absorbe energía mágica del entorno para potenciarse.", icon: "/img/Elementos/logo.png" }
+        ]
+    },
+    mago4: {
+        name: "Ner'zhul",
+        title: "Conjurador de tormentos",
+        legion: "Legión Tenebrosa",
+        race: "Mago Oscuro",
+        lore: "Sus conjuros solo buscan causar tormento y desolación en el mundo.",
+        abilities: [
+            { name: "Tormenta de Agonía", description: "Desata una tormenta que inflige daño continuo.", icon: "/img/Elementos/Horda-escudo.png" },
+            { name: "Lazo de Desesperación", description: "Ata la voluntad del enemigo reduciendo su eficacia.", icon: "/img/Elementos/logo.png" },
+            { name: "Onda Letal", description: "Una onda de energía que atraviesa y debilita a los oponentes.", icon: "/img/Elementos/Horda-escudo.png" }
+        ]
+    }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -289,18 +437,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const cardImg = document.querySelector(`[data-character="${characterId}"] img`);
         panelPortrait.src = cardImg ? cardImg.src : '';
+        // Copiar el object-position de la tarjeta al retrato en el panel, si existe
+        if (cardImg) {
+            const pos = cardImg.style.objectPosition || cardImg.dataset.objPos;
+            if (pos) panelPortrait.style.objectPosition = pos;
+        }
         panelName.textContent = character.name;
         panelTitle.textContent = character.title;
         panelLore.textContent = character.lore;
 
-        // Render abilities
+        // Render abilities (con icono si existe)
         panelAbilities.innerHTML = '';
         character.abilities.forEach(ability => {
             const ab = document.createElement('div');
-            ab.className = 'bg-[#001428]/50 p-4 rounded-xl border border-[#ffd700]/10';
+            ab.className = 'bg-[#001428]/30 p-3 rounded-xl border border-[#8b00ff]/10';
             ab.innerHTML = `
-                <div class="flex flex-col gap-2">
-                    <h4 class="text-base font-semibold text-[#ffd700]">${ability.name}</h4>
+                <div class="flex flex-col gap-1">
+                    <h4 class="text-base font-semibold horda-subtitle">${ability.name}</h4>
                     <p class="text-sm text-white/80 leading-relaxed">${ability.description}</p>
                 </div>
             `;
@@ -319,6 +472,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Agregar event listeners a las tarjetas de personajes
     // Event listeners
+    // Aplicar object-position por defecto o por tarjeta (data-obj-pos)
+    document.querySelectorAll('.character-card img').forEach(img => {
+        const objPos = img.dataset.objPos; // ejemplo: "50% 20%"
+        if (objPos && objPos.trim().length) {
+            img.style.objectPosition = objPos;
+        } else {
+            // posición por defecto pensada para priorizar la cara
+            img.style.objectPosition = '50% 18%';
+        }
+    });
+
     document.querySelectorAll('.character-card').forEach(card => {
         card.addEventListener('click', () => {
             const characterId = card.dataset.character;

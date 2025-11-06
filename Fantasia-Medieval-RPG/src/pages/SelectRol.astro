@@ -23,14 +23,15 @@ import "../styles/global.css";
                     Dos bandos dividen el mundo
                 </h1>
                 <p
-                    class="group text-base md:text-lg text-gray-200 mt-3 max-w-2xl bg-black/40 rounded-lg px-4 py-2"
+                    class="group text-base md:text-lg text-white mt-3 max-w-2xl bg-black/50 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/10 shadow-lg"
+                    style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);"
                 >
-                    La <span class="text-cyan-400 font-semibold">Alianza</span>,
+                    La <span class="text-cyan-400 font-semibold" style="text-shadow: 0 0 10px rgba(34, 211, 238, 0.5);">Alianza</span>,
                     guardiana del orden, y la
-                    <span class="text-red-500 font-semibold">Horda</span>,
+                    <span class="text-red-500 font-semibold" style="text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);">Horda</span>,
                     forjada en fuego y libertad.
                     <br />
-                    <span class="text-yellow-200"
+                    <span class="text-yellow-200 font-bold" style="text-shadow: 0 0 10px rgba(253, 224, 71, 0.5);"
                         >Elige tu lealtad y escribe tu leyenda.</span
                     >
                 </p>
@@ -107,42 +108,41 @@ import "../styles/global.css";
         /* Título principal estilo épico */
         .wow-title {
             color: #ffd86b;
-            text-shadow:
-                0 0 5px rgba(255, 222, 120, 0.9),
-                0 0 15px rgba(255, 180, 40, 0.8),
-                0 0 35px rgba(255, 150, 0, 0.6);
+            text-shadow: 
+                2px 2px 4px rgba(0, 0, 0, 0.6),
+                0 0 15px rgba(255, 216, 107, 0.4),
+                0 0 25px rgba(255, 216, 107, 0.2);
             border: 2px solid rgba(255, 220, 130, 0.4);
             border-radius: 12px;
-            background: radial-gradient(
-                circle at top,
-                rgba(255, 200, 50, 0.15),
-                rgba(0, 0, 0, 0.4)
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.7),
+                rgba(0, 0, 0, 0.85)
             );
-            box-shadow:
-                0 0 20px rgba(255, 210, 100, 0.3),
-                inset 0 0 10px rgba(255, 220, 120, 0.2);
-            animation: title-glow 3s ease-in-out infinite;
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(255, 216, 107, 0.25);
+            animation: title-glow 4s ease-in-out infinite;
         }
 
         @keyframes title-glow {
-            0%,
-            100% {
-                text-shadow:
-                    0 0 5px rgba(255, 222, 120, 0.9),
-                    0 0 15px rgba(255, 180, 40, 0.8),
-                    0 0 35px rgba(255, 150, 0, 0.6);
-                box-shadow:
-                    0 0 15px rgba(255, 230, 130, 0.3),
-                    inset 0 0 8px rgba(255, 240, 180, 0.2);
+            0%, 100% {
+                text-shadow: 
+                    2px 2px 4px rgba(0, 0, 0, 0.6),
+                    0 0 15px rgba(255, 216, 107, 0.4),
+                    0 0 25px rgba(255, 216, 107, 0.2);
+                box-shadow: 
+                    0 4px 6px rgba(0, 0, 0, 0.3),
+                    0 0 20px rgba(255, 216, 107, 0.25);
             }
             50% {
-                text-shadow:
-                    0 0 8px rgba(255, 250, 200, 1),
-                    0 0 30px rgba(255, 210, 100, 1),
-                    0 0 60px rgba(255, 180, 0, 0.8);
-                box-shadow:
-                    0 0 25px rgba(255, 240, 150, 0.4),
-                    inset 0 0 10px rgba(255, 220, 100, 0.3);
+                text-shadow: 
+                    2px 2px 4px rgba(0, 0, 0, 0.6),
+                    0 0 20px rgba(255, 216, 107, 0.5),
+                    0 0 35px rgba(255, 216, 107, 0.3);
+                box-shadow: 
+                    0 4px 6px rgba(0, 0, 0, 0.3),
+                    0 0 30px rgba(255, 216, 107, 0.35);
             }
         }
 

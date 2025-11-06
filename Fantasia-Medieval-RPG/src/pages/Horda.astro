@@ -7,12 +7,12 @@ import Welcome from "../components/Welcome.astro";
 
 <Layout>
     <Welcome />
-    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden" style="background: url('/img/Elementos/fondo-horda.png') center center / cover no-repeat fixed;">
         <header
-            class="alliance-header sticky top-0 z-50 flex items-center justify-between whitespace-nowrap px-10 py-4 backdrop-blur-md bg-gradient-to-r from-[#00234f]/80 to-[#001428]/80 border-b border-[#ffd700]/10"
+            class="horda-header sticky top-0 z-50 flex items-center justify-between whitespace-nowrap px-10 py-4 backdrop-blur-md"
         >
             <div class="flex items-center gap-4">
-                <h1 class="text-[#ffd700] font-bold text-xl">Alianza</h1>
+                <a href="/SelectRol" class="text-[#ff6b6b] font-bold text-xl hover:scale-105 transition-transform">Atrás</a>
             </div>
         </header>
         <main
@@ -20,200 +20,162 @@ import Welcome from "../components/Welcome.astro";
         >
             <div class="w-full relative">
                 <div class="text-center">
-                    <h2 class="text-4xl font-bold text-[#ffd700] mb-4 tracking-wide">La Alianza te necesita</h2>
-                    <p class="mx-auto mt-4 max-w-2xl text-lg text-white drop-shadow-lg" style="text-shadow: 0 0 10px rgba(0, 163, 255, 0.5);">
-                        Elige a tu campeón para liderar las fuerzas de la Alianza.
-                        Cada héroe posee habilidades únicas y poderes extraordinarios
-                        que definirán el destino de nuestras tierras.
-                    </p>
+                    <div class="relative mx-auto max-w-3xl rounded-xl bg-gradient-to-br from-[#2b0018]/80 to-[#12000a]/90 p-8 backdrop-blur-sm border border-[#ff4d4d]/20 shadow-xl">
+                        <h2 class="text-4xl font-bold horda-title mb-4 tracking-wide">La Horda te necesita</h2>
+                        <p class="mx-auto mt-4 max-w-2xl text-lg text-white/90" style="text-shadow: 0 0 10px rgba(255, 80, 80, 0.25);">
+                            Elige a tu campeón para liderar las fuerzas de la Horda.
+                            Cada guerrero posee ferocidad y habilidades mortales
+                            que forjarán el futuro de nuestras tierras.
+                        </p>
+                    </div>
                 </div>
                 <div class="mt-12">
                     <!-- Contenedor principal con grid -->
                         <div class="max-w-6xl mx-auto">
-                            <h3 class="mb-8 text-3xl font-bold tracking-tight text-[#ffd700] text-center"
-                                style="text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);">
-                                Campeones de la Alianza
-                            </h3>
+                            <div class="relative mx-auto max-w-3xl rounded-xl bg-gradient-to-br from-[#2b0018]/70 to-[#12000a]/80 p-4 backdrop-blur-sm border border-[#ff4d4d]/20 shadow-xl mb-12">
+                                <h3 class="text-3xl font-bold tracking-tight horda-title text-center"
+                                    style="text-shadow: 0 0 20px rgba(139,0,255,0.25);">
+                                    Campeones de la Horda
+                                </h3>
+                            </div>
                             <div class="space-y-8">
-                                <!-- Elfos -->
+                                <!-- (Elfos removed for Horda page) -->
+                                <!-- Orcos -->
                                 <div class="mb-12">
-                                    <h4 class="text-xl font-bold text-[#ffd700] mb-6 text-center">Elfos de la Noche</h4>
+                                    <div class="relative mx-auto max-w-xl rounded-xl bg-gradient-to-br from-[#2b0018]/60 to-[#12000a]/70 p-3 backdrop-blur-sm border border-[#ff4d4d]/10 shadow-lg mb-6">
+                                        <h4 class="text-xl font-bold horda-subtitle text-center">Orcos</h4>
+                                    </div>
                                     <div class="grid grid-cols-4 gap-6 max-w-4xl mx-auto">
-                                        <div class="character-card relative group cursor-pointer rounded-xl bg-white/5 p-3" data-character="elfo1">
-                                            <div class="aspect-square w-full overflow-hidden rounded-xl">
-                                                <img alt="Aethel Silvermoon" class="h-[150%] w-full object-cover transition-transform group-hover:scale-110" style="object-position: center 25%; margin-top: -25%;" src="/img/Buenos/Elfo1.png" />
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="orco1">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Gorak" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Antagonistas/Orco1.png" />
                                             </div>
-                                            <div class="absolute inset-x-3 bottom-3 p-2 bg-gradient-to-t from-black/90 to-transparent rounded-lg">
-                                                <h4 class="text-sm font-bold text-[#ffd700] truncate">Aethel Silvermoon</h4>
-                                                <p class="text-xs text-white/60 truncate">Archimago de Quel'thalas</p>
-                                            </div>
-                                        </div>
-                                        <div class="character-card relative group cursor-pointer rounded-xl bg-white/5 p-3" data-character="elfo2">
-                                            <div class="aspect-square w-full overflow-hidden rounded-xl">
-                                                <img alt="Lyandra Dawnweaver" class="h-[150%] w-full object-cover transition-transform group-hover:scale-110" style="object-position: center 25%; margin-top: -25%;" src="/img/Buenos/Elfo2.png" />
-                                            </div>
-                                            <div class="absolute inset-x-3 bottom-3 p-2 bg-gradient-to-t from-black/90 to-transparent rounded-lg">
-                                                <h4 class="text-sm font-bold text-[#ffd700] truncate">Lyandra Dawnweaver</h4>
-                                                <p class="text-xs text-white/60 truncate">Guardiana del Bosque Eterno</p>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold horda-subtitle">Gorak Bloodaxe</h4>
+                                                <p class="mt-1 text-sm text-white/60">Guerrero de la Horda</p>
                                             </div>
                                         </div>
-                                        <div class="character-card relative group cursor-pointer rounded-xl bg-white/5 p-3" data-character="elfo3">
-                                            <div class="aspect-square w-full overflow-hidden rounded-xl">
-                                                <img alt="Theron Starwhisper" class="h-[150%] w-full object-cover transition-transform group-hover:scale-110" style="object-position: center 25%; margin-top: -25%;" src="/img/Buenos/Elfo3.png" />
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="orco2">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Orco 2" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Antagonistas/Orco2.png" />
                                             </div>
-                                            <div class="absolute inset-x-3 bottom-3 p-2 bg-gradient-to-t from-black/90 to-transparent rounded-lg">
-                                                <h4 class="text-sm font-bold text-[#ffd700] truncate">Theron Starwhisper</h4>
-                                                <p class="text-xs text-white/60 truncate">Sacerdote de la Luna</p>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Razh Skullcrusher</h4>
+                                                <p class="mt-1 text-sm text-white/60">Berserker tribal</p>
                                             </div>
                                         </div>
-                                        <div class="character-card relative group cursor-pointer rounded-xl bg-white/5 p-3" data-character="elfo4">
-                                            <div class="aspect-square w-full overflow-hidden rounded-xl">
-                                                <img alt="Sylvanas Windrunner" class="h-[150%] w-full object-cover transition-transform group-hover:scale-110" style="object-position: center 25%; margin-top: -25%;" src="/img/Buenos/Elfo4.png" />
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="orco3">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Orco 3" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Antagonistas/Orco3.png" />
                                             </div>
-                                            <div class="absolute inset-x-3 bottom-3 p-2 bg-gradient-to-t from-black/90 to-transparent rounded-lg">
-                                                <h4 class="text-sm font-bold text-[#ffd700] truncate">Sylvanas Windrunner</h4>
-                                                <p class="text-xs text-white/60 truncate">Capitana de los Forestales</p>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Korgash the Crusher</h4>
+                                                <p class="mt-1 text-sm text-white/60">Campeón de la vanguardia</p>
+                                            </div>
+                                        </div>
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="orco4">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Orco 4" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Antagonistas/Orco4.png" />
+                                            </div>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Thok Ironjaw</h4>
+                                                <p class="mt-1 text-sm text-white/60">Líder de asalto</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Enanos -->
-                                <div class="mb-12">
-                                    <h4 class="text-xl font-bold text-[#ffd700] mb-6 text-center">Enanos</h4>
-                                    <div class="grid grid-cols-4 gap-6 max-w-4xl mx-auto">
-                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="enano1">
-                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
-                                                <img alt="Thorin Steelbeard" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Enano1.png" />
-                                            </div>
-                                            <div class="mt-4">
-                                                <h4 class="text-base font-bold text-[#ffd700]">Thorin Steelbeard</h4>
-                                                <p class="mt-1 text-sm text-white/60">Señor de la Forja</p>
-                                            </div>
-                                        </div>
-                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="enano2">
-                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
-                                                <img alt="Moira Thaurissan" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Enano2.png" />
-                                            </div>
-                                            <div class="mt-4">
-                                                <h4 class="text-base font-bold text-[#ffd700]">Moira Thaurissan</h4>
-                                                <p class="mt-1 text-sm text-white/60">Reina Regente</p>
-                                            </div>
-                                        </div>
-                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="enano3">
-                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
-                                                <img alt="Bromm Ironfist" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Enano3.png" />
-                                            </div>
-                                            <div class="mt-4">
-                                                <h4 class="text-base font-bold text-[#ffd700]">Bromm Ironfist</h4>
-                                                <p class="mt-1 text-sm text-white/60">Maestro de Rifles</p>
-                                            </div>
-                                        </div>
-                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="enano4">
-                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
-                                                <img alt="Dagmar Stoneheart" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Enano4.png" />
-                                            </div>
-                                            <div class="mt-4">
-                                                <h4 class="text-base font-bold text-[#ffd700]">Dagmar Stoneheart</h4>
-                                                <p class="mt-1 text-sm text-white/60">Guardián de las Runas</p>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <!-- Humanos -->
+                                <!-- Trolls -->
                                 <div class="mb-12">
-                                    <h4 class="text-xl font-bold text-[#ffd700] mb-6 text-center">Humanos</h4>
+                                    <div class="relative mx-auto max-w-xl rounded-xl bg-gradient-to-br from-[#2b0018]/60 to-[#12000a]/70 p-3 backdrop-blur-sm border border-[#ff4d4d]/10 shadow-lg mb-6">
+                                        <h4 class="text-xl font-bold horda-subtitle text-center">Trolls</h4>
+                                    </div>
                                     <div class="grid grid-cols-4 gap-6 max-w-4xl mx-auto">
-                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="humano1">
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="troll1">
                                             <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
-                                                <img alt="Marcus Shadowblade" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Humano1.png" />
+                                                <img alt="Troll 1" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Antagonistas/Troll1.png" />
                                             </div>
                                             <div class="mt-4">
-                                                <h4 class="text-base font-bold text-[#ffd700]">Marcus Shadowblade</h4>
-                                                <p class="mt-1 text-sm text-white/60">Maestro Asesino</p>
+                                                <h4 class="text-base font-bold text-[#ffd700]">Zul'Gar</h4>
+                                                <p class="mt-1 text-sm text-white/60">Chamán de Guerra</p>
                                             </div>
                                         </div>
-                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="humano2">
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="troll2">
                                             <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
-                                                <img alt="Katarina Lightbringer" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Humano2.png" />
+                                                <img alt="Troll 2" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Antagonistas/Troll2.png" />
                                             </div>
                                             <div class="mt-4">
-                                                <h4 class="text-base font-bold text-[#ffd700]">Katarina Lightbringer</h4>
-                                                <p class="mt-1 text-sm text-white/60">Alta Inquisidora</p>
+                                                <h4 class="text-base font-bold text-[#ffd700]">Bal'rok</h4>
+                                                <p class="mt-1 text-sm text-white/60">Cazador de la tribu</p>
                                             </div>
                                         </div>
-                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="humano3">
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="troll3">
                                             <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
-                                                <img alt="Gabriel Brightweave" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Humano3.png" />
+                                                <img alt="Troll 3" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Antagonistas/Troll3.png" />
                                             </div>
                                             <div class="mt-4">
-                                                <h4 class="text-base font-bold text-[#ffd700]">Gabriel Brightweave</h4>
-                                                <p class="mt-1 text-sm text-white/60">Archimago de Dalaran</p>
+                                                <h4 class="text-base font-bold text-[#ffd700]">Rhok'thar</h4>
+                                                <p class="mt-1 text-sm text-white/60">Aplastador de huesos</p>
                                             </div>
                                         </div>
-                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="humano4">
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="troll4">
                                             <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
-                                                <img alt="Elena Stormwind" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Buenos/Humano4.png" />
+                                                <img alt="Troll 4" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Antagonistas/Troll4.png" />
                                             </div>
                                             <div class="mt-4">
-                                                <h4 class="text-base font-bold text-[#ffd700]">Elena Stormwind</h4>
-                                                <p class="mt-1 text-sm text-white/60">Capitana de la Guardia</p>
+                                                <h4 class="text-base font-bold text-[#ffd700]">Hexa'zul</h4>
+                                                <p class="mt-1 text-sm text-white/60">Lanzador de maldiciones</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Modal de detalles del personaje -->
-                        <div id="characterModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
-                            <div class="relative w-full max-w-4xl bg-gradient-to-br from-[#00234f]/90 to-[#00132a]/90 rounded-xl border border-[#ffd700]/20 shadow-xl shadow-[#00234f]/30 mx-4" style="height: 32rem;">
-                                <div class="grid grid-cols-2 h-full">
-                                    <!-- Columna izquierda con imagen -->
-                                    <div class="relative overflow-hidden rounded-l-xl bg-gradient-to-br from-[#001428] to-[#00234f] h-full">
-                                        <img id="panelPortrait" src="" alt="Portrait" class="object-contain w-full h-full" style="object-position: center;" />
-                                        <!-- Botón de cerrar -->
-                                        <button id="closeModal" class="absolute top-4 right-4 p-2 hover:bg-black/20 rounded-lg transition-colors z-30">
-                                            <svg class="w-6 h-6 text-white/80 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                            </svg>
-                                        </button>
+                                <!-- Magos Oscuros -->
+                                <div class="mb-12">
+                                    <div class="relative mx-auto max-w-xl rounded-xl bg-gradient-to-br from-[#2b0018]/60 to-[#12000a]/70 p-3 backdrop-blur-sm border border-[#ff4d4d]/10 shadow-lg mb-6">
+                                        <h4 class="text-xl font-bold horda-subtitle text-center">Magos Oscuros</h4>
                                     </div>
-                                    
-                                    <!-- Columna derecha con información -->
-                                    <div class="flex flex-col h-full">
-                                        <!-- Encabezado -->
-                                        <div class="p-4 border-b border-[#ffd700]/10">
-                                            <h2 id="panelName" class="text-2xl font-bold text-[#ffd700] drop-shadow-lg mb-1">Selecciona un campeón</h2>
-                                            <p id="panelTitle" class="text-base text-white/90 italic leading-snug">Título</p>
+                                    <div class="grid grid-cols-4 gap-6 max-w-4xl mx-auto">
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="mago1">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Mago Oscuro 1" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Antagonistas/Mago Oscuro1.png" />
+                                            </div>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Malakar Nightfall</h4>
+                                                <p class="mt-1 text-sm text-white/60">Hechicero sombrío</p>
+                                            </div>
                                         </div>
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="mago2">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Mago Oscuro 2" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Antagonistas/Mago Oscuro2.png" />
+                                            </div>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Zeroth the Black</h4>
+                                                <p class="mt-1 text-sm text-white/60">Invoker de lo prohibido</p>
+                                            </div>
+                                        </div>
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="mago3">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Mago Oscuro 3" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Antagonistas/Mago Oscuro3.png" />
+                                            </div>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Vor'kul</h4>
+                                                <p class="mt-1 text-sm text-white/60">Maestro de sombras</p>
+                                            </div>
+                                        </div>
+                                        <div class="character-card group cursor-pointer rounded-xl bg-white/5 p-4" data-character="mago4">
+                                            <div class="aspect-[3/4] w-full overflow-hidden rounded-lg">
+                                                <img alt="Mago Oscuro 4" class="h-full w-full object-cover object-center transition-transform group-hover:scale-110" src="/img/Antagonistas/Mago Oscuro4.png" />
+                                            </div>
+                                            <div class="mt-4">
+                                                <h4 class="text-base font-bold text-[#ffd700]">Ner'zhul</h4>
+                                                <p class="mt-1 text-sm text-white/60">Conjurador de tormentos</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                         
-                                        <!-- Contenido principal -->
-                                        <div class="p-4 flex flex-col gap-4">
-                                            <!-- Historia con borde decorativo -->
-                                            <div class="relative bg-[#001428]/30 p-4 rounded-xl border-l-4 border-[#ffd700]/30">
-                                                <h3 class="text-base font-semibold text-[#ffd700] mb-2">Historia</h3>
-                                                <p id="panelLore" class="text-sm text-white/80 leading-relaxed">Las características del personaje aparecerán aquí al seleccionarlo.</p>
-                                            </div>
-
-                                            <!-- Habilidades con scroll -->
-                                            <div class="bg-[#001428]/30 rounded-xl border-l-4 border-[#ffd700]/30 flex flex-col">
-                                                <div class="p-4">
-                                                    <h3 class="text-base font-semibold text-[#ffd700] mb-2">Habilidades</h3>
-                                                    <div id="panelAbilities" class="grid grid-cols-1 gap-3 max-h-[8rem] overflow-y-auto pr-2 custom-scrollbar">
-                                                        <!-- Las habilidades se insertarán aquí dinámicamente -->
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Botón de selección -->
-                                        <div class="mt-auto p-4 bg-[#001428]/50 border-t border-[#ffd700]/10 rounded-br-xl">
-                                            <button id="panelSelect" class="w-full py-3 px-6 bg-gradient-to-r from-[#ffd700] to-[#ffc000] rounded-lg text-lg font-bold text-[#00234f] transition-all hover:shadow-lg hover:shadow-[#ffd700]/20 hover:scale-[1.02]">
-                                                ¡Por la Alianza!
-                                            </button>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -223,6 +185,55 @@ import Welcome from "../components/Welcome.astro";
 
             </div>
         </main>
+        <!-- Modal de detalles del personaje (idéntico a Alianza pero con colores Horda) -->
+        <div id="characterModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50">
+            <div class="relative w-full max-w-5xl bg-gradient-to-br from-[#2b0018]/90 to-[#12000a]/90 rounded-xl border border-[#ff4d4d]/20 shadow-xl shadow-[#2b0018]/30 mx-4" style="min-height: 32rem; max-height: 90vh;">
+                <div class="grid grid-cols-2 h-full">
+                    <!-- Columna izquierda con imagen -->
+                    <div class="relative overflow-hidden rounded-l-xl bg-gradient-to-br from-[#12000a] to-[#2b0018] h-full flex items-center justify-center p-4">
+                        <img id="panelPortrait" src="" alt="Portrait" class="max-w-full max-h-[80vh] object-contain" style="object-position: center;" />
+                        <!-- Botón de cerrar -->
+                        <button id="closeModal" class="absolute top-4 right-4 p-2 hover:bg-black/20 rounded-lg transition-colors z-30">
+                            <svg class="w-6 h-6 text-white/80 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- Columna derecha con información -->
+                    <div class="flex flex-col h-full">
+                        <!-- Encabezado -->
+                        <div class="p-4 border-b border-[#ff4d4d]/10">
+                            <h2 id="panelName" class="text-2xl font-bold horda-title drop-shadow-lg mb-1">Selecciona un campeón</h2>
+                            <p id="panelTitle" class="text-base text-white/90 italic leading-snug">Título</p>
+                        </div>
+                        <!-- Contenido principal -->
+                        <div class="p-4 flex flex-col gap-4">
+                            <!-- Historia con borde decorativo -->
+                            <div class="relative bg-[#2b0018]/30 p-4 rounded-xl border-l-4 border-[#ff4d4d]/30">
+                                <h3 class="text-base font-semibold horda-title mb-2">Historia</h3>
+                                <p id="panelLore" class="text-sm text-white/80 leading-relaxed">Las características del personaje aparecerán aquí al seleccionarlo.</p>
+                            </div>
+                            <!-- Habilidades con scroll -->
+                            <div class="bg-[#2b0018]/30 rounded-xl border-l-4 border-[#8b00ff]/30 flex flex-col">
+                                <div class="p-4">
+                                    <h3 class="text-base font-semibold horda-title mb-2">Habilidades</h3>
+                                    <div id="panelAbilities" class="grid grid-cols-1 gap-3 max-h-[8rem] overflow-y-auto pr-2 custom-scrollbar">
+                                        <!-- Las habilidades se insertarán aquí dinámicamente -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Botón de selección -->
+                        <div class="mt-auto p-4 bg-[#2b0018]/50 border-t border-[#8b00ff]/10 rounded-br-xl">
+                            <button id="panelSelect" class="w-full py-3 px-6 horda-button rounded-lg text-lg font-bold transition-all hover:shadow-lg hover:shadow-[#8b00ff]/20 hover:scale-[1.02]">
+                                ¡Por la Horda!
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="heroic-showcase" id="heroicShowcase">
             <div class="heroic-showcase-content">
                 <div class="character-portrait-full">
@@ -254,3 +265,8 @@ import Welcome from "../components/Welcome.astro";
         </div>
     </div>
 </Layout>
+<style>
+        body{
+            font-family: "MedievalSharp";
+        }
+    </style>

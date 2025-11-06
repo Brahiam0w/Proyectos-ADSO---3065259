@@ -254,3 +254,43 @@ body {
   font-size: 0.875rem;
   line-height: 1.4;
 }
+
+/* Priorizar encuadre en la cara para las imágenes de las tarjetas
+   Se puede sobrescribir por tarjeta con el atributo HTML data-obj-pos="X% Y%" */
+.character-card img {
+  /* object-fit ya se aplica en las imágenes; aquí priorizamos la parte superior-centro (cara) */
+  object-position: 50% 18%;
+  -webkit-object-position: 50% 18%;
+}
+
+/* Tema Horda: tonos rojos, morados y negros */
+.horda-header {
+  background: linear-gradient(90deg, #2b0018 0%, #12000a 50%, #080006 100%);
+  border-bottom: 2px solid rgba(255, 59, 59, 0.15);
+}
+
+.horda-title {
+  color: #ff6b6b; /* rojo claro */
+  text-shadow: 0 0 12px rgba(139, 0, 255, 0.12);
+}
+
+.horda-subtitle {
+  color: #e0b3ff; /* lila pálido */
+}
+
+.horda-modal {
+  background: linear-gradient(180deg, rgba(18,0,10,0.9) 0%, rgba(43,0,24,0.95) 100%);
+  border: 1px solid rgba(255, 59, 59, 0.12);
+  box-shadow: 0 10px 40px rgba(139, 0, 255, 0.12);
+}
+
+.horda-button {
+  background: linear-gradient(90deg, #ff4d4d 0%, #8b00ff 100%);
+  color: #fff;
+}
+
+/* Fondo completo para páginas de la Horda */
+.horda-bg {
+  background: radial-gradient(circle at center, #220009 0%, #090007 60%, #020002 100%);
+  background-attachment: fixed;
+}
