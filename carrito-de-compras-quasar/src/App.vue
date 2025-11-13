@@ -146,7 +146,8 @@ export default {
         { nombre: 'Mouse Gaming', desc: 'Ergonómico RGB', precio: 45.99, img: '/img/mouse.webp' },
         { nombre: 'Laptop Gaming', desc: 'Alta gama', precio: 1299.99, img: '/img/portatil.jpg' },
         { nombre: 'Silla Gaming', desc: 'Ergonómica', precio: 199.99, img: '/img/silla.webp' },
-        { nombre: 'Teclado Mecánico', desc: 'RGB', precio: 89.99, img: '/img/teclado.webp' }
+        { nombre: 'Teclado Mecánico', desc: 'RGB', precio: 89.99, img: '/img/teclado.webp' },
+        { nombre: 'Audifonos Diadema' , desc : 'Cancelación de ruido', precio: 99.99, img: '/img/audifonos-diadema.webp'}
       ],
       carrito: []
     }
