@@ -102,6 +102,12 @@
                   </div>
                 </div>
               </div>
+
+              <!-- Mensaje cuando el carrito está vacío -->
+              <div v-if="carrito.length === 0" class="text-center text-grey-6 q-py-xl">
+                <q-icon name="shopping_cart" size="xl" />
+                <div class="q-mt-md">El carrito está vacío</div>
+              </div>
             </div>
 
             <!-- Totales (fijo, no scroll) -->
@@ -112,11 +118,13 @@
               </div>
               <div class="row justify-between text-grey-9">
                 <span>Envío</span>
-                <span class="text-weight-medium">$15.00</span>
+                <span class="text-weight-medium" :class="envioGratis ? 'text-green' : ''">
+                  {{ envioGratis ? 'GRATIS' : '$15.00' }}
+                </span>
               </div>
               <div class="row justify-between text-h6 text-weight-bold text-grey-9">
                 <span>Total</span>
-                <span>${{ (subtotal + 15).toFixed(2) }}</span>
+                <span>${{ total.toFixed(2) }}</span>
               </div>
 
               <q-btn
@@ -124,10 +132,26 @@
                 color="amber-6"
                 class="full-width q-mt-md"
                 unelevated
+                :disable="carrito.length === 0"
               />
             </div>
           </div>
         </div>
+
+        <!-- Popup flotante de oferta especial -->
+        <transition name="popup">
+          <div v-if="mostrarOferta" class="popup-oferta">
+            <q-card class="bg-green text-white shadow-10">
+              <q-card-section class="row items-center">
+                <q-icon name="local_offer" size="md" class="q-mr-sm" />
+                <div>
+                  <div class="text-subtitle1">¡Oferta Especial!</div>
+                  <div class="text-caption">Has superado los $500 en compras, el envio será gratis!</div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
+        </transition>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -149,12 +173,46 @@ export default {
         { nombre: 'Teclado Mecánico', desc: 'RGB', precio: 89.99, img: '/img/teclado.webp' },
         { nombre: 'Audifonos Diadema' , desc : 'Cancelación de ruido', precio: 99.99, img: '/img/audifonos-diadema.webp'}
       ],
-      carrito: []
+      carrito: [],
+      mostrarOferta: false,
+      ofertaMostrada: false,
+      timeoutOferta: null
     }
   },
   computed: {
     subtotal() {
       return this.carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0)
+    },
+    total() {
+      return this.subtotal + (this.envioGratis ? 0 : 15)
+    },
+    envioGratis() {
+      return this.subtotal > 200
+    }
+  },
+  watch: {
+    // Watcher para cambios en el carrito
+    carrito: {
+      handler(nuevoCarrito) {
+        console.log('Carrito actualizado:', nuevoCarrito)
+        
+        // Guardar en localStorage
+        this.guardarCarrito()
+        
+        // Verificar oferta especial
+        this.verificarOfertaEspecial()
+      },
+      deep: true
+    },
+    
+    // Watcher para el subtotal
+    subtotal(nuevoSubtotal) {
+      console.log('Subtotal actualizado:', nuevoSubtotal)
+      
+      // Resetear oferta mostrada cuando el carrito está vacío
+      if (nuevoSubtotal === 0) {
+        this.ofertaMostrada = false
+      }
     }
   },
   methods: {
@@ -166,14 +224,77 @@ export default {
         this.carrito.push({ ...prod, cantidad: 1 })
       }
     },
+    
     incrementar(i) {
       this.carrito[i].cantidad++
     },
+    
     disminuir(i) {
-      if (this.carrito[i].cantidad > 1) this.carrito[i].cantidad--
+      if (this.carrito[i].cantidad > 1) {
+        this.carrito[i].cantidad--
+      } else {
+        this.eliminar(i)
+      }
     },
+    
     eliminar(i) {
       this.carrito.splice(i, 1)
+    },
+    
+    // Verificar oferta especial
+    verificarOfertaEspecial() {
+      if (this.subtotal > 500 && !this.ofertaMostrada) {
+        this.mostrarOferta = true
+        this.ofertaMostrada = true
+        
+        // Cerrar automáticamente después de 4 segundos
+        this.timeoutOferta = setTimeout(() => {
+          this.mostrarOferta = false
+        }, 4000)
+      }
+    },
+    
+    // Guardar carrito en localStorage
+    guardarCarrito() {
+      try {
+        localStorage.setItem('carritoGaming', JSON.stringify(this.carrito))
+        console.log('Carrito guardado en localStorage')
+      } catch (e) {
+        console.error('Error al guardar carrito:', e)
+      }
+    },
+    
+    // Cargar carrito desde localStorage
+    cargarCarrito() {
+      try {
+        const carritoGuardado = localStorage.getItem('carritoGaming')
+        if (carritoGuardado) {
+          this.carrito = JSON.parse(carritoGuardado)
+          console.log('Carrito cargado desde localStorage:', this.carrito)
+          
+          // Verificar si ya se mostró la oferta con el carrito cargado
+          if (this.subtotal > 500) {
+            this.ofertaMostrada = true
+          }
+        }
+      } catch (e) {
+        console.error('Error al cargar carrito:', e)
+        // Si hay error, limpiar el localStorage
+        localStorage.removeItem('carritoGaming')
+        this.carrito = []
+      }
+    }
+  },
+  
+  mounted() {
+    // Cargar carrito desde localStorage al iniciar
+    this.cargarCarrito()
+  },
+  
+  beforeUnmount() {
+    // Limpiar timeout al desmontar el componente
+    if (this.timeoutOferta) {
+      clearTimeout(this.timeoutOferta)
     }
   }
 }
@@ -256,5 +377,46 @@ export default {
 /* Asegura que las tarjetas tengan altura uniforme */
 .hover-shadow .q-card__section {
   flex: 1;
+}
+
+/* Estilos para el popup flotante */
+.popup-oferta {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 10000;
+  min-width: 300px;
+  animation: slideIn 0.5s ease-out;
+}
+
+/* Animaciones para el popup */
+.popup-enter-active {
+  animation: slideIn 0.5s ease-out;
+}
+
+.popup-leave-active {
+  animation: slideOut 0.5s ease-in;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }
 </style>
