@@ -22,7 +22,7 @@
                 <q-card
                   v-for="(p, i) in productos"
                   :key="i"
-                  class="col-xs-12 col-sm-6 col-md-4 col-lg-3 hover-shadow q-ma-xs"
+                  class="col-xs-3 col-sm-6 col-md-4 col-lg-3 hover-shadow q-ma-xs"
                 >
                   <div class="product-img-container">
                     <q-img 
