@@ -2,7 +2,7 @@
   <div class="pagina-completa secciones-container">
     <!-- Sección izquierda - Entretenimiento -->
     <div class="seccion seccion-izquierda column justify-center items-center q-pa-md">
-      <h1 class="text-h5 text-center text-bold q-mb-lg">zona de entretenimiento</h1>
+      <h1 class="text-h5 text-center text-bold q-mb-lg text-black">zona de entretenimiento</h1>
       
       <q-btn 
         @click="alimentar" 
@@ -14,14 +14,14 @@
       />
       
       <div class="barra-container q-mb-md">
-        <p class="text-subtitle2 text-bold">Hambre</p>
+        <p class="text-subtitle2 text-bold text-black">Hambre</p>
         <q-linear-progress 
           :value="hambre / 100" 
           size="20px" 
           :color="getColorBarra(hambre)" 
           class="rounded-borders"
         />
-        <p class="text-caption text-right">{{ hambre }}%</p>
+        <p class="text-caption text-right text-black">{{ hambre }}%</p>
       </div>
 
       <!-- NUEVA SECCIÓN DE JUEGO - Estructurada igual que baño y limpieza -->
@@ -35,14 +35,14 @@
       />
       
       <div class="barra-container">
-        <p class="text-subtitle2 text-bold">Diversión</p>
+        <p class="text-subtitle2 text-bold text-black">Diversión</p>
         <q-linear-progress 
           :value="diversion / 100" 
           size="20px" 
           :color="getColorBarra(diversion)" 
           class="rounded-borders"
         />
-        <p class="text-caption text-right">{{ diversion }}%</p>
+        <p class="text-caption text-right text-black">{{ diversion }}%</p>
       </div>
     </div>
 
@@ -60,7 +60,7 @@
           :color="estadoEmocional.color" 
           class="q-mt-md rounded-borders bg-amber-1"
         />
-        <p class="text-caption text-center q-mt-xs">Felicidad: {{ felicidad }}%</p>
+        <p class="text-caption text-center q-mt-xs text-black">Felicidad: {{ felicidad }}%</p>
         
       </div>
       
@@ -76,7 +76,7 @@
 
     <!-- Sección derecha - Limpieza -->
     <div class="seccion seccion-derecha column justify-center items-center q-pa-md">
-      <h1 class="text-h5 text-center text-bold q-mb-lg">zona de limpieza</h1>
+      <h1 class="text-h5 text-center text-bold q-mb-lg text-black">zona de limpieza</h1>
       
       <q-btn 
         @click="banar" 
@@ -88,14 +88,14 @@
       />
       
       <div class="barra-container q-mb-md">
-        <p class="text-subtitle2 text-bold">Higiene</p>
+        <p class="text-subtitle2 text-bold text-black">Higiene</p>
         <q-linear-progress 
           :value="higiene / 100" 
           size="20px" 
           :color="getColorBarra(higiene)" 
           class="rounded-borders"
         />
-        <p class="text-caption text-right">{{ higiene }}%</p>
+        <p class="text-caption text-right text-black">{{ higiene }}%</p>
       </div>
       
       <q-btn 
@@ -112,14 +112,14 @@
       </q-btn>
       
       <div class="barra-container">
-        <p class="text-subtitle2 text-bold">Limpieza</p>
+        <p class="text-subtitle2 text-bold text-black">Limpieza</p>
         <q-linear-progress 
           :value="limpieza / 100" 
           size="20px" 
           :color="getColorBarra(limpieza)" 
           class="rounded-borders"
         />
-        <p class="text-caption text-right">{{ limpieza }}%</p>
+        <p class="text-caption text-right text-black">{{ limpieza }}%</p>
       </div>
     </div>
 
