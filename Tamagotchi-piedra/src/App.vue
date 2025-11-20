@@ -24,7 +24,6 @@
         <p class="text-caption text-right text-black">{{ hambre }}%</p>
       </div>
 
-      <!-- NUEVA SECCIÓN DE JUEGO - Estructurada igual que baño y limpieza -->
       <q-btn 
         @click="jugar" 
         color="purple-8" 
@@ -61,14 +60,16 @@
           class="q-mt-md rounded-borders bg-amber-1"
         />
         <p class="text-caption text-center q-mt-xs text-black">Felicidad: {{ felicidad }}%</p>
-        
       </div>
       
       <div class="imagen-contenedor">
-        <!-- Cacas invisibles -->
-        <div v-for="caca in cacasInvisibles" :key="caca.id" class="caca-invisible" :style="{ left: caca.x + '%' }">
-          💩
-        </div>
+        <!-- Burbuja de diálogo sobre la piedra -->
+        <transition name="burbuja">
+          <div v-if="mostrarDialog" class="burbuja-dialogo">
+            <p class="texto-burbuja">{{ mensaje }}</p>
+            <div class="pico-burbuja"></div>
+          </div>
+        </transition>
         
         <img src="/img/piedra.png" alt="piedra" class="imagen-grande" />
       </div>
@@ -99,17 +100,13 @@
       </div>
       
       <q-btn 
-        @click="limpiarCaca" 
+        @click="limpiar" 
         color="brown-7" 
         size="lg" 
         class="full-width q-mb-md"
         icon="cleaning_services"
-      >
-        <div class="column items-center">
-          <span>Limpiar Caca</span>
-          <span class="text-caption">({{ cacasInvisibles.length }} invisibles)</span>
-        </div>
-      </q-btn>
+        label="Limpiar"
+      />
       
       <div class="barra-container">
         <p class="text-subtitle2 text-bold text-black">Limpieza</p>
@@ -123,11 +120,13 @@
       </div>
     </div>
 
-    <!-- Popup de mensajes -->
-    <transition name="popup">
-      <div v-if="mostrarDialog" class="popup-mensaje">
-        <div class="popup-contenido">
-          <p class="text-body1 text-bold text-black">{{ mensaje }}</p>
+    <!-- NOTIFICACIONES DEL SISTEMA - EN ESQUINA SUPERIOR DERECHA -->
+    <transition name="notificacion">
+      <div v-if="mostrarNotificacion" class="notificacion-sistema" :class="`notificacion-${tipoNotificacion}`">
+        <div class="notificacion-contenido">
+          <q-icon :name="iconoNotificacion" size="sm" class="q-mr-sm" />
+          <span class="text-caption text-bold">{{ mensajeNotificacion }}</span>
+          <q-icon name="close" size="xs" class="q-ml-sm cursor-pointer" @click="cerrarNotificacion" />
         </div>
       </div>
     </transition>
@@ -137,225 +136,424 @@
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 
-const nombre = "brahiam"
 const hambre = ref(100)
-const diversion = ref(100) // NUEVO: Estado para la diversión
+const diversion = ref(100)
 const higiene = ref(100)
 const limpieza = ref(100)
 const mensaje = ref("")
-const cacasInvisibles = ref([])
 const mostrarDialog = ref(false)
 
-// Variables para manejar la cola de mensajes
+// VARIABLES PARA NOTIFICACIONES DEL SISTEMA (en lugar de alertas)
+const mostrarNotificacion = ref(false)
+const mensajeNotificacion = ref("")
+const tipoNotificacion = ref("info")
+const iconoNotificacion = ref("info")
+let notificacionTimeout = null
+
+// Variables para manejar los mensajes
 const mensajeTimeout = ref(null)
-const colaMensajes = ref([])
-const procesandoMensaje = ref(false)
+const ultimoMensajeMostrado = ref("")
 
 let intervalo = null
 
-// Mensajes creativos para alimentar
+// MENSAJES DE NOTIFICACIÓN DEL SISTEMA
+const notificacionesHambre = {
+  80: "Tengo un poco de hambre...",
+  60: "Mi estómago de piedra está gruñendo",
+  40: "¡Tengo hambre! Aunque no sé para qué",
+  20: "¿En serio no me vas a alimentar?",
+  10: "Hambre nivel: caníbal..."
+}
+
+const notificacionesDiversion = {
+  80: "Estoy aburrida... ¿jugamos?",
+  60: "La diversión está por los suelos",
+  40: "Más aburrida que una piedra en un museo",
+  20: "¡Me aburro más que una piedra en un jardín!",
+  10: "Nivel de aburrimiento: contar granos de arena"
+}
+
+const notificacionesHigiene = {
+  80: "Empiezo a sentirme sucia...",
+  60: "Huelo a musgo y tierra...",
+  40: "¡Estoy más sucia que una piedra en un charco!",
+  20: "Mi higiene está por debajo de mis expectativas",
+  10: "¡Tengo más bichos que un jardín!"
+}
+
+const notificacionesLimpieza = {
+  80: "Todo está bastante limpio pero puede mejorar",
+  60: "Un poco de limpieza no vendría mal",
+  40: "Empiezo a notar algo de suciedad",
+  20: "La suciedad se acumula...",
+  10: "¡Estoy muy sucia! ¿Me limpiarás?"
+}
+
+// MENSAJES MEJORADOS CON MÁS VARIEDAD Y HUMOR
 const mensajesAlimentar = [
-  "La piedra dice 'mmm delicioso'... o eso creo",
-  "¿Las piedras tienen estómago? Bueno, da igual",
-  "La piedra aprecia tu gesto inútil pero adorable",
-  "Acabas de alimentar a una roca. Reflexiona sobre tu vida",
-  "La comida atravesó la piedra. Física básica",
-  "La piedra no masticó. Ni siquiera lo intentó",
-  "Gastaste comida en una piedra. Genio nivel: experto",
-  "La piedra no tiene boca pero igual la alimentaste",
-  "La piedra sigue siendo una piedra",
-  "Tu dedicación a esta roca es admirable y preocupante",
-  "No tienes que hacer la API con el profe Miguel? No pierdas el tiempo!!",
-  "La piedra hizo 'ñam ñam'... en matrix",
-  "Nutrición mineral level: experto",
-  "¿Le pones ketchup a las piedras o solo sal?",
-  "Tu piedra está más alimentada que tu motivación",
-  "Alimentar rocas: el nuevo curso de gastronomía"
+  "Alimentar una piedra... tu currículum acaba de actualizarse",
+  "La piedra hizo 'crunch'. O tal vez fue tu autoestima",
+  "Nutrición nivel roca: ahora tengo más minerales que tu vida social",
+  "¿Sabías que las piedras tienen 0 calorías? Como tu conversación",
+  "La piedra digirió la comida mejor que tú digieres las malas decisiones",
+  "Alimentaste una roca. Tu terapeuta quiere saber tu ubicación",
+  "La comida pasó directo al suelo. Eficiencia: 100%",
+  "Tu piedra está más alimentada que tu motivación por el gym",
+  "Las piedras no necesitan comida. Tampoco tus excusas",
+  "¿Le diste de comer a una piedra? Eso explica muchas cosas",
+  "La piedra apreció el gesto. Mentira, es una piedra",
+  "Alimentación completada. Ahora la piedra pesa 0.0001g más",
+  "Tu piedra tiene mejor dieta que tú",
+  "Comida + piedra = todavía piedra. Matemáticas básicas",
+  "La piedra hizo 'ñam' en su mente de piedra",
+  "Gastaste comida en algo que literalmente come sol",
+  "Nutrición rocosa: el nuevo curso online que nadie pidió",
+  "Tu piedra está más llena que tu agenda social",
+  "Alimentar piedras: habilidad número 1 en LinkedIn",
+  "La piedra no dijo gracias. Qué sorpresa"
 ]
 
-// NUEVO: Mensajes creativos para jugar
 const mensajesJugar = [
-  "Jugaste con la piedra... ella no se movió",
-  "La piedra ganó al escondite. Siempre gana",
-  "Tu piedra es el oponente más quieto que tendrás",
-  "Jugar con piedras: el nuevo entretenimiento de la era digital",
-  "La piedra disfrutó más este juego que tú tu último examen",
-  "La piedra es demasiado buena en 'piedra, papel o tijera'",
-  "Tu piedra tiene más habilidades de juego que tu personaje en RPG",
-  "La piedra está en modo 'hardcore'. No muestra emociones",
-  "Jugar con una roca: nivel máximo de paciencia",
-  "La piedra está en el top del ranking de piedras gamers",
-  "Tu piedra tiene más logros desbloqueados que tú en Steam",
-  "La piedra está en su elemento. Literalmente",
-  "Ganaste contra la piedra... o te dejó ganar?",
-  "La piedra está en modo AFK... como siempre"
+  "Ganaste contra una piedra. ¿Quieres una medalla?",
+  "La piedra jugó mejor que tú en tu último juego online",
+  "Jugar con piedras: el nuevo deporte olímpico 2024",
+  "Tu piedra tiene más habilidades de juego que tú en el FIFA",
+  "La piedra está en modo AFK permanente. Como tú en las reuniones",
+  "Ganaste! La piedra te dejó ganar por lástima",
+  "Jugar con una roca es más divertido que escuchar tus chistes",
+  "La piedra tiene mejor reacción que tu ex respondiendo mensajes",
+  "Nivel de diversión: más bajo que tus expectativas laborales",
+  "La piedra está en el top 1% de piedras gamers",
+  "Jugaste con una piedra. Tu infancia llora de envidia",
+  "La piedra no se movió. Estrategia nivel dios",
+  "Gaming con rocas: cuando Steam está muy caro",
+  "Tu piedra tiene más logros que tú en Xbox",
+  "La piedra carryeó el juego. Como siempre",
+  "Jugar con piedras: más emocionante que tu Tinder",
+  "La piedra no ragequit. Aprendé de ella",
+  "Diversión nivel: contar piedras. Wait...",
+  "Tu piedra tiene mejor K/D ratio que tú",
+  "Jugar con una roca es más productivo que tu trabajo"
 ]
 
-// Mensajes creativos para bañar
 const mensajesBanar = [
-  "La piedra está mojada. Eso es literalmente todo",
-  "Acabas de desperdiciar agua en una roca. Ecología 0",
-  "La piedra no olía mal... porque es una piedra",
-  "El jabón se pregunta por qué existe en este momento",
-  "Las burbujas rodaron por la piedra en silencio mortal",
-  "La piedra no agradeció el baño. Qué mal educada",
-  "Ahora tienes una piedra mojada. Felicidades",
-  "Usaste shampoo en una roca. SHAMPOO. EN UNA ROCA",
-  "La piedra sigue sucia de existencia",
-  "Bañaste una piedra. Tu diploma universitario llora",
-  "Le cayo jabón en los ojoooos, ahh falsa alarma",
-  "La piedra ahora huele a... piedra mojada. Wow",
-  "¿Usaste acondicionador? Para el brillo mineral",
-  "Tu piedra está más limpia que tu historial de commits",
-  "Baño de piedras: la nueva tendencia en spa",
-  "La piedra disfrutó más este baño que tú tu ducha matutina"
+  "Bañaste una piedra. El agua se pregunta qué hizo mal",
+  "La piedra ahora está mojada. Revolución científica",
+  "Gastaste agua en una roca. Greta Thunberg quiere hablar contigo",
+  "La piedra huele a... piedra mojada. Innovador",
+  "Bañar piedras: la nueva tendencia en bienestar",
+  "Tu piedra está más limpia que tu historial de navegación",
+  "El jabón se ofendió. '¿Para esto me crearon?'",
+  "La piedra disfrutó más el baño que tú tu última cita",
+  "Ahora tienes una piedra limpia. Felicidades, supongo",
+  "Bañar rocas: cuando el aburrimiento gana",
+  "La piedra no se enjabonó bien. Drama total",
+  "Tu piedra está más fresca que tus memes",
+  "Agua + piedra = piedra mojada. Premio Nobel please",
+  "La piedra ahora brilla más que tu futuro",
+  "Baño completado. La piedra sigue siendo piedra",
+  "Gastaste shampoo en algo sin cabello. Lógica: 0",
+  "Tu piedra huele mejor que tu aliento matutino",
+  "Bañar piedras: el nuevo yoga para procrastinadores",
+  "La piedra no cantó en la ducha. Decepcionante",
+  "Hidroterapia para rocas: porque why not"
 ]
 
-// Mensajes creativos para limpiar caca
-const mensajesLimpiarCaca = [
-  "Limpiaste caca que NO EXISTE. Déjalo hundirse",
-  "La caca invisible ha sido derrotada. Eres un héroe",
-  "Removiste materia fecal del plano astral",
-  "La piedra no agradeció que limpiaras su caca imaginaria",
-  "Usaste papel higiénico en el aire. Eficiente",
-  "Nunca hubo caca. O tal vez sí. Quién sabe",
-  "Limpiaste caca invisible mejor que tu cuarto real",
-  "La caca se fue a la dimensión de las cosas inexistentes",
-  "La caca invisible olía a... nada. Obvio",
-  "Gastaste más energía limpiando esto que estudiando",
-  "Ya limpiaste la de firulais en casa?",
-  "Limpiar caca imaginaria: habilidades para el CV",
-  "Tu piedra produce más caca que ideas productivas",
-  "¿La caca invisible cuenta para el reciclaje?",
-  "Esa caca tenía mejor forma que tu código",
-  "Limpiar caca fantasma. Ahora eres un exterminador paranormal"
+const mensajesLimpiar = [
+  "Limpiaste una piedra. Tu madre estaría orgullosa (o no)",
+  "La piedra ahora tiene 0.001% menos polvo. Impactante",
+  "Limpiar piedras: el nuevo coreografía de TikTok",
+  "Tu piedra está más pulida que tus excusas",
+  "El trapo se sintió usado. Para esto me compraron?",
+  "Limpiaste algo que literalmente vive en la tierra. Ironía",
+  "La piedra brilla más que tu personalidad",
+  "Productividad nivel: limpiar objetos inmóviles",
+  "Tu piedra está más limpia que tu habitación",
+  "Limpiar rocas: cuando no hay nada mejor que hacer",
+  "El polvo volverá. Como tus malas decisiones",
+  "La piedra apreció el esfuerzo. Es broma, es una piedra",
+  "Limpiaste algo que se ensucia con el aire. Eficiencia",
+  "Tu piedra tiene mejor higiene que tu mascota",
+  "Limpieza completada. La piedra sigue sin pagar impuestos",
+  "Gastaste productos de limpieza en una roca. Economía 101",
+  "La piedra está más reluciente que tu cerebro en vacaciones",
+  "Limpiar piedras: habilidad para poner en CV",
+  "Tu piedra está más impecable que tu récord criminal",
+  "La limpieza fue un éxito. La piedra sigue siendo inútil"
 ]
 
-// Mensajes cuando no hay caca para limpiar
-const mensajesNoCaca = [
-  "No hay caca. Nunca la hubo. ¿O sí?",
-  "Buscaste caca invisible y no encontraste nada. Lógico",
-  "La ausencia de caca invisible es filosóficamente profunda",
-  "Las cacas están en otra dimensión ahora",
-  "Intentaste limpiar el vacío existencial",
-  "Buscas caca donde no hay... como bugs en tu código",
-  "No hay caca, pero sigue buscando. La esperanza es lo último que se pierde",
-  "Caca no encontrada 404",
-  "Tu piedra es ecológica: cero emisiones",
-  "Limpiar caca que no existe: nivel pro de procrastinación"
-]
-
-// Computed: Calcular felicidad como promedio de las otras barras (ahora incluye diversion)
+// Computed: Calcular felicidad
 const felicidad = computed(() => {
   return Math.round((hambre.value + diversion.value + higiene.value + limpieza.value) / 4)
 })
 
-// Computed: Estado emocional basado en la felicidad
+// Computed: Estado emocional
 const estadoEmocional = computed(() => {
   if (felicidad.value >= 80) {
-    return {
-      mensaje: 'Muy Feliz',
-      color: 'positive',
-      clase: 'muy-feliz'
-    }
+    return { mensaje: 'Muy Feliz', color: 'positive', clase: 'muy-feliz' }
   } else if (felicidad.value >= 60) {
-    return {
-      mensaje: 'Feliz',
-      color: 'positive',
-      clase: 'feliz'
-    }
+    return { mensaje: 'Feliz', color: 'positive', clase: 'feliz' }
   } else if (felicidad.value >= 40) {
-    return {
-      mensaje: 'Normal',
-      color: 'warning',
-      clase: 'normal'
-    }
+    return { mensaje: 'Normal', color: 'warning', clase: 'normal' }
   } else if (felicidad.value >= 20) {
-    return {
-      mensaje: 'Triste',
-      color: 'orange',
-      clase: 'triste'
-    }
+    return { mensaje: 'Triste', color: 'orange', clase: 'triste' }
   } else {
-    return {
-      mensaje: 'Muy Triste',
-      color: 'negative',
-      clase: 'muy-triste'
-    }
+    return { mensaje: 'Muy Triste', color: 'negative', clase: 'muy-triste' }
   }
 })
 
-// Computed: Número total de cacas
-const totalCacas = computed(() => cacasInvisibles.value.length)
+// SISTEMA DE NOTIFICACIONES DEL SISTEMA
+const mostrarNotificacionSistema = (mensaje, tipo = 'info', icono = 'info') => {
+  if (notificacionTimeout) {
+    clearTimeout(notificacionTimeout)
+  }
+  
+  mensajeNotificacion.value = mensaje
+  tipoNotificacion.value = tipo
+  iconoNotificacion.value = icono
+  mostrarNotificacion.value = true
+  
+  notificacionTimeout = setTimeout(() => {
+    mostrarNotificacion.value = false
+  }, 4000)
+}
 
-// Sistema mejorado de mensajes con cola
-const procesarColaMensajes = () => {
-  if (colaMensajes.value.length > 0 && !procesandoMensaje.value) {
-    procesandoMensaje.value = true
-    mensaje.value = colaMensajes.value.shift()
-    mostrarDialog.value = true
+const cerrarNotificacion = () => {
+  mostrarNotificacion.value = false
+  if (notificacionTimeout) {
+    clearTimeout(notificacionTimeout)
+  }
+}
+
+// SISTEMA DE VERIFICACIÓN DE NECESIDADES
+const verificarNecesidades = () => {
+  // No mostrar notificaciones si ya hay una activa
+  if (mostrarNotificacion.value) return
+  
+  const necesidades = []
+  
+  // HAMBRE
+  if (hambre.value <= 80) {
+    let mensajeHambre = ''
+    let tipoHambre = 'info'
+    let iconoHambre = 'restaurant'
     
-    // Limpiar timeout anterior si existe
-    if (mensajeTimeout.value) {
-      clearTimeout(mensajeTimeout.value)
+    if (hambre.value <= 10) {
+      mensajeHambre = notificacionesHambre[10]
+      tipoHambre = 'urgent'
+      iconoHambre = 'warning'
+    } else if (hambre.value <= 20) {
+      mensajeHambre = notificacionesHambre[20]
+      tipoHambre = 'warning'
+      iconoHambre = 'warning'
+    } else if (hambre.value <= 40) {
+      mensajeHambre = notificacionesHambre[40]
+      tipoHambre = 'warning'
+      iconoHambre = 'info'
+    } else if (hambre.value <= 60) {
+      mensajeHambre = notificacionesHambre[60]
+      tipoHambre = 'info'
+      iconoHambre = 'info'
+    } else if (hambre.value <= 80) {
+      mensajeHambre = notificacionesHambre[80]
+      tipoHambre = 'info'
+      iconoHambre = 'info'
     }
     
-    // Configurar nuevo timeout
-    mensajeTimeout.value = setTimeout(() => {
-      mostrarDialog.value = false
-      // Pequeño delay antes del siguiente mensaje
-      setTimeout(() => {
-        procesandoMensaje.value = false
-        procesarColaMensajes()
-      }, 300)
-    }, 2800)
+    necesidades.push({
+      tipo: `hambre-${hambre.value}`,
+      porcentaje: hambre.value,
+      mensaje: mensajeHambre,
+      tipoNotificacion: tipoHambre,
+      icono: iconoHambre
+    })
+  }
+  
+  // DIVERSIÓN
+  if (diversion.value <= 80) {
+    let mensajeDiversion = ''
+    let tipoDiversion = 'info'
+    let iconoDiversion = 'sports_esports'
+    
+    if (diversion.value <= 10) {
+      mensajeDiversion = notificacionesDiversion[10]
+      tipoDiversion = 'urgent'
+      iconoDiversion = 'warning'
+    } else if (diversion.value <= 20) {
+      mensajeDiversion = notificacionesDiversion[20]
+      tipoDiversion = 'warning'
+      iconoDiversion = 'warning'
+    } else if (diversion.value <= 40) {
+      mensajeDiversion = notificacionesDiversion[40]
+      tipoDiversion = 'warning'
+      iconoDiversion = 'info'
+    } else if (diversion.value <= 60) {
+      mensajeDiversion = notificacionesDiversion[60]
+      tipoDiversion = 'info'
+      iconoDiversion = 'info'
+    } else if (diversion.value <= 80) {
+      mensajeDiversion = notificacionesDiversion[80]
+      tipoDiversion = 'info'
+      iconoDiversion = 'info'
+    }
+    
+    necesidades.push({
+      tipo: `diversion-${diversion.value}`,
+      porcentaje: diversion.value,
+      mensaje: mensajeDiversion,
+      tipoNotificacion: tipoDiversion,
+      icono: iconoDiversion
+    })
+  }
+  
+  // HIGIENE
+  if (higiene.value <= 80) {
+    let mensajeHigiene = ''
+    let tipoHigiene = 'info'
+    let iconoHigiene = 'shower'
+    
+    if (higiene.value <= 10) {
+      mensajeHigiene = notificacionesHigiene[10]
+      tipoHigiene = 'urgent'
+      iconoHigiene = 'warning'
+    } else if (higiene.value <= 20) {
+      mensajeHigiene = notificacionesHigiene[20]
+      tipoHigiene = 'warning'
+      iconoHigiene = 'warning'
+    } else if (higiene.value <= 40) {
+      mensajeHigiene = notificacionesHigiene[40]
+      tipoHigiene = 'warning'
+      iconoHigiene = 'info'
+    } else if (higiene.value <= 60) {
+      mensajeHigiene = notificacionesHigiene[60]
+      tipoHigiene = 'info'
+      iconoHigiene = 'info'
+    } else if (higiene.value <= 80) {
+      mensajeHigiene = notificacionesHigiene[80]
+      tipoHigiene = 'info'
+      iconoHigiene = 'info'
+    }
+    
+    necesidades.push({
+      tipo: `higiene-${higiene.value}`,
+      porcentaje: higiene.value,
+      mensaje: mensajeHigiene,
+      tipoNotificacion: tipoHigiene,
+      icono: iconoHigiene
+    })
+  }
+  
+  // LIMPIEZA
+  if (limpieza.value <= 80) {
+    let mensajeLimpieza = ''
+    let tipoLimpieza = 'info'
+    let iconoLimpieza = 'cleaning_services'
+    
+    if (limpieza.value <= 10) {
+      mensajeLimpieza = notificacionesLimpieza[10]
+      tipoLimpieza = 'urgent'
+      iconoLimpieza = 'warning'
+    } else if (limpieza.value <= 20) {
+      mensajeLimpieza = notificacionesLimpieza[20]
+      tipoLimpieza = 'warning'
+      iconoLimpieza = 'warning'
+    } else if (limpieza.value <= 40) {
+      mensajeLimpieza = notificacionesLimpieza[40]
+      tipoLimpieza = 'warning'
+      iconoLimpieza = 'info'
+    } else if (limpieza.value <= 60) {
+      mensajeLimpieza = notificacionesLimpieza[60]
+      tipoLimpieza = 'info'
+      iconoLimpieza = 'info'
+    } else if (limpieza.value <= 80) {
+      mensajeLimpieza = notificacionesLimpieza[80]
+      tipoLimpieza = 'info'
+      iconoLimpieza = 'info'
+    }
+    
+    necesidades.push({
+      tipo: `limpieza-${limpieza.value}`,
+      porcentaje: limpieza.value,
+      mensaje: mensajeLimpieza,
+      tipoNotificacion: tipoLimpieza,
+      icono: iconoLimpieza
+    })
+  }
+  
+  if (necesidades.length > 0) {
+    const necesidadSeleccionada = necesidades.reduce((prev, current) => 
+      (current.porcentaje < prev.porcentaje) ? current : prev
+    )
+    
+    mostrarNotificacionSistema(
+      necesidadSeleccionada.mensaje,
+      necesidadSeleccionada.tipoNotificacion,
+      necesidadSeleccionada.icono
+    )
   }
 }
 
-// Función para agregar mensajes a la cola
-const agregarMensajeACola = (texto) => {
-  colaMensajes.value.push(texto)
-  if (!procesandoMensaje.value) {
-    procesarColaMensajes()
-  }
+// SISTEMA DE MENSAJES DE LA PIEDRA
+const obtenerMensajeAleatorio = (arrayMensajes) => {
+  let mensajeElegido;
+  let intentos = 0;
+  
+  do {
+    mensajeElegido = arrayMensajes[Math.floor(Math.random() * arrayMensajes.length)];
+    intentos++;
+    
+    if (intentos >= 5) {
+      break;
+    }
+  } while (mensajeElegido === ultimoMensajeMostrado.value);
+  
+  ultimoMensajeMostrado.value = mensajeElegido;
+  return mensajeElegido;
 }
 
-// Watch: Alertar cuando la felicidad está muy baja
+const mostrarMensajePiedra = (texto) => {
+  mensaje.value = texto
+  mostrarDialog.value = true
+  
+  if (mensajeTimeout.value) {
+    clearTimeout(mensajeTimeout.value)
+  }
+  
+  mensajeTimeout.value = setTimeout(() => {
+    mostrarDialog.value = false
+  }, 3000)
+}
+
+// Watch: Mensaje cuando la felicidad está muy baja
 watch(felicidad, (nuevaFelicidad, felicidadAnterior) => {
   if (nuevaFelicidad < 20 && felicidadAnterior >= 20) {
-    agregarMensajeACola("Tu piedra está deprimida. Una PIEDRA. Piénsalo")
+    mostrarMensajePiedra("Tu piedra está deprimida. Una PIEDRA. Piénsalo")
   }
 })
 
-// Watch: Generar caca cuando la limpieza pasa por 95%, 90%, 85%, etc
-watch(limpieza, (nuevoValor, valorAnterior) => {
-  if (nuevoValor < valorAnterior) {
-    for (let umbral = 95; umbral >= 0; umbral -= 5) {
-      if (valorAnterior > umbral && nuevoValor <= umbral) {
-        const nuevaCaca = {
-          id: Date.now() + Math.random(),
-          x: Math.random() * 70 + 15
-        }
-        cacasInvisibles.value.push(nuevaCaca)
-      }
-    }
-  }
-})
+// Watch para verificar necesidades cuando cambian los estados
+watch([hambre, diversion, higiene, limpieza], () => {
+  verificarNecesidades()
+}, { deep: true })
 
 // Sistema de degradación automática
 onMounted(() => {
   intervalo = setInterval(() => {
-    // Las barras bajan más despacio (1% cada 1.2 segundos)
     hambre.value = Math.max(0, hambre.value - 1)
-    diversion.value = Math.max(0, diversion.value - 1) // NUEVO: La diversión también disminuye
+    diversion.value = Math.max(0, diversion.value - 1)
     higiene.value = Math.max(0, higiene.value - 1)
     limpieza.value = Math.max(0, limpieza.value - 1)
+    
+    if (Math.random() < 0.3) {
+      verificarNecesidades()
+    }
   }, 1200)
 })
 
 onUnmounted(() => {
   if (intervalo) clearInterval(intervalo)
   if (mensajeTimeout.value) clearTimeout(mensajeTimeout.value)
+  if (notificacionTimeout) clearTimeout(notificacionTimeout)
 })
 
 const getColorBarra = (valor) => {
@@ -364,45 +562,26 @@ const getColorBarra = (valor) => {
   return 'negative'
 }
 
-const obtenerMensajeAleatorio = (arrayMensajes) => {
-  return arrayMensajes[Math.floor(Math.random() * arrayMensajes.length)]
-}
-
 const alimentar = () => {
   hambre.value = Math.min(100, hambre.value + 5)
-  agregarMensajeACola(obtenerMensajeAleatorio(mensajesAlimentar))
+  mostrarMensajePiedra(obtenerMensajeAleatorio(mensajesAlimentar))
 }
 
-// NUEVO: Función para jugar
 const jugar = () => {
   diversion.value = Math.min(100, diversion.value + 5)
-  agregarMensajeACola(obtenerMensajeAleatorio(mensajesJugar))
+  mostrarMensajePiedra(obtenerMensajeAleatorio(mensajesJugar))
 }
 
+// CORRECCIÓN: Bañar solo afecta la higiene, NO la limpieza
 const banar = () => {
   higiene.value = Math.min(100, higiene.value + 5)
-  agregarMensajeACola(obtenerMensajeAleatorio(mensajesBanar))
+  // NOTA: Eliminé la línea que aumentaba limpieza.value
+  mostrarMensajePiedra(obtenerMensajeAleatorio(mensajesBanar))
 }
 
-const limpiarCaca = () => {
-  if (cacasInvisibles.value.length > 0) {
-    cacasInvisibles.value.shift()
-    
-    const cacasRestantes = cacasInvisibles.value.length
-    const aumentoLimpieza = 5 + (cacasRestantes * 2)
-    
-    limpieza.value = Math.min(100, limpieza.value + aumentoLimpieza)
-    
-    let mensajeBase = obtenerMensajeAleatorio(mensajesLimpiarCaca)
-    
-    if (cacasRestantes > 0) {
-      agregarMensajeACola(`${mensajeBase} - Quedan ${cacasRestantes}`)
-    } else {
-      agregarMensajeACola(`${mensajeBase} - Todo limpio (o eso crees)`)
-    }
-  } else {
-    agregarMensajeACola(obtenerMensajeAleatorio(mensajesNoCaca))
-  }
+const limpiar = () => {
+  limpieza.value = Math.min(100, limpieza.value + 10)
+  mostrarMensajePiedra(obtenerMensajeAleatorio(mensajesLimpiar))
 }
 </script>
 
@@ -504,8 +683,8 @@ const limpiarCaca = () => {
   width: 100%;
   flex: 1;
   min-height: 0;
-  margin-bottom: -90px;
   position: relative;
+  padding-bottom: 20px;
 }
 
 .imagen-grande {
@@ -514,51 +693,175 @@ const limpiarCaca = () => {
   width: auto;
   height: auto;
   object-fit: contain;
+  transition: none;
 }
 
-.caca-invisible {
+/* BURBUJA DE LA PIEDRA - CENTRO DE LA PANTALLA */
+.burbuja-dialogo {
   position: absolute;
-  bottom: 20px;
-  font-size: 30px;
-  opacity: 0.6;
-  z-index: 1;
-}
-
-/* Popup de mensajes */
-.popup-mensaje {
-  position: fixed;
-  top: 30px;
+  top: -120px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 9999;
-}
-
-.popup-contenido {
   background: white;
-  padding: 16px 24px;
-  border-radius: 8px;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
-  min-width: 300px;
-  max-width: 600px;
+  padding: 12px 20px;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  max-width: 350px;
+  z-index: 20;
+  border: 3px solid #333;
+  pointer-events: none;
+}
+
+.texto-burbuja {
+  margin: 0;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
   text-align: center;
+  line-height: 1.4;
 }
 
-.text-black {
-  color: #000000 !important;
+.pico-burbuja {
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-top: 15px solid #333;
 }
 
-/* Animación del popup */
-.popup-enter-active, .popup-leave-active {
-  transition: all 0.3s ease;
+.pico-burbuja::before {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: -12px;
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid white;
 }
 
-.popup-enter-from {
+/* NOTIFICACIONES DEL SISTEMA - ESQUINA SUPERIOR DERECHA */
+.notificacion-sistema {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  z-index: 100;
+  min-width: 280px;
+  max-width: 400px;
+}
+
+.notificacion-contenido {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  animation: slideInRight 0.4s ease-out;
+}
+
+.notificacion-info {
+  background: linear-gradient(135deg, #2196F3, #21CBF3);
+  color: white;
+}
+
+.notificacion-warning {
+  background: linear-gradient(135deg, #FF9800, #FFC107);
+  color: white;
+}
+
+.notificacion-urgent {
+  background: linear-gradient(135deg, #f44336, #E91E63);
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+/* TRANSICIONES */
+.burbuja-enter-active,
+.burbuja-leave-active {
+  transition: all 0.4s ease;
+}
+
+.burbuja-enter-from {
   opacity: 0;
-  transform: translateX(-50%) translateY(-20px);
+  transform: translateX(-50%) translateY(20px) scale(0.8);
 }
 
-.popup-leave-to {
+.burbuja-enter-to {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.burbuja-leave-from {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.burbuja-leave-to {
   opacity: 0;
-  transform: translateX(-50%) translateY(-20px);
+  transform: translateX(-50%) translateY(-20px) scale(0.8);
+}
+
+.notificacion-enter-active,
+.notificacion-leave-active {
+  transition: all 0.5s ease;
+}
+
+.notificacion-enter-from {
+  opacity: 0;
+  transform: translateX(100px);
+}
+
+.notificacion-enter-to {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.notificacion-leave-from {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.notificacion-leave-to {
+  opacity: 0;
+  transform: translateX(100px);
+}
+
+/* ANIMACIONES */
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Asegurar que las secciones tengan fondo semi-transparente para mejor legibilidad */
+.seccion-izquierda, .seccion-derecha {
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+}
+
+.seccion-central {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 </style>
