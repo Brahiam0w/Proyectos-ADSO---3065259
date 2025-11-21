@@ -1,5 +1,62 @@
 <template>
-  <div class="pagina-completa secciones-container">
+  <!-- Pantalla de presentación -->
+  <div v-if="mostrarPresentacion" class="pantalla-presentacion">
+    <div class="contenido-presentacion">
+      <div class="tarjeta-presentacion">
+        <h1 class="titulo-presentacion">¡Bienvenido a Piedra Virtual!</h1>
+        
+        <div class="imagen-presentacion">
+          <img src="/img/piedra.png" alt="piedra" class="piedra-presentacion" />
+        </div>
+        
+        <div class="formulario-nombre">
+          <q-input
+            v-model="nombrePiedra"
+            label="¿Cómo quieres llamar a tu piedra?"
+            class="input-nombre"
+            filled
+            color="primary"
+            maxlength="20"
+            counter
+            :rules="[val => !!val || '¡Tu piedra necesita un nombre!']"
+          />
+          
+          <q-btn
+            @click="comenzarJuego"
+            color="primary"
+            size="lg"
+            class="boton-comenzar"
+            icon-right="play_arrow"
+            label="Comenzar"
+            :disable="!nombrePiedra"
+          />
+        </div>
+        
+        <div class="consejos">
+          <p class="texto-consejo">💡 <strong>Consejo:</strong> Cuida a tu piedra como si fuera real... pero recuerda que es una piedra.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Juego principal -->
+  <div v-else class="pagina-completa secciones-container">
+    <!-- Cabecera con nombre de la piedra -->
+    <div class="cabecera-juego">
+      <div class="nombre-piedra-container">
+        <q-icon name="spa" size="sm" class="q-mr-sm" />
+        <span class="nombre-piedra">{{ nombrePiedra }}</span>
+        <q-btn 
+          flat 
+          round 
+          icon="edit" 
+          size="sm" 
+          class="q-ml-sm boton-editar"
+          @click="editarNombre"
+        />
+      </div>
+    </div>
+
     <!-- Sección izquierda - Entretenimiento -->
     <div class="seccion seccion-izquierda column justify-center items-center q-pa-md">
       <h1 class="text-h5 text-center text-bold q-mb-lg text-black">zona de entretenimiento</h1>
@@ -130,12 +187,45 @@
         </div>
       </div>
     </transition>
+
+    <!-- Modal para editar nombre -->
+    <q-dialog v-model="mostrarModalEditar">
+      <q-card class="modal-editar-nombre">
+        <q-card-section>
+          <div class="text-h6">Editar nombre de tu piedra</div>
+        </q-card-section>
+
+        <q-card-section>
+          <q-input
+            v-model="nuevoNombrePiedra"
+            label="Nuevo nombre"
+            filled
+            color="primary"
+            maxlength="20"
+            counter
+            :rules="[val => !!val || '¡Tu piedra necesita un nombre!']"
+          />
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancelar" color="primary" v-close-popup />
+          <q-btn label="Guardar" color="primary" @click="guardarNuevoNombre" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 
+// VARIABLES DE PRESENTACIÓN
+const mostrarPresentacion = ref(true)
+const nombrePiedra = ref("")
+const nuevoNombrePiedra = ref("")
+const mostrarModalEditar = ref(false)
+
+// VARIABLES DEL JUEGO
 const hambre = ref(100)
 const diversion = ref(100)
 const higiene = ref(100)
@@ -143,7 +233,7 @@ const limpieza = ref(100)
 const mensaje = ref("")
 const mostrarDialog = ref(false)
 
-// VARIABLES PARA NOTIFICACIONES DEL SISTEMA (en lugar de alertas)
+// VARIABLES PARA NOTIFICACIONES DEL SISTEMA
 const mostrarNotificacion = ref(false)
 const mensajeNotificacion = ref("")
 const tipoNotificacion = ref("info")
@@ -158,35 +248,35 @@ let intervalo = null
 
 // MENSAJES DE NOTIFICACIÓN DEL SISTEMA
 const notificacionesHambre = {
-  80: "Tengo un poco de hambre...",
-  60: "Mi estómago de piedra está gruñendo",
-  40: "¡Tengo hambre! Aunque no sé para qué",
-  20: "¿En serio no me vas a alimentar?",
-  10: "Hambre nivel: caníbal..."
+  80: "⚡ Tengo un poco de hambre...",
+  60: "⚡ Mi estómago de piedra está gruñendo",
+  40: "🔴 ¡Tengo hambre! Aunque no sé para qué",
+  20: "🔴 ¿En serio no me vas a alimentar?",
+  10: "🚨 Hambre nivel: caníbal..."
 }
 
 const notificacionesDiversion = {
-  80: "Estoy aburrida... ¿jugamos?",
-  60: "La diversión está por los suelos",
-  40: "Más aburrida que una piedra en un museo",
-  20: "¡Me aburro más que una piedra en un jardín!",
-  10: "Nivel de aburrimiento: contar granos de arena"
+  80: "⚡ Estoy aburrida... ¿jugamos?",
+  60: "⚡ La diversión está por los suelos",
+  40: "🔴 Más aburrida que una piedra en un museo",
+  20: "🔴 ¡Me aburro más que una piedra en un jardín!",
+  10: "🚨 Nivel de aburrimiento: contar granos de arena"
 }
 
 const notificacionesHigiene = {
-  80: "Empiezo a sentirme sucia...",
-  60: "Huelo a musgo y tierra...",
-  40: "¡Estoy más sucia que una piedra en un charco!",
-  20: "Mi higiene está por debajo de mis expectativas",
-  10: "¡Tengo más bichos que un jardín!"
+  80: "⚡ Empiezo a sentirme sucia...",
+  60: "⚡ Huelo a musgo y tierra...",
+  40: "🔴 ¡Estoy más sucia que una piedra en un charco!",
+  20: "🔴 Mi higiene está por debajo de mis expectativas",
+  10: "🚨 ¡Tengo más bichos que un jardín!"
 }
 
 const notificacionesLimpieza = {
-  80: "Todo está bastante limpio pero puede mejorar",
-  60: "Un poco de limpieza no vendría mal",
-  40: "Empiezo a notar algo de suciedad",
-  20: "La suciedad se acumula...",
-  10: "¡Estoy muy sucia! ¿Me limpiarás?"
+  80: "⚡ Todo está bastante limpio",
+  60: "⚡ Un poco de limpieza no vendría mal",
+  40: "🔴 Empiezo a notar algo de suciedad",
+  20: "🔴 La suciedad se acumula...",
+  10: "🚨 ¡Estoy muy sucia! ¿Me limpiarás?"
 }
 
 // MENSAJES MEJORADOS CON MÁS VARIEDAD Y HUMOR
@@ -281,6 +371,30 @@ const mensajesLimpiar = [
   "Tu piedra está más impecable que tu récord criminal",
   "La limpieza fue un éxito. La piedra sigue siendo inútil"
 ]
+
+// FUNCIONES DE PRESENTACIÓN
+const comenzarJuego = () => {
+  if (nombrePiedra.value.trim()) {
+    mostrarPresentacion.value = false
+    // Mostrar mensaje de bienvenida personalizado
+    setTimeout(() => {
+      mostrarMensajePiedra(`¡Hola! Soy ${nombrePiedra.value}, tu nueva piedra virtual. ¡Cuídame bien!`)
+    }, 1000)
+  }
+}
+
+const editarNombre = () => {
+  nuevoNombrePiedra.value = nombrePiedra.value
+  mostrarModalEditar.value = true
+}
+
+const guardarNuevoNombre = () => {
+  if (nuevoNombrePiedra.value.trim()) {
+    nombrePiedra.value = nuevoNombrePiedra.value
+    mostrarModalEditar.value = false
+    mostrarMensajePiedra(`¡Ahora me llamo ${nombrePiedra.value}! Suena bien, ¿no?`)
+  }
+}
 
 // Computed: Calcular felicidad
 const felicidad = computed(() => {
@@ -538,16 +652,35 @@ watch([hambre, diversion, higiene, limpieza], () => {
 
 // Sistema de degradación automática
 onMounted(() => {
-  intervalo = setInterval(() => {
-    hambre.value = Math.max(0, hambre.value - 1)
-    diversion.value = Math.max(0, diversion.value - 1)
-    higiene.value = Math.max(0, higiene.value - 1)
-    limpieza.value = Math.max(0, limpieza.value - 1)
-    
-    if (Math.random() < 0.3) {
-      verificarNecesidades()
-    }
-  }, 1200)
+  // Solo iniciar el intervalo cuando el juego esté activo
+  if (!mostrarPresentacion.value) {
+    intervalo = setInterval(() => {
+      hambre.value = Math.max(0, hambre.value - 1)
+      diversion.value = Math.max(0, diversion.value - 1)
+      higiene.value = Math.max(0, higiene.value - 1)
+      limpieza.value = Math.max(0, limpieza.value - 1)
+      
+      if (Math.random() < 0.3) {
+        verificarNecesidades()
+      }
+    }, 1200)
+  }
+})
+
+// Iniciar el intervalo cuando comience el juego
+watch(mostrarPresentacion, (nuevoValor) => {
+  if (!nuevoValor && !intervalo) {
+    intervalo = setInterval(() => {
+      hambre.value = Math.max(0, hambre.value - 1)
+      diversion.value = Math.max(0, diversion.value - 1)
+      higiene.value = Math.max(0, higiene.value - 1)
+      limpieza.value = Math.max(0, limpieza.value - 1)
+      
+      if (Math.random() < 0.3) {
+        verificarNecesidades()
+      }
+    }, 1200)
+  }
 })
 
 onUnmounted(() => {
@@ -572,10 +705,8 @@ const jugar = () => {
   mostrarMensajePiedra(obtenerMensajeAleatorio(mensajesJugar))
 }
 
-// CORRECCIÓN: Bañar solo afecta la higiene, NO la limpieza
 const banar = () => {
   higiene.value = Math.min(100, higiene.value + 5)
-  // NOTA: Eliminé la línea que aumentaba limpieza.value
   mostrarMensajePiedra(obtenerMensajeAleatorio(mensajesBanar))
 }
 
@@ -586,6 +717,119 @@ const limpiar = () => {
 </script>
 
 <style scoped>
+/* ESTILOS PARA LA PANTALLA DE PRESENTACIÓN */
+.pantalla-presentacion {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.contenido-presentacion {
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+}
+
+.tarjeta-presentacion {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 40px 30px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.titulo-presentacion {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.imagen-presentacion {
+  margin: 30px 0;
+}
+
+.piedra-presentacion {
+  width: 150px;
+  height: 150px;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+  animation: flotar 3s ease-in-out infinite;
+}
+
+@keyframes flotar {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.formulario-nombre {
+  margin: 30px 0;
+}
+
+.input-nombre {
+  margin-bottom: 20px;
+}
+
+.boton-comenzar {
+  width: 100%;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.consejos {
+  margin-top: 30px;
+  padding: 15px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 10px;
+}
+
+.texto-consejo {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* ESTILOS PARA EL JUEGO PRINCIPAL */
+.cabecera-juego {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 20px;
+  border-radius: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(102, 126, 234, 0.3);
+}
+
+.nombre-piedra-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nombre-piedra {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.boton-editar {
+  color: #667eea;
+}
+
 .pagina-completa {
   position: fixed;
   top: 0;
@@ -600,7 +844,7 @@ const limpiar = () => {
   display: flex;
   height: 100vh;
   gap: 20px;
-  padding: 20px;
+  padding: 60px 20px 20px 20px;
   box-sizing: border-box;
 }
 
@@ -780,6 +1024,11 @@ const limpiar = () => {
   background: linear-gradient(135deg, #f44336, #E91E63);
   color: white;
   animation: pulse 2s infinite;
+}
+
+/* MODAL EDITAR NOMBRE */
+.modal-editar-nombre {
+  min-width: 400px;
 }
 
 /* TRANSICIONES */
