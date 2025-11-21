@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import Componetizar from './components/Componetizar.vue'
+import Componetizar from './components/componetizar.vue'
 </script>
 
 <style>
