@@ -3,7 +3,7 @@
   <div v-if="mostrarPresentacion" class="pantalla-presentacion">
     <div class="contenido-presentacion">
       <div class="tarjeta-presentacion">
-        <h1 class="titulo-presentacion">¡Bienvenido a Piedra Virtual!</h1>
+        <h1 class="titulo-presentacion">¡Bienvenido al Tamagotchi de una piedra!</h1>
         
         <div class="imagen-presentacion">
           <img src="/img/piedra.png" alt="piedra" class="piedra-presentacion" />
