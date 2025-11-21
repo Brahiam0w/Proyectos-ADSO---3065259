@@ -747,7 +747,7 @@ const limpiar = () => {
 }
 
 .titulo-presentacion {
-  font-size: 2.5rem;
+  font-size: 25px;
   font-weight: bold;
   color: #333;
   margin-bottom: 30px;
