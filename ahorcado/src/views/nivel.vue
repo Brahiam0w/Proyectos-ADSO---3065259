@@ -1,77 +1,132 @@
 <template>
-  <div class="contenedor">
-    <div class="titulo">
-      <h2>📌 Categoría: {{ game.categoryName.value }}</h2>
-      <h3>Elige la dificultad</h3>
+    <div class="contenedor">
+        <div class="titulo">
+            <h2>¡Selecciona una Dificultad!</h2>
+            <p>Con cada nivel es un nuevo desafio. !Escoge con sabiduría¡</p>
+        </div>
+        <div class="contenedor-2">
+            <router-link to="/juego" class="no-decoration" @click="seleccionarNivel('facil')"> 
+                <div class="dificultad bg-green-11">
+                    <h2>Fácil</h2>
+                    <p>Palabras cortas y comúnes para empezar.</p>
+                </div>
+            </router-link>
+            <router-link to="/juego" class="no-decoration" @click="seleccionarNivel('medio')">
+                <div class="dificultad bg-amber-11">
+                    <h2>Medio</h2>
+                    <p>Un reto equilibrado con palabras variadas.</p>
+                </div>
+            </router-link>
+            <router-link to="/juego" class="no-decoration" @click="seleccionarNivel('dificil')">
+                <div class="dificultad bg-red-11">
+                    <h2>Difícil</h2>
+                    <p>Palabras complejas solo para conocedores.</p>
+                </div>
+            </router-link>
+        </div>
     </div>
-
-    <div class="nivel-container">
-      <q-card
-        v-for="nivel in niveles"
-        :key="nivel.id"
-        class="dificultad-card"
-        :style="{ backgroundColor: nivel.color }"
-        @click="seleccionarNivel(nivel.id)"
-        clickable
-        v-ripple
-      >
-        <q-icon :name="nivel.icon" size="50px" />
-        <h4>{{ nivel.nombre }}</h4>
-        <p>{{ nivel.descripcion }}</p>
-      </q-card>
-    </div>
-  </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useGame } from '../composables/useGame'
+const palabras = {
+  animales: {
+    facil: ['GATO', 'PERRO', 'PATO', 'OSO', 'LEON'],
+    medio: ['ELEFANTE', 'JIRAFA', 'TIGRE', 'CABALLO'],
+    dificil: ['RINOCERONTE', 'ORNITORRINCO', 'MURCIELAGO']
+  },
+  cultura: {
+    facil: ['ARTE', 'LIBRO', 'DANZA', 'CINE'],
+    medio: ['PINTURA', 'ESCULTURA', 'TEATRO'],
+    dificil: ['RENACIMIENTO', 'ARQUEOLOGIA']
+  },
+  paises: {
+    facil: ['PERU', 'CHILE', 'CUBA', 'IRAN'],
+    medio: ['COLOMBIA', 'ARGENTINA', 'ALEMANIA'],
+    dificil: ['UZBEKISTAN', 'MADAGASCAR']
+  },
+  ciencia: {
+    facil: ['ATOMO', 'CELULA', 'AGUA'],
+    medio: ['ELECTRON', 'MOLECULA', 'GRAVEDAD'],
+    dificil: ['TERMODINAMICA', 'BIOQUIMICA']
+  },
+  peliculas: {
+    facil: ['TITANIC', 'AVATAR', 'ROCKY'],
+    medio: ['GLADIADOR', 'INCEPTION', 'MATRIX'],
+    dificil: ['RESPLANDOR', 'CASABLANCA']
+  },
+  musica: {
+    facil: ['ROCK', 'JAZZ', 'SALSA'],
+    medio: ['GUITARRA', 'BATERIA', 'MELODIA'],
+    dificil: ['CONTRAPUNTO', 'ORQUESTACION']
+  }
+}
 
-const router = useRouter()
-const game = useGame()
-
-const niveles = ref([
-  { id: 'facil', nombre: 'Fácil', icon: 'sentiment_satisfied', color: '#4CAF50', descripcion: '6 intentos + palabras cortas' },
-  { id: 'medio', nombre: 'Medio', icon: 'sentiment_neutral', color: '#FF9800', descripcion: '5 intentos + palabras medias' },
-  { id: 'dificil', nombre: 'Difícil', icon: 'sentiment_very_dissatisfied', color: '#F44336', descripcion: '4 intentos + palabras largas' }
-])
-
-function seleccionarNivel(dificultad) {
-  game.setDifficulty(dificultad)
-  if (dificultad === 'dificil') game.maxAttempts.value = 4
-  else if (dificultad === 'medio') game.maxAttempts.value = 5
-  else game.maxAttempts.value = 6
-
-  game.startNewGame()
-  router.push('/juego')
+function seleccionarNivel(nivel) {
+  const categoria = localStorage.getItem('categoria')
+  
+  if (!categoria) {
+    alert('Primero selecciona una categoría')
+    return
+  }
+  
+  // Guardar nivel
+  localStorage.setItem('dificultad', nivel)
+  
+  // Seleccionar palabra aleatoria
+  const palabrasCategoria = palabras[categoria][nivel]
+  const palabraAleatoria = palabrasCategoria[Math.floor(Math.random() * palabrasCategoria.length)]
+  
+  // Guardar palabra y resetear juego
+  localStorage.setItem('palabraActual', palabraAleatoria)
+  localStorage.setItem('letrasAdivinadas', JSON.stringify([]))
+  localStorage.setItem('intentosIncorrectos', '0')
+  localStorage.setItem('estadoJuego', 'jugando')
 }
 </script>
 
 <style scoped>
 .contenedor {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: linear-gradient(120deg, #ff9a9e 0%, #fad0c4 100%);
-  min-height: 100vh;
-  padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    gap: 50px;
 }
-.nivel-container {
-  display: flex;
-  gap: 20px;
+
+.contenedor-2 {
+    display: flex;
+    gap: 20px;
 }
-.dificultad-card {
-  width: 200px;
-  padding: 20px;
-  border-radius: 15px;
-  text-align: center;
-  color: white;
-  cursor: pointer;
-  box-shadow: 0px 5px 15px rgba(0,0,0,0.3);
-  transition: 0.3s;
+
+.dificultad {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    padding: 10px;
+    width: 400px;
+    font-size: 17px;
+    transition: all 0.2s ease-in-out;
 }
-.dificultad-card:hover {
-  transform: scale(1.05);
+
+.dificultad:hover{
+    transform:  scale(1.05);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.no-decoration {
+    text-decoration: none;
+    color: inherit;
+}
+
+.titulo{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
 }
 </style>
