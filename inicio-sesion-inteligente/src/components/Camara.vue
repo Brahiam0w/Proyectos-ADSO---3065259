@@ -1,114 +1,212 @@
 <template>
-  <div>
-    <video ref="video" autoplay playsinline width="350"></video>
+  <div class="camera-container">
+    <h2>🔐 Reconocimiento Facial con Parpadeo</h2>
 
-    <div style="margin-top:10px;">
-      <input v-model="nombre" placeholder="Nombre para registrar" />
-
-      <button @click="registrar">Registrar rostro</button>
-      <button @click="verificar">Verificar rostro</button>
+    <div class="video-wrapper">
+      <video ref="video" autoplay playsinline></video>
+      <canvas ref="canvas"></canvas>
     </div>
 
-    <p>{{ mensaje }}</p>
+    <div class="controls">
+      <button @click="registerFace">Registrar Rostro</button>
+      <button @click="confirmFace">Confirmar Rostro</button>
+      <button @click="toggleDetection">
+        {{ detecting ? 'Detener Detección' : 'Iniciar Detección' }}
+      </button>
+    </div>
+
+    <h3>📸 Galería de Rostros Registrados</h3>
+    <div class="gallery">
+      <div v-for="(face, index) in faceGallery" :key="index" class="gallery-item">
+        <img :src="face.image" />
+      </div>
+    </div>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
-import { faceapi, loadModels } from '../faceApi'
+<script>
+import * as faceapi from "face-api.js";
 
-const video = ref(null)
-const nombre = ref('')
-const mensaje = ref('')
+export default {
+  name: "CameraFace",
 
-async function startCamera() {
-  const stream = await navigator.mediaDevices.getUserMedia({ video: true })
-  video.value.srcObject = stream
-}
+  data() {
+    return {
+      detecting: false,
+      faceDescriptor: null,
+      faceGallery: []
+    };
+  },
 
-async function capturarDescriptor() {
-  const det = await faceapi
-    .detectSingleFace(video.value, new faceapi.TinyFaceDetectorOptions())
-    .withFaceLandmarks()
-    .withFaceDescriptor()
+  async mounted() {
+    await this.loadModels();
+    await this.startCamera();
+  },
 
-  if (!det) throw new Error("No se detectó rostro")
+  methods: {
+    async loadModels() {
+      const MODEL_URL = "/models";
+      await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+      await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+      await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+    },
 
-  return det.descriptor
-}
+    async startCamera() {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      this.$refs.video.srcObject = stream;
+    },
 
-function guardarRostro(nombre, descriptor) {
-  const arr = Array.from(descriptor)
+    toggleDetection() {
+      this.detecting = !this.detecting;
+      if (this.detecting) this.detectLoop();
+    },
 
-  const db = JSON.parse(localStorage.getItem('facesDB') || '{}')
-  db[nombre] = arr
-  localStorage.setItem('facesDB', JSON.stringify(db))
-}
+    async detectLoop() {
+      if (!this.detecting) return;
 
-function cargarRostros() {
-  const db = JSON.parse(localStorage.getItem('facesDB') || '{}')
-  return Object.entries(db).map(([name, arr]) => ({
-    name,
-    descriptor: new Float32Array(arr)
-  }))
-}
+      const video = this.$refs.video;
 
-function distancia(a, b) {
-  let s = 0
-  for (let i = 0; i < a.length; i++) {
-    const d = a[i] - b[i]
-    s += d * d
-  }
-  return Math.sqrt(s)
-}
+      const detection = await faceapi
+        .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+        .withFaceLandmarks();
 
-async function registrar() {
-  if (!nombre.value) {
-    mensaje.value = "Pon un nombre"
-    return
-  }
+      if (detection) {
+        this.drawFace(detection);
+      }
 
-  try {
-    const descriptor = await capturarDescriptor()
-    guardarRostro(nombre.value, descriptor)
-    mensaje.value = "Rostro registrado correctamente"
-  } catch (err) {
-    mensaje.value = err.message
-  }
-}
+      requestAnimationFrame(this.detectLoop);
+    },
 
-async function verificar() {
-  try {
-    const actual = await capturarDescriptor()
-    const rostros = cargarRostros()
+    drawFace(det) {
+      const canvas = this.$refs.canvas;
+      const video = this.$refs.video;
 
-    if (rostros.length === 0) {
-      mensaje.value = "No hay rostros guardados"
-      return
-    }
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
 
-    let mejor = null
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    for (const r of rostros) {
-      const d = distancia(actual, r.descriptor)
-      if (!mejor || d < mejor.dist) {
-        mejor = { name: r.name, dist: d }
+      faceapi.draw.drawFaceLandmarks(canvas, det);
+    },
+
+    async registerFace() {
+      const video = this.$refs.video;
+
+      const detection = await faceapi
+        .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+        .withFaceLandmarks()
+        .withFaceDescriptor();
+
+      if (!detection || !detection.descriptor) {
+        alert("No se detectó ningún rostro válido.");
+        return;
+      }
+
+      this.faceDescriptor = detection.descriptor;
+
+      // Guardar imagen en galería
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext("2d").drawImage(video, 0, 0);
+
+      this.faceGallery.push({
+        image: canvas.toDataURL("image/png"),
+        descriptor: detection.descriptor
+      });
+
+      alert("Rostro registrado correctamente.");
+    },
+
+    async confirmFace() {
+      const video = this.$refs.video;
+
+      const detection = await faceapi
+        .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+        .withFaceLandmarks()
+        .withFaceDescriptor();
+
+      if (!detection || !detection.descriptor) {
+        alert("No se detectó un rostro válido.");
+        return;
+      }
+
+      if (!this.faceGallery.length) {
+        alert("No hay rostros registrados.");
+        return;
+      }
+
+      let bestDistance = 999;
+
+      for (const item of this.faceGallery) {
+        if (!item.descriptor || item.descriptor.length !== detection.descriptor.length) {
+          continue;
+        }
+
+        const dist = faceapi.euclideanDistance(item.descriptor, detection.descriptor);
+        bestDistance = Math.min(bestDistance, dist);
+      }
+
+      if (bestDistance < 0.45) {
+        alert("Identidad confirmada.");
+      } else {
+        alert("Acceso denegado. Rostro no coincide.");
       }
     }
-
-    if (mejor.dist < 0.55) {
-      mensaje.value = "Bienvenido " + mejor.name
-    } else {
-      mensaje.value = "No coincide con ningún rostro"
-    }
-
-  } catch (err) {
-    mensaje.value = err.message
   }
+};
+</script>
+
+<style scoped>
+.camera-container {
+  max-width: 700px;
+  margin: auto;
+  text-align: center;
 }
 
-onMounted(async () => {
-  await loadModels()
-  await startCamera()
-})
-</script>
+.video-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+video {
+  width: 100%;
+  border-radius: 14px;
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.controls {
+  margin-top: 20px;
+}
+
+.controls button {
+  padding: 10px 18px;
+  margin: 6px;
+  font-size: 15px;
+  background: #333;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.gallery {
+  margin-top: 15px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.gallery-item img {
+  width: 90px;
+  height: 90px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+</style>

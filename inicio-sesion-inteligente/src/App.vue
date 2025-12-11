@@ -1,5 +1,6 @@
 <template>
   <Camara />
+
 </template>
 
 <script setup>
