@@ -19,6 +19,17 @@
 
         <div class="contenedor-tabla">
             <div class="acciones">
+                <!-- Filtro por dificultad -->
+                <q-select
+                    v-model="filtroDificultad"
+                    :options="opcionesDificultad"
+                    label="Filtrar por dificultad"
+                    outlined
+                    dense
+                    class="filtro-select"
+                    style="min-width: 200px; margin-right: 15px;"
+                />
+                
                 <q-btn 
                     color="negative" 
                     label="Limpiar Puntajes" 
@@ -34,7 +45,9 @@
                     <div v-if="jugadoresOrdenados.length === 0" class="no-data">
                         <q-icon name="sentiment_dissatisfied" size="80px" color="grey-6"/>
                         <p class="text-h6 text-grey-6 q-mt-md">
-                            No hay puntajes registrados aún
+                            {{ filtroDificultad.value === 'todas' 
+                                ? 'No hay puntajes registrados aún' 
+                                : `No hay puntajes para ${filtroDificultad.label}` }}
                         </p>
                         <q-btn 
                             color="primary" 
@@ -73,6 +86,9 @@
                                 <q-item-label caption class="text-subtitle1">
                                     <q-icon name="videogame_asset" size="xs" class="q-mr-xs"/>
                                     {{ jugador.partidas }} {{ jugador.partidas === 1 ? 'partida' : 'partidas' }} jugadas
+                                    <span v-if="filtroDificultad.value !== 'todas'" class="q-ml-sm">
+                                        • {{ jugador.dificultad }}
+                                    </span>
                                 </q-item-label>
                             </q-item-section>
 
@@ -95,14 +111,16 @@
                 </q-card-section>
             </q-card>
 
-            <div class="estadisticas" v-if="puntajes.length > 0">
+            <div class="estadisticas" v-if="puntajesFiltrados.length > 0">
                 <q-card class="stat-card">
                     <q-card-section>
                         <div class="stat-content">
                             <q-icon name="emoji_events" size="50px" color="amber-8"/>
                             <div>
                                 <div class="stat-valor">{{ totalPartidas }}</div>
-                                <div class="stat-label">Partidas Totales</div>
+                                <div class="stat-label">
+                                    Partidas {{ filtroDificultad.value !== 'todas' ? filtroDificultad.label : 'Totales' }}
+                                </div>
                             </div>
                         </div>
                     </q-card-section>
@@ -176,15 +194,34 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-
+// Estado
 const puntajes = ref([])
 const mostrarConfirmacion = ref(false)
+const filtroDificultad = ref({ value: 'todas', label: 'Todas las dificultades' })
 
+// Opciones para el filtro
+const opcionesDificultad = [
+    { value: 'todas', label: 'Todas las dificultades' },
+    { value: 'facil', label: 'Fácil' },
+    { value: 'medio', label: 'Medio' },
+    { value: 'dificil', label: 'Difícil' }
+]
 
+// Computed - Puntajes filtrados por dificultad
+const puntajesFiltrados = computed(() => {
+    if (filtroDificultad.value.value === 'todas') {
+        return puntajes.value
+    }
+    return puntajes.value.filter(puntaje => 
+        puntaje.dificultad === filtroDificultad.value.value
+    )
+})
+
+// Computed - Jugadores ordenados según filtro
 const jugadoresOrdenados = computed(() => {
     const jugadoresMap = {}
     
-    puntajes.value.forEach(puntaje => {
+    puntajesFiltrados.value.forEach(puntaje => {
         const nombre = puntaje.nombre
         
         if (!jugadoresMap[nombre]) {
@@ -192,7 +229,8 @@ const jugadoresOrdenados = computed(() => {
                 nombre: nombre,
                 puntosTotal: 0,
                 partidas: 0,
-                puntajes: []
+                puntajes: [],
+                dificultad: filtroDificultad.value.value !== 'todas' ? filtroDificultad.value.label : 'Variadas'
             }
         }
         
@@ -209,18 +247,20 @@ const jugadoresOrdenados = computed(() => {
     return jugadoresArray.sort((a, b) => b.puntosTotal - a.puntosTotal)
 })
 
-const totalPartidas = computed(() => puntajes.value.length)
+// Estadísticas basadas en los puntajes filtrados
+const totalPartidas = computed(() => puntajesFiltrados.value.length)
 
 const totalJugadores = computed(() => {
-    const nombresUnicos = new Set(puntajes.value.map(p => p.nombre))
+    const nombresUnicos = new Set(puntajesFiltrados.value.map(p => p.nombre))
     return nombresUnicos.size
 })
 
 const mejorPuntaje = computed(() => {
-    if (puntajes.value.length === 0) return 0
-    return Math.max(...puntajes.value.map(p => p.puntos))
+    if (puntajesFiltrados.value.length === 0) return 0
+    return Math.max(...puntajesFiltrados.value.map(p => p.puntos))
 })
 
+// Funciones
 function cargarPuntajes() {
     const datos = localStorage.getItem('puntajes')
     puntajes.value = datos ? JSON.parse(datos) : []
@@ -258,12 +298,15 @@ function confirmarLimpiar() {
 function limpiarPuntajes() {
     localStorage.removeItem('puntajes')
     puntajes.value = []
+    // Reiniciar el filtro
+    filtroDificultad.value = { value: 'todas', label: 'Todas las dificultades' }
 }
 
 function volver() {
     router.push('/juego')
 }
 
+// Lifecycle
 onMounted(() => {
     cargarPuntajes()
 })
@@ -314,7 +357,15 @@ onMounted(() => {
 
 .acciones {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.filtro-select {
+    background: white;
+    border-radius: 8px;
 }
 
 .tabla-card {
@@ -336,6 +387,9 @@ onMounted(() => {
     padding: 20px;
     transition: all 0.3s ease;
     border-left: 5px solid transparent;
+    background: white;
+    margin: 5px;
+    border-radius: 10px;
 }
 
 .puntaje-item:hover {
@@ -394,6 +448,16 @@ onMounted(() => {
     border-radius: 15px;
 }
 
+/* Indicador de dificultad en la etiqueta */
+.puntaje-item .text-subtitle1 span {
+    background: rgba(102, 126, 234, 0.1);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    color: #667eea;
+    font-weight: 500;
+}
+
 @media (max-width: 768px) {
     .contenedor-puntajes {
         padding: 15px;
@@ -413,6 +477,17 @@ onMounted(() => {
 
     .dialog-confirm {
         min-width: 300px;
+    }
+    
+    .acciones {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filtro-select {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
     }
 }
 

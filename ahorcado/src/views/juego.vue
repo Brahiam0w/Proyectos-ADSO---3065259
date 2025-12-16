@@ -67,36 +67,26 @@
                             </filter>
                         </defs>
                         
-                        
                         <ellipse cx="110" cy="265" rx="80" ry="8" fill="#333" opacity="0.2"/>
-                        
                         <rect x="10" y="250" width="150" height="15" fill="url(#woodGradient)" rx="2" filter="url(#shadow)"/>
-                        
                         <rect x="45" y="20" width="12" height="230" fill="url(#woodGradient)" filter="url(#shadow)"/>
-                        
                         <rect x="45" y="20" width="100" height="10" fill="url(#woodGradient)" filter="url(#shadow)"/>
-                        
                         <line x1="57" y1="30" x2="90" y2="70" stroke="#8B4513" stroke-width="8" opacity="0.6"/>
-                        
                         <line x1="145" y1="30" x2="145" y2="60" stroke="#DAA520" stroke-width="3"/>
                         
                         <g v-if="intentosIncorrectos >= 1">
                             <circle cx="145" cy="80" r="22" stroke="#FFD700" stroke-width="2" fill="#FFE4B5" filter="url(#shadow)"/>
-                           
                             <template v-if="intentosIncorrectos < 6">
                                 <circle cx="138" cy="75" r="2.5" fill="#333"/>
                                 <circle cx="152" cy="75" r="2.5" fill="#333"/>
                             </template>
                             <template v-else>
-                                
                                 <line x1="136" y1="73" x2="140" y2="77" stroke="#DC143C" stroke-width="2"/>
                                 <line x1="140" y1="73" x2="136" y2="77" stroke="#DC143C" stroke-width="2"/>
                                 <line x1="150" y1="73" x2="154" y2="77" stroke="#DC143C" stroke-width="2"/>
                                 <line x1="154" y1="73" x2="150" y2="77" stroke="#DC143C" stroke-width="2"/>
                             </template>
-                            
                             <path d="M 137 88 Q 145 85 153 88" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
-                            
                             <line x1="135" y1="70" x2="141" y2="69" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
                             <line x1="149" y1="69" x2="155" y2="70" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
                         </g>
@@ -115,20 +105,16 @@
                         
                         <g v-if="intentosIncorrectos >= 4">
                             <line x1="155" y1="115" x2="180" y2="140" stroke="#4A90E2" stroke-width="6" stroke-linecap="round" filter="url(#shadow)"/>
-                            
                             <circle cx="180" cy="140" r="5" fill="#FFE4B5" filter="url(#shadow)"/>
                         </g>
                         
-                        
                         <g v-if="intentosIncorrectos >= 5">
                             <line x1="145" y1="152" x2="125" y2="195" stroke="#2C3E50" stroke-width="7" stroke-linecap="round" filter="url(#shadow)"/>
-                            
                             <ellipse cx="125" cy="198" rx="8" ry="5" fill="#333" filter="url(#shadow)"/>
                         </g>
                         
                         <g v-if="intentosIncorrectos >= 6">
                             <line x1="145" y1="152" x2="165" y2="195" stroke="#2C3E50" stroke-width="7" stroke-linecap="round" filter="url(#shadow)"/>
-                           
                             <ellipse cx="165" cy="198" rx="8" ry="5" fill="#333" filter="url(#shadow)"/>
                         </g>
                     </svg>
@@ -340,7 +326,6 @@ function getColorLetra(letra) {
 }
 
 function verificarEstadoJuego() {
-    // Verificar victoria
     const todasAdivinadas = palabraActual.value.split('').every(letra => 
         letrasUsadas.value.includes(letra)
     )
@@ -353,7 +338,6 @@ function verificarEstadoJuego() {
         return
     }
     
-    // Verificar derrota
     if (intentosIncorrectos.value >= 6) {
         setTimeout(() => {
             mostrarDerrota.value = true
@@ -382,32 +366,32 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.principal{
+.principal {
     display: flex;
     justify-content: space-around;
     align-items: flex-start;
-    height: 100vh; 
+    min-height: 100vh;
     width: 100%;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 30px;
-    gap: 30px;
-    overflow: hidden; 
+    padding: 20px;
+    gap: 20px;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .panel-izquierdo {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
     width: 300px;
-    flex-shrink: 0; 
+    flex-shrink: 0;
+    min-width: 250px;
 }
 
 .panel-derecho {
     flex: 1;
     max-width: 700px;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+    min-width: 0; /* Importante para evitar desbordamiento */
 }
 
 .info-card,
@@ -416,6 +400,7 @@ onMounted(() => {
     background: white;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden; /* Previene desbordamiento interno */
 }
 
 .pista-card {
@@ -424,7 +409,7 @@ onMounted(() => {
 
 .hangman-card {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    margin: 10px 0;
+    margin: 15px 0;
 }
 
 .botones-navegacion {
@@ -433,40 +418,41 @@ onMounted(() => {
     gap: 10px;
 }
 
-.contenedor-abc{
+.contenedor-abc {
     background-color: rgba(255, 255, 255, 0.15);
-    padding: 30px;
+    padding: 20px;
     border-radius: 20px;
     backdrop-filter: blur(10px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.2);
     display: flex;
     flex-direction: column;
-    height: 100%;
+    min-height: 0; /* Importante para flexbox */
 }
 
 .word-display {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-bottom: 10px; 
+    gap: 8px;
+    margin-bottom: 15px;
     flex-wrap: wrap;
-    flex-shrink: 0; 
+    min-height: 60px;
 }
 
 .letter-box {
-    width: 40px;
-    height: 50px;
+    width: 35px;
+    height: 45px;
     border-bottom: 4px solid white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
+    font-size: 26px;
     font-weight: bold;
     color: white;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
     animation: letterPop 0.5s ease;
+    flex-shrink: 0; /* Evita que las letras se encojan */
 }
 
 @keyframes letterPop {
@@ -475,24 +461,26 @@ onMounted(() => {
     100% { transform: scale(1); }
 }
 
-.abc{
+.abc {
     display: grid;
     grid-template-columns: repeat(10, 1fr);
-    gap: 6px;
+    gap: 5px;
     margin: 10px 0;
-    flex-shrink: 0; 
+    min-height: 0; /* Permite que se ajuste al contenedor */
 }
 
 .letra-btn {
     font-weight: bold;
-    font-size: 14px;
+    font-size: 13px;
     transition: all 0.2s ease;
-    padding: 6px 0;
+    padding: 4px 0;
+    min-width: 0; /* Evita que los botones crezcan demasiado */
+    min-height: 35px;
 }
 
 .letra-btn:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
 }
 
 .letra-btn:active:not(:disabled) {
@@ -501,15 +489,16 @@ onMounted(() => {
 
 .botones {
     display: flex;
-    gap: 15px;
+    gap: 10px;
     justify-content: center;
-    margin-top: 10px; 
-    flex-shrink: 0;
+    margin-top: 15px;
+    flex-wrap: wrap; /* Permite que los botones se ajusten en pantallas pequeñas */
 }
 
 .dialog-card {
     min-width: 400px;
     border-radius: 20px;
+    max-width: 90vw; /* Limita el ancho en pantallas pequeñas */
 }
 
 .celebration-animation {
@@ -518,7 +507,7 @@ onMounted(() => {
 
 @keyframes bounce {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
+    50% { transform: translateY(-15px); }
 }
 
 .puntos-ganados {
@@ -527,32 +516,49 @@ onMounted(() => {
 
 @keyframes pulse {
     0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Media Queries para responsividad */
+@media (max-width: 1200px) {
+    .principal {
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .panel-izquierdo {
+        width: 280px;
+    }
+    
+    .abc {
+        grid-template-columns: repeat(8, 1fr);
+    }
 }
 
 @media (max-width: 1024px) {
     .principal {
         flex-direction: column;
         align-items: center;
-        height: auto;
-        min-height: 100vh;
-        overflow: auto;
+        overflow: auto; /* Permite scroll en móvil */
     }
     
     .panel-izquierdo {
         width: 100%;
-        max-width: 500px;
+        max-width: 600px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .panel-izquierdo > * {
+        flex: 1;
+        min-width: 250px;
+        max-width: 300px;
     }
     
     .panel-derecho {
         width: 100%;
-        max-width: 500px;
-        height: auto;
-    }
-    
-    .contenedor-abc {
-        height: auto;
-        min-height: 0;
+        max-width: 600px;
     }
     
     .abc {
@@ -560,14 +566,23 @@ onMounted(() => {
     }
     
     .dialog-card {
-        min-width: 300px;
+        min-width: 350px;
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     .principal {
-        padding: 15px;
-        gap: 15px;
+        padding: 10px;
+        gap: 10px;
+    }
+    
+    .panel-izquierdo {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .panel-izquierdo > * {
+        max-width: 100%;
     }
     
     .abc {
@@ -583,27 +598,15 @@ onMounted(() => {
     
     .letra-btn {
         font-size: 12px;
-        padding: 4px 0;
+        min-height: 30px;
     }
     
     .contenedor-abc {
-        padding: 20px;
+        padding: 15px;
     }
     
     .hangman-card {
-        margin: 5px 0;
-    }
-}
-
-@media (max-height: 700px) {
-    .letter-box {
-        width: 35px;
-        height: 45px;
-        font-size: 24px;
-    }
-    
-    .hangman-card {
-        margin: 5px 0;
+        margin: 10px 0;
     }
     
     .hangman-card svg {
@@ -611,14 +614,101 @@ onMounted(() => {
         height: 240px;
     }
     
+    .dialog-card {
+        min-width: 300px;
+        margin: 10px;
+    }
+}
+
+@media (max-width: 480px) {
     .abc {
-        gap: 4px;
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .letter-box {
+        width: 25px;
+        height: 35px;
+        font-size: 18px;
+    }
+    
+    .botones {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .botones .q-btn {
+        width: 100%;
+    }
+    
+    .hangman-card svg {
+        width: 150px;
+        height: 200px;
+    }
+}
+
+@media (max-height: 700px) {
+    .principal {
+        min-height: 100vh;
+        overflow-y: auto; /* Permite scroll vertical */
+    }
+    
+    .letter-box {
+        width: 30px;
+        height: 40px;
+        font-size: 20px;
+    }
+    
+    .hangman-card {
+        margin: 8px 0;
+    }
+    
+    .hangman-card svg {
+        width: 160px;
+        height: 200px;
+    }
+    
+    .abc {
+        gap: 3px;
         margin: 8px 0;
     }
     
     .letra-btn {
-        font-size: 12px;
-        padding: 4px 0;
+        font-size: 11px;
+        min-height: 28px;
+        padding: 2px 0;
     }
+    
+    .contenedor-abc {
+        padding: 15px;
+    }
+}
+
+/* Corrección especial para pantallas muy pequeñas */
+@media (max-width: 350px) {
+    .abc {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .letter-box {
+        width: 22px;
+        height: 32px;
+        font-size: 16px;
+    }
+    
+    .hangman-card svg {
+        width: 130px;
+        height: 170px;
+    }
+}
+
+/* Prevenir desbordamiento horizontal */
+* {
+    box-sizing: border-box;
+}
+
+/* Asegurar que los elementos no excedan el ancho */
+img, svg, video {
+    max-width: 100%;
+    height: auto;
 }
 </style>

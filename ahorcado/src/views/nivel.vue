@@ -241,7 +241,6 @@ const palabrasConPistas = {
       { palabra: 'APOCALYPSE NOW', pista: 'Viaje por río en Vietnam durante la guerra' },
       { palabra: 'BLADE RUNNER', pista: 'Cazador de replicantes en futuro distópico' },
       { palabra: 'CIUDADANO KANE', pista: 'Periodista investiga última palabra de magnate' },
-      { palabra: '2001 ODISEA DEL ESPACIO', pista: 'Viaje espacial con IA rebelde llamada HAL' },
       { palabra: 'LA NARANJA MECANICA', pista: 'Joven violento sometido a terapia de aversión' },
       { palabra: 'EL SILENCIO DE LOS INOCENTES', pista: 'Agente del FBI consulta a asesino caníbal' },
       { palabra: 'TAXI DRIVER', pista: 'Taxista solitario planea asesinato en Nueva York' }
