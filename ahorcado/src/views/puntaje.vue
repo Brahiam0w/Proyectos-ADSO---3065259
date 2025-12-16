@@ -1,71 +1,430 @@
 <template>
-  <div class="q-pa-md">
-    <q-card class="my-card" flat bordered>
-      <q-card-section>
-        <div class="text-h6">Our Changing Planet</div>
-        <div class="text-subtitle2">by John Doe</div>
-      </q-card-section>
+    <div class="contenedor-puntajes">
+        <div class="header">
+            <q-btn 
+                flat 
+                round 
+                icon="arrow_back" 
+                color="white" 
+                size="lg"
+                @click="volver"
+                class="btn-volver"
+            />
+            <div class="titulo">
+                <q-icon name="emoji_events" size="60px" color="amber-8"/>
+                <h2>Tabla de Clasificación</h2>
+                <p>Los mejores jugadores</p>
+            </div>
+        </div>
 
-      <q-markup-table>
-        <thead>
-          <tr>
-            <th class="text-left">Dessert (100g serving)</th>
-            <th class="text-right">Calories</th>
-            <th class="text-right">Fat (g)</th>
-            <th class="text-right">Carbs (g)</th>
-            <th class="text-right">Protein (g)</th>
-            <th class="text-right">Sodium (mg)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="text-left">Frozen Yogurt</td>
-            <td class="text-right">159</td>
-            <td class="text-right">6</td>
-            <td class="text-right">24</td>
-            <td class="text-right">4</td>
-            <td class="text-right">87</td>
-          </tr>
-          <tr>
-            <td class="text-left">Ice cream sandwich</td>
-            <td class="text-right">237</td>
-            <td class="text-right">9</td>
-            <td class="text-right">37</td>
-            <td class="text-right">4.3</td>
-            <td class="text-right">129</td>
-          </tr>
-          <tr>
-            <td class="text-left">Eclair</td>
-            <td class="text-right">262</td>
-            <td class="text-right">16</td>
-            <td class="text-right">23</td>
-            <td class="text-right">6</td>
-            <td class="text-right">337</td>
-          </tr>
-          <tr>
-            <td class="text-left">Cupcake</td>
-            <td class="text-right">305</td>
-            <td class="text-right">3.7</td>
-            <td class="text-right">67</td>
-            <td class="text-right">4.3</td>
-            <td class="text-right">413</td>
-          </tr>
-          <tr>
-            <td class="text-left">Gingerbread</td>
-            <td class="text-right">356</td>
-            <td class="text-right">16</td>
-            <td class="text-right">49</td>
-            <td class="text-right">3.9</td>
-            <td class="text-right">327</td> 
-          </tr>
-        </tbody>
-      </q-markup-table>
-    </q-card>
-  </div>
+        <div class="contenedor-tabla">
+            <div class="acciones">
+                <q-btn 
+                    color="negative" 
+                    label="Limpiar Puntajes" 
+                    icon="delete"
+                    @click="confirmarLimpiar"
+                    outline
+                    size="md"
+                />
+            </div>
+
+            <q-card class="tabla-card">
+                <q-card-section>
+                    <div v-if="jugadoresOrdenados.length === 0" class="no-data">
+                        <q-icon name="sentiment_dissatisfied" size="80px" color="grey-6"/>
+                        <p class="text-h6 text-grey-6 q-mt-md">
+                            No hay puntajes registrados aún
+                        </p>
+                        <q-btn 
+                            color="primary" 
+                            label="Jugar Ahora" 
+                            icon="play_arrow"
+                            to="/categoria"
+                            class="q-mt-md"
+                            unelevated
+                        />
+                    </div>
+
+                    <q-list v-else separator class="puntajes-list">
+                        <q-item 
+                            v-for="(jugador, index) in jugadoresOrdenados" 
+                            :key="index"
+                            class="puntaje-item"
+                        >
+                            <q-item-section avatar>
+                                <q-avatar 
+                                    :color="getMedalColor(index + 1)" 
+                                    text-color="white"
+                                    size="60px"
+                                >
+                                    <span v-if="index < 3" class="medal-icon">
+                                        {{ getMedalIcon(index + 1) }}
+                                    </span>
+                                    <span v-else class="text-h6">{{ index + 1 }}</span>
+                                </q-avatar>
+                            </q-item-section>
+
+                            <q-item-section>
+                                <q-item-label class="text-h5 text-weight-bold">
+                                    <q-icon name="person" size="sm" class="q-mr-sm"/>
+                                    {{ jugador.nombre }}
+                                </q-item-label>
+                                <q-item-label caption class="text-subtitle1">
+                                    <q-icon name="videogame_asset" size="xs" class="q-mr-xs"/>
+                                    {{ jugador.partidas }} {{ jugador.partidas === 1 ? 'partida' : 'partidas' }} jugadas
+                                </q-item-label>
+                            </q-item-section>
+
+                            <q-item-section side>
+                                <q-chip 
+                                    :color="getPuntosColor(jugador.puntosTotal)" 
+                                    text-color="white"
+                                    icon="stars"
+                                    size="xl"
+                                    class="puntos-chip"
+                                >
+                                    <span class="text-h5 text-weight-bold">{{ jugador.puntosTotal }}</span>
+                                </q-chip>
+                                <div class="text-caption text-grey-6 q-mt-xs text-center">
+                                    Promedio: {{ jugador.promedio }}
+                                </div>
+                            </q-item-section>
+                        </q-item>
+                    </q-list>
+                </q-card-section>
+            </q-card>
+
+            <div class="estadisticas" v-if="puntajes.length > 0">
+                <q-card class="stat-card">
+                    <q-card-section>
+                        <div class="stat-content">
+                            <q-icon name="emoji_events" size="50px" color="amber-8"/>
+                            <div>
+                                <div class="stat-valor">{{ totalPartidas }}</div>
+                                <div class="stat-label">Partidas Totales</div>
+                            </div>
+                        </div>
+                    </q-card-section>
+                </q-card>
+
+                <q-card class="stat-card">
+                    <q-card-section>
+                        <div class="stat-content">
+                            <q-icon name="people" size="50px" color="primary"/>
+                            <div>
+                                <div class="stat-valor">{{ totalJugadores }}</div>
+                                <div class="stat-label">Jugadores</div>
+                            </div>
+                        </div>
+                    </q-card-section>
+                </q-card>
+
+                <q-card class="stat-card">
+                    <q-card-section>
+                        <div class="stat-content">
+                            <q-icon name="trending_up" size="50px" color="positive"/>
+                            <div>
+                                <div class="stat-valor">{{ mejorPuntaje }}</div>
+                                <div class="stat-label">Puntaje Más Alto</div>
+                            </div>
+                        </div>
+                    </q-card-section>
+                </q-card>
+            </div>
+        </div>
+
+        <q-dialog v-model="mostrarConfirmacion" persistent>
+            <q-card class="dialog-confirm">
+                <q-card-section class="text-center q-pa-lg">
+                    <q-icon name="warning" size="60px" color="warning"/>
+                    <div class="text-h5 q-mt-md text-weight-bold">¿Estás seguro?</div>
+                    <div class="text-body1 q-mt-md">
+                        Se eliminarán todos los puntajes registrados y estadísticas.
+                    </div>
+                    <div class="text-body2 text-grey-7 q-mt-sm">
+                        Esta acción no se puede deshacer.
+                    </div>
+                </q-card-section>
+                <q-card-actions class="q-pa-md q-gutter-sm">
+                    <q-btn 
+                        label="Cancelar" 
+                        color="secondary" 
+                        outline 
+                        v-close-popup
+                        size="lg"
+                        class="q-px-xl"
+                    />
+                    <q-btn 
+                        label="Eliminar Todo" 
+                        color="negative" 
+                        @click="limpiarPuntajes" 
+                        v-close-popup
+                        unelevated
+                        size="lg"
+                        class="q-px-xl"
+                    />
+                </q-card-actions>
+            </q-card>
+        </q-dialog>
+    </div>
 </template>
 
 <script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+
+const puntajes = ref([])
+const mostrarConfirmacion = ref(false)
+
+
+const jugadoresOrdenados = computed(() => {
+    const jugadoresMap = {}
+    
+    puntajes.value.forEach(puntaje => {
+        const nombre = puntaje.nombre
+        
+        if (!jugadoresMap[nombre]) {
+            jugadoresMap[nombre] = {
+                nombre: nombre,
+                puntosTotal: 0,
+                partidas: 0,
+                puntajes: []
+            }
+        }
+        
+        jugadoresMap[nombre].puntosTotal += puntaje.puntos
+        jugadoresMap[nombre].partidas += 1
+        jugadoresMap[nombre].puntajes.push(puntaje.puntos)
+    })
+    
+    const jugadoresArray = Object.values(jugadoresMap).map(jugador => ({
+        ...jugador,
+        promedio: Math.round(jugador.puntosTotal / jugador.partidas)
+    }))
+    
+    return jugadoresArray.sort((a, b) => b.puntosTotal - a.puntosTotal)
+})
+
+const totalPartidas = computed(() => puntajes.value.length)
+
+const totalJugadores = computed(() => {
+    const nombresUnicos = new Set(puntajes.value.map(p => p.nombre))
+    return nombresUnicos.size
+})
+
+const mejorPuntaje = computed(() => {
+    if (puntajes.value.length === 0) return 0
+    return Math.max(...puntajes.value.map(p => p.puntos))
+})
+
+function cargarPuntajes() {
+    const datos = localStorage.getItem('puntajes')
+    puntajes.value = datos ? JSON.parse(datos) : []
+}
+
+function getMedalColor(posicion) {
+    const colores = {
+        1: 'amber-8',
+        2: 'grey-6',
+        3: 'orange-10'
+    }
+    return colores[posicion] || 'blue-6'
+}
+
+function getMedalIcon(posicion) {
+    const iconos = {
+        1: '🥇',
+        2: '🥈',
+        3: '🥉'
+    }
+    return iconos[posicion] || posicion
+}
+
+function getPuntosColor(puntos) {
+    if (puntos >= 100) return 'purple'
+    if (puntos >= 70) return 'positive'
+    if (puntos >= 40) return 'warning'
+    return 'info'
+}
+
+function confirmarLimpiar() {
+    mostrarConfirmacion.value = true
+}
+
+function limpiarPuntajes() {
+    localStorage.removeItem('puntajes')
+    puntajes.value = []
+}
+
+function volver() {
+    router.push('/juego')
+}
+
+onMounted(() => {
+    cargarPuntajes()
+})
 </script>
 
 <style scoped>
+.contenedor-puntajes {
+    min-height: 100vh;
+    width: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 30px;
+}
+
+.header {
+    position: relative;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.btn-volver {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.titulo {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.titulo h2 {
+    font-size: 42px;
+    margin: 10px 0;
+}
+
+.titulo p {
+    font-size: 18px;
+    opacity: 0.9;
+}
+
+.contenedor-tabla {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.acciones {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.tabla-card {
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.no-data {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.puntajes-list {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.puntaje-item {
+    padding: 20px;
+    transition: all 0.3s ease;
+    border-left: 5px solid transparent;
+}
+
+.puntaje-item:hover {
+    background-color: rgba(102, 126, 234, 0.1);
+    transform: translateX(5px);
+    border-left-color: #667eea;
+}
+
+.medal-icon {
+    font-size: 32px;
+}
+
+.puntos-chip {
+    padding: 12px 20px;
+}
+
+.estadisticas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.stat-card {
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    background: white;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.stat-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.stat-valor {
+    font-size: 36px;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #666;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.dialog-confirm {
+    min-width: 400px;
+    border-radius: 15px;
+}
+
+@media (max-width: 768px) {
+    .contenedor-puntajes {
+        padding: 15px;
+    }
+    
+    .titulo h2 {
+        font-size: 28px;
+    }
+    
+    .estadisticas {
+        grid-template-columns: 1fr;
+    }
+
+    .puntaje-item {
+        padding: 15px;
+    }
+
+    .dialog-confirm {
+        min-width: 300px;
+    }
+}
+
+@media (max-width: 600px) {
+    .puntaje-item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .puntaje-item q-item-section {
+        margin-top: 10px;
+    }
+}
 </style>

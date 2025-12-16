@@ -1,5 +1,14 @@
 <template>
-    <div class="contenedor"> 
+    <div class="contenedor">
+        <q-btn 
+            flat 
+            round 
+            icon="arrow_back" 
+            color="white" 
+            size="lg"
+            @click="volver"
+            class="btn-volver"
+        />
         <div class="titulo">
             <h2>¡Elige tu aventura!</h2>
             <p>Selecciona una categoria para empezar</p>
@@ -46,8 +55,15 @@
 </template>
 
 <script setup>
+
+import { useRouter } from 'vue-router'
+const router = useRouter()
 function seleccionarCategoria(categoria) {
-  localStorage.setItem('categoria', categoria)
+    localStorage.setItem('categoria', categoria)
+}
+
+function volver() {
+    router.push('/')
 }
 </script>
 
@@ -61,6 +77,14 @@ function seleccionarCategoria(categoria) {
     background-color: #FFF5E1;
     height: 100vh;
     width: 100%;
+}
+
+.btn-volver {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    z-index: 10;
+    color: #333 !important;
 }
 
 .titulo {
@@ -86,8 +110,8 @@ function seleccionarCategoria(categoria) {
 }
 
 .categoria:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 
 .contenedor-categoria {
