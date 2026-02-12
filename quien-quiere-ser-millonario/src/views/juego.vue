@@ -1,154 +1,140 @@
 <template>
-  <q-layout view="hHh lpR fFf">
-    <q-page-container>
-      <q-page>
-        <div class="game-container">
-          <!-- Fondo con estrellas -->
-          <div 
-            v-for="n in 30" 
-            :key="n" 
-            class="sparkle"
-            :style="{
-              left: Math.random() * 100 + '%',
-              top: Math.random() * 100 + '%',
-              animationDelay: Math.random() * 3 + 's'
+  <div class="game-container">
+    <header class="header">
+      <div class="logo-area">
+        <h1 class="game-title">WHO WANTS TO BE A<br><span class="title-highlight">MILLIONAIRE</span></h1>
+      </div>
+      
+      <div class="lifelines-area">
+        <div class="timer-badge">50:50</div>
+        <button 
+          v-for="(lifeline, index) in lifelines" 
+          :key="index"
+          class="lifeline-btn"
+          :class="{ 'used': lifeline.used }"
+          :disabled="lifeline.used || showResult"
+          @click="useLifeline(index)"
+        >
+          <span class="lifeline-icon">{{ lifeline.icon }}</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="main-layout">
+      <div class="game-board">
+        
+        <div class="question-wrapper">
+          <div class="hex-border">
+            <div class="hex-content question-box">
+              {{ questions[currentQuestion].question }}
+            </div>
+          </div>
+          <div class="line-connector left"></div>
+          <div class="line-connector right"></div>
+        </div>
+
+        <div class="answers-grid">
+          <div
+            v-for="(option, index) in questions[currentQuestion].options"
+            :key="index"
+            class="answer-wrapper"
+            :class="{
+              'hidden': hiddenOptions.includes(index)
             }"
-          />
-
-          <!-- Panel superior - Pregunta y número -->
-          <div class="top-panel">
-            <div class="question-number">
-              Pregunta {{ currentQuestion + 1 }} de {{ totalQuestions }}
-            </div>
-            <div class="prize-amount">
-              {{ formatMoney(currentPrize) }}
-            </div>
-          </div>
-
-          <!-- Pregunta -->
-          <div class="question-section">
-            <div class="question-box">
-              <p class="question-text">{{ questions[currentQuestion].question }}</p>
-            </div>
-          </div>
-
-          <!-- Opciones de respuesta -->
-          <div class="answers-section">
-            <div class="answers-grid">
-              <div
-                v-for="(option, index) in questions[currentQuestion].options"
-                :key="index"
-                class="answer-option"
-                :class="{
-                  'selected': selectedAnswer === index,
-                  'correct': showResult && index === questions[currentQuestion].correct,
-                  'incorrect': showResult && selectedAnswer === index && index !== questions[currentQuestion].correct,
-                  'disabled': showResult || selectedAnswer !== null
-                }"
-                @click="selectAnswer(index)"
-              >
-                <div class="option-letter">{{ ['A', 'B', 'C', 'D'][index] }}</div>
-                <div class="option-text">{{ option }}</div>
+            @click="selectAnswer(index)"
+          >
+            <div class="hex-border" 
+                 :class="{
+                   'selected': selectedAnswer === index,
+                   'correct': showResult && index === questions[currentQuestion].correct,
+                   'incorrect': showResult && selectedAnswer === index && index !== questions[currentQuestion].correct,
+                   'disabled': showResult
+                 }">
+              <div class="hex-content answer-box">
+                <span class="option-letter">{{ ['A', 'B', 'C', 'D'][index] }}:</span>
+                <span class="option-text">{{ option }}</span>
               </div>
             </div>
+            <div class="answer-line" :class="index % 2 === 0 ? 'right' : 'left'"></div>
           </div>
-
-          <!-- Comodines -->
-          <div class="lifelines-section">
-            <q-btn
-              v-for="(lifeline, index) in lifelines"
-              :key="index"
-              :disable="lifeline.used || showResult"
-              :class="['lifeline-btn', { 'used': lifeline.used }]"
-              rounded
-              @click="useLifeline(index)"
-            >
-              <q-icon :name="lifeline.icon" size="sm" />
-              <div class="lifeline-text">{{ lifeline.name }}</div>
-            </q-btn>
-          </div>
-
-          <!-- Escalera de premios (lateral derecha) -->
-          <div class="prize-ladder">
-            <div class="ladder-title">PREMIOS</div>
-            <div
-              v-for="(prize, index) in prizes"
-              :key="index"
-              class="prize-item"
-              :class="{
-                'current': index === currentQuestion,
-                'completed': index < currentQuestion,
-                'milestone': prize.milestone
-              }"
-            >
-              <div class="prize-number">{{ prizes.length - index }}</div>
-              <div class="prize-value">{{ formatMoney(prize.amount) }}</div>
-            </div>
-          </div>
-
-          <!-- Botón de confirmación -->
-          <div v-if="selectedAnswer !== null && !showResult" class="confirm-section">
-            <q-btn
-              class="confirm-btn"
-              label="Respuesta Final"
-              rounded
-              unelevated
-              @click="confirmAnswer"
-            />
-          </div>
-
-          <!-- Diálogo de resultado -->
-          <q-dialog v-model="showGameOver" persistent>
-            <q-card class="game-over-card">
-              <q-card-section class="text-center">
-                <q-icon 
-                  :name="isWinner ? 'emoji_events' : 'sentiment_dissatisfied'" 
-                  :color="isWinner ? 'yellow' : 'red'"
-                  size="100px"
-                />
-                <h4 class="q-mt-md q-mb-sm">
-                  {{ isWinner ? '¡FELICITACIONES!' : 'Juego Terminado' }}
-                </h4>
-                <p class="text-h6">
-                  {{ gameOverMessage }}
-                </p>
-                <p class="text-h5 text-weight-bold text-positive">
-                  Premio: {{ formatMoney(finalPrize) }}
-                </p>
-              </q-card-section>
-              <q-card-actions align="center">
-                <q-btn
-                  label="Volver al Inicio"
-                  color="primary"
-                  rounded
-                  @click="goHome"
-                />
-                <q-btn
-                  label="Jugar de Nuevo"
-                  color="positive"
-                  rounded
-                  @click="restartGame"
-                />
-              </q-card-actions>
-            </q-card>
-          </q-dialog>
         </div>
-      </q-page>
-    </q-page-container>
-  </q-layout>
+      </div>
+
+      <aside class="sidebar">
+        <div class="prize-ladder">
+          <div class="prize-row current-prize-header">
+            <span class="prize-level">{{ currentQuestion + 1 }}</span>
+            <span class="prize-amount">{{ formatMoney(prizes[currentQuestion].amount) }}</span>
+          </div>
+
+          <div 
+            v-for="(prize, index) in [...prizes].reverse()" 
+            :key="index"
+            class="prize-row"
+            :class="{
+              'active': (prizes.length - 1 - index) === currentQuestion,
+              'passed': (prizes.length - 1 - index) < currentQuestion,
+              'milestone': prize.milestone
+            }"
+          >
+            <span class="row-num">{{ prizes.length - index }}</span>
+            <span class="row-value">{{ formatMoney(prize.amount) }}</span>
+            <span v-if="prize.milestone" class="lock-icon">🔒</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <footer class="footer">
+      <div class="winnings-info">
+        <div class="stat-group">
+          <span class="label">CURRENT WINNINGS</span>
+          <span class="value">{{ formatMoney(currentPrizeEarned) }}</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-group">
+          <span class="label">SAFETY NET</span>
+          <span class="value">{{ formatMoney(safetyNet) }}</span>
+        </div>
+      </div>
+
+      <div class="footer-actions">
+        <div class="timer-circle">
+          <span>45</span>
+        </div>
+        
+        <button 
+          class="walk-away-btn" 
+          @click="retirarse"
+          :disabled="showResult"
+        >
+          WALK AWAY
+        </button>
+      </div>
+    </footer>
+
+    <div v-if="showGameOver" class="modal-overlay" @click="showGameOver = false">
+      <div class="modal-card" @click.stop>
+        <h2>{{ isWinner ? '¡MILLONARIO!' : 'JUEGO TERMINADO' }}</h2>
+        <div class="final-prize">{{ formatMoney(finalPrize) }}</div>
+        <p>{{ gameOverMessage }}</p>
+        <div class="modal-actions">
+          <button class="btn-restart" @click="restartGame">JUGAR DE NUEVO</button>
+        </div>
+      </div>
+    </div>
+    
+    <div v-if="notification" class="notification-toast" :class="notification.type">
+      {{ notification.message }}
+    </div>
+
+  </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { useQuasar } from 'quasar';
+import { ref, computed, watch } from 'vue';
 
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
-
-const $q = useQuasar();
-
-// Estado del juego
+// --- ESTADO DEL JUEGO ---
 const currentQuestion = ref(0);
 const selectedAnswer = ref(null);
 const showResult = ref(false);
@@ -156,241 +142,152 @@ const showGameOver = ref(false);
 const isWinner = ref(false);
 const finalPrize = ref(0);
 const totalQuestions = 15;
+const hiddenOptions = ref([]);
+const isProcessingAnswer = ref(false);
+const notification = ref(null);
 
-// Premios (de menor a mayor)
+// Premios y Preguntas (Datos)
 const prizes = ref([
-  { amount: 1000000, milestone: true },
-  { amount: 500000, milestone: false },
-  { amount: 250000, milestone: false },
-  { amount: 125000, milestone: false },
-  { amount: 64000, milestone: true },
-  { amount: 32000, milestone: false },
-  { amount: 16000, milestone: false },
-  { amount: 8000, milestone: false },
-  { amount: 4000, milestone: false },
-  { amount: 2000, milestone: true },
-  { amount: 1000, milestone: false },
-  { amount: 500, milestone: false },
-  { amount: 300, milestone: false },
+  { amount: 100, milestone: false },
   { amount: 200, milestone: false },
-  { amount: 100, milestone: false }
-].reverse());
+  { amount: 300, milestone: false },
+  { amount: 500, milestone: false },
+  { amount: 1000, milestone: true }, // Seguro 1
+  { amount: 2000, milestone: false },
+  { amount: 4000, milestone: false },
+  { amount: 8000, milestone: false },
+  { amount: 16000, milestone: false },
+  { amount: 32000, milestone: true }, // Seguro 2
+  { amount: 64000, milestone: false },
+  { amount: 125000, milestone: false },
+  { amount: 250000, milestone: false },
+  { amount: 500000, milestone: false },
+  { amount: 1000000, milestone: true } // Gran Premio
+]);
 
-// Comodines
 const lifelines = ref([
-  { name: '50:50', icon: 'filter_2', used: false },
-  { name: 'Llamada', icon: 'phone', used: false },
-  { name: 'Público', icon: 'groups', used: false }
+  { name: 'phone', icon: '📞', used: false },
+  { name: 'audience', icon: '👥', used: false }
 ]);
+// Nota: El 50:50 lo he puesto como decorativo en el header según la imagen, 
+// o podemos añadirlo a la lista. Lo mantendré lógico aquí:
+const fiftyFiftyUsed = ref(false);
 
-// Preguntas del juego
 const questions = ref([
-  {
-    question: '¿Cuál es la capital de Francia?',
-    options: ['Londres', 'Berlín', 'París', 'Madrid'],
-    correct: 2
-  },
-  {
-    question: '¿En qué año llegó el hombre a la Luna?',
-    options: ['1965', '1969', '1972', '1975'],
-    correct: 1
-  },
-  {
-    question: '¿Cuál es el océano más grande del mundo?',
-    options: ['Atlántico', 'Índico', 'Ártico', 'Pacífico'],
-    correct: 3
-  },
-  {
-    question: '¿Quién pintó la Mona Lisa?',
-    options: ['Michelangelo', 'Leonardo da Vinci', 'Rafael', 'Donatello'],
-    correct: 1
-  },
-  {
-    question: '¿Cuál es el planeta más grande del sistema solar?',
-    options: ['Saturno', 'Neptuno', 'Júpiter', 'Urano'],
-    correct: 2
-  },
-  {
-    question: '¿En qué continente se encuentra Egipto?',
-    options: ['Asia', 'África', 'Europa', 'Oceanía'],
-    correct: 1
-  },
-  {
-    question: '¿Cuántos lados tiene un hexágono?',
-    options: ['5', '6', '7', '8'],
-    correct: 1
-  },
-  {
-    question: '¿Quién escribió "Don Quijote de la Mancha"?',
-    options: ['Lope de Vega', 'Miguel de Cervantes', 'Garcilaso de la Vega', 'Francisco de Quevedo'],
-    correct: 1
-  },
-  {
-    question: '¿Cuál es el río más largo del mundo?',
-    options: ['Nilo', 'Amazonas', 'Yangtsé', 'Misisipi'],
-    correct: 0
-  },
-  {
-    question: '¿En qué año comenzó la Segunda Guerra Mundial?',
-    options: ['1937', '1939', '1941', '1943'],
-    correct: 1
-  },
-  {
-    question: '¿Cuál es el elemento químico con símbolo Au?',
-    options: ['Plata', 'Oro', 'Aluminio', 'Argón'],
-    correct: 1
-  },
-  {
-    question: '¿Cuántos continentes hay en la Tierra?',
-    options: ['5', '6', '7', '8'],
-    correct: 2
-  },
-  {
-    question: '¿Quién fue el primer presidente de Estados Unidos?',
-    options: ['Thomas Jefferson', 'George Washington', 'Abraham Lincoln', 'John Adams'],
-    correct: 1
-  },
-  {
-    question: '¿En qué país se encuentra la Torre Eiffel?',
-    options: ['Italia', 'España', 'Francia', 'Alemania'],
-    correct: 2
-  },
-  {
-    question: '¿Cuál es la montaña más alta del mundo?',
-    options: ['K2', 'Kangchenjunga', 'Monte Everest', 'Lhotse'],
-    correct: 2
-  }
+  { question: '¿Cuál de estos elementos químicos lleva el nombre de la palabra griega para "sol"?', options: ['Helio', 'Neón', 'Argón', 'Kriptón'], correct: 0 },
+  { question: '¿Cuál es la capital de Francia?', options: ['Londres', 'Berlín', 'París', 'Madrid'], correct: 2 },
+  { question: '¿En qué año llegó el hombre a la Luna?', options: ['1965', '1969', '1972', '1975'], correct: 1 },
+  { question: '¿Cuál es el océano más grande del mundo?', options: ['Atlántico', 'Índico', 'Ártico', 'Pacífico'], correct: 3 },
+  { question: '¿Quién pintó la Mona Lisa?', options: ['Michelangelo', 'Leonardo da Vinci', 'Rafael', 'Donatello'], correct: 1 },
+  { question: '¿Cuál es el planeta más grande del sistema solar?', options: ['Saturno', 'Neptuno', 'Júpiter', 'Urano'], correct: 2 },
+  { question: '¿Qué país tiene forma de bota?', options: ['España', 'Italia', 'Grecia', 'Portugal'], correct: 1 },
+  { question: '¿Cuántos lados tiene un hexágono?', options: ['5', '6', '7', '8'], correct: 1 },
+  { question: '¿Quién escribió "Don Quijote"?', options: ['Cervantes', 'Shakespeare', 'Dante', 'Homer'], correct: 0 },
+  { question: '¿Cuál es el río más largo del mundo?', options: ['Nilo', 'Amazonas', 'Yangtsé', 'Misisipi'], correct: 1 }, // Amazonas es técnicamente más largo según estudios recientes
+  { question: '¿Símbolo químico del Oro?', options: ['Ag', 'Au', 'Fe', 'Cu'], correct: 1 },
+  { question: '¿Continentes en la Tierra?', options: ['5', '6', '7', '8'], correct: 2 },
+  { question: '¿Primer presidente de USA?', options: ['Lincoln', 'Washington', 'Jefferson', 'Adams'], correct: 1 },
+  { question: '¿Dónde está la Torre Eiffel?', options: ['Italia', 'España', 'Francia', 'Alemania'], correct: 2 },
+  { question: '¿Montaña más alta?', options: ['K2', 'Everest', 'Kilimanjaro', 'Fuji'], correct: 1 }
 ]);
 
-// Computed
-const currentPrize = computed(() => {
-  return prizes.value[currentQuestion.value].amount;
+// --- COMPUTED ---
+const currentPrizeEarned = computed(() => {
+  if (currentQuestion.value === 0) return 0;
+  return prizes.value[currentQuestion.value - 1].amount;
+});
+
+const safetyNet = computed(() => {
+  // Encuentra el último milestone alcanzado
+  let safeAmount = 0;
+  for (let i = currentQuestion.value - 1; i >= 0; i--) {
+    if (prizes.value[i].milestone) {
+      safeAmount = prizes.value[i].amount;
+      break;
+    }
+  }
+  return safeAmount;
 });
 
 const gameOverMessage = computed(() => {
-  if (isWinner.value) {
-    return '¡Has ganado el premio mayor!';
-  } else if (currentQuestion.value === 0) {
-    return 'No te llevas ningún premio.';
-  } else {
-    return `Has llegado a la pregunta ${currentQuestion.value + 1}`;
-  }
+  if (isWinner.value) return '¡Increíble! Has ganado el premio mayor.';
+  return `Te llevas a casa ${formatMoney(finalPrize.value)}`;
 });
 
-// Métodos
+// --- LOGICA ---
+
+watch(currentQuestion, () => {
+  hiddenOptions.value = [];
+  fiftyFiftyUsed.value = false;
+});
+
 const formatMoney = (amount) => {
-  return new Intl.NumberFormat('es-ES', {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: 0
+    maximumFractionDigits: 0
   }).format(amount);
 };
 
+const showNotification = (message, type = 'info') => {
+  notification.value = { message, type };
+  setTimeout(() => notification.value = null, 3000);
+};
+
 const selectAnswer = (index) => {
-  if (showResult.value || selectedAnswer.value !== null) return;
+  if (showResult.value || isProcessingAnswer.value || hiddenOptions.value.includes(index)) return;
+
   selectedAnswer.value = index;
+  isProcessingAnswer.value = true;
+
+  // Simular tensión
+  setTimeout(() => {
+    confirmAnswer();
+  }, 1500);
 };
 
 const confirmAnswer = () => {
   showResult.value = true;
-  
   const isCorrect = selectedAnswer.value === questions.value[currentQuestion.value].correct;
-  
+
   if (isCorrect) {
-    $q.notify({
-      message: '¡Respuesta Correcta!',
-      color: 'positive',
-      icon: 'check_circle',
-      position: 'top',
-      timeout: 2000
-    });
-    
     setTimeout(() => {
       if (currentQuestion.value === totalQuestions - 1) {
-        // Ganó el juego
         isWinner.value = true;
         finalPrize.value = prizes.value[currentQuestion.value].amount;
         showGameOver.value = true;
       } else {
-        // Siguiente pregunta
         nextQuestion();
       }
     }, 2000);
   } else {
-    $q.notify({
-      message: 'Respuesta Incorrecta',
-      color: 'negative',
-      icon: 'cancel',
-      position: 'top',
-      timeout: 2000
-    });
-    
     setTimeout(() => {
-      // Calcular premio de seguridad
-      finalPrize.value = calculateSafePrize();
+      finalPrize.value = safetyNet.value;
+      isWinner.value = false;
       showGameOver.value = true;
     }, 2000);
   }
-};
-
-const calculateSafePrize = () => {
-  // Encontrar el último hito alcanzado
-  for (let i = currentQuestion.value - 1; i >= 0; i--) {
-    if (prizes.value[i].milestone) {
-      return prizes.value[i].amount;
-    }
-  }
-  return 0;
 };
 
 const nextQuestion = () => {
   currentQuestion.value++;
   selectedAnswer.value = null;
   showResult.value = false;
+  isProcessingAnswer.value = false;
 };
 
 const useLifeline = (index) => {
+  // Lógica simplificada para demo
+  if (lifelines.value[index].used) return;
   lifelines.value[index].used = true;
-  
-  switch (index) {
-    case 0: // 50:50
-      $q.notify({
-        message: 'Comodín 50:50 usado - Se eliminan 2 respuestas incorrectas',
-        color: 'info',
-        icon: 'info',
-        position: 'top',
-        timeout: 3000
-      });
-      break;
-    case 1: // Llamada
-      $q.notify({
-        message: 'Comodín de llamada usado - Tu amigo sugiere una respuesta',
-        color: 'info',
-        icon: 'phone',
-        position: 'top',
-        timeout: 3000
-      });
-      break;
-    case 2: // Público
-      $q.notify({
-        message: 'Comodín del público usado - Opinión de la audiencia',
-        color: 'info',
-        icon: 'groups',
-        position: 'top',
-        timeout: 3000
-      });
-      break;
-  }
+  showNotification('Comodín activado (Simulado)', 'info');
 };
 
-const goHome = () => {
-  // Aquí iría la navegación al home
-  // router.push({ name: 'home' })
-  $q.notify({
-    message: 'Volviendo al inicio...',
-    color: 'info',
-    position: 'top'
-  });
+const retirarse = () => {
+  if(showResult.value) return;
+  finalPrize.value = currentPrizeEarned.value;
+  isWinner.value = false;
+  showGameOver.value = true;
 };
 
 const restartGame = () => {
@@ -398,368 +295,459 @@ const restartGame = () => {
   selectedAnswer.value = null;
   showResult.value = false;
   showGameOver.value = false;
-  isWinner.value = false;
-  finalPrize.value = 0;
+  isProcessingAnswer.value = false;
   lifelines.value.forEach(l => l.used = false);
-  
-  $q.notify({
-    message: 'Nuevo juego iniciado',
-    color: 'positive',
-    position: 'top'
-  });
 };
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+}
+
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
 .game-container {
   width: 100vw;
   height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background: linear-gradient(135deg, #0a0e27 0%, #1a1f4d 50%, #2d3561 100%);
+  background: radial-gradient(circle at center, #0b1740 0%, #020b20 80%, #000000 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  display: grid;
-  grid-template-rows: auto 1fr auto auto;
-  grid-template-columns: 1fr 250px;
-  gap: 20px;
-  padding: 20px;
+  padding: 20px 40px;
 }
 
-.sparkle {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: white;
-  border-radius: 50%;
-  animation: sparkle 3s infinite;
-  z-index: 1;
-}
-
-@keyframes sparkle {
-  0%, 100% { opacity: 0; transform: scale(0); }
-  50% { opacity: 1; transform: scale(1); }
-}
-
-/* Panel superior */
-.top-panel {
-  grid-column: 1 / -1;
+/* --- HEADER --- */
+.header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 15px 30px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  z-index: 2;
+  align-items: flex-start;
+  height: 100px;
+  position: relative;
+  z-index: 10;
 }
 
-.question-number {
-  font-size: 1.2rem;
-  color: #a0c4ff;
-  font-weight: 500;
-}
-
-.prize-amount {
-  font-size: 1.8rem;
-  color: #ffd700;
-  font-weight: 700;
-  text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-}
-
-/* Sección de pregunta */
-.question-section {
-  grid-column: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-}
-
-.question-box {
-  background: linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(75, 0, 130, 0.3));
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(138, 43, 226, 0.5);
-  border-radius: 20px;
-  padding: 40px 50px;
-  box-shadow: 0 10px 40px rgba(138, 43, 226, 0.3);
-  max-width: 800px;
-  width: 100%;
-}
-
-.question-text {
-  font-size: 1.6rem;
-  color: white;
-  text-align: center;
+.game-title {
   margin: 0;
-  font-weight: 500;
-  line-height: 1.6;
+  font-size: 1.2rem;
+  font-style: italic;
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: 1px;
 }
 
-/* Sección de respuestas */
-.answers-section {
-  grid-column: 1;
+.title-highlight {
+  color: #3f6eff;
+  font-size: 1.4rem;
+  text-shadow: 0 0 10px rgba(63, 110, 255, 0.6);
+}
+
+.lifelines-area {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-}
-
-.answers-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: 15px;
-  max-width: 900px;
-  width: 100%;
-}
-
-.answer-option {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 15px;
-  padding: 20px 25px;
-  display: flex;
   align-items: center;
-  gap: 20px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-height: 80px;
 }
 
-.answer-option:hover:not(.disabled) {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
-  border-color: rgba(255, 255, 255, 0.4);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-}
-
-.answer-option.selected {
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 215, 0, 0.2));
-  border-color: #ffd700;
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
-}
-
-.answer-option.correct {
-  background: linear-gradient(135deg, rgba(0, 255, 0, 0.3), rgba(0, 200, 0, 0.2));
-  border-color: #00ff00;
-  animation: correctPulse 0.5s ease;
-}
-
-.answer-option.incorrect {
-  background: linear-gradient(135deg, rgba(255, 0, 0, 0.3), rgba(200, 0, 0, 0.2));
-  border-color: #ff0000;
-  animation: shake 0.5s ease;
-}
-
-.answer-option.disabled {
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-@keyframes correctPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-10px); }
-  75% { transform: translateX(10px); }
-}
-
-.option-letter {
-  background: linear-gradient(135deg, #ffd700, #ffed4e);
-  color: #0a0e27;
+.timer-badge {
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  border: 2px solid #5a7bda;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  font-weight: 700;
-  flex-shrink: 0;
-  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
-}
-
-.option-text {
-  color: white;
-  font-size: 1.2rem;
-  font-weight: 500;
-  flex: 1;
-}
-
-/* Comodines */
-.lifelines-section {
-  grid-column: 1;
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  padding: 10px;
-  z-index: 2;
+  font-weight: bold;
+  font-size: 0.9rem;
+  background: rgba(0,0,0,0.3);
+  box-shadow: 0 0 10px rgba(90, 123, 218, 0.2);
 }
 
 .lifeline-btn {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.1)) !important;
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.3) !important;
-  color: white !important;
-  padding: 15px 25px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 8px !important;
-  transition: all 0.3s ease !important;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #a0aec0;
+  background: transparent;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
 }
 
-.lifeline-btn:hover:not(.used) {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15)) !important;
-  border-color: rgba(255, 255, 255, 0.5) !important;
-  transform: translateY(-3px);
+.lifeline-btn:hover:not(:disabled) {
+  border-color: #fff;
+  background: rgba(255,255,255,0.1);
+  box-shadow: 0 0 15px rgba(255,255,255,0.3);
 }
 
 .lifeline-btn.used {
-  opacity: 0.3;
-  cursor: not-allowed;
+  border-color: #ef4444;
+  color: #ef4444;
+  opacity: 0.5;
+  position: relative;
 }
 
-.lifeline-text {
-  font-size: 0.9rem;
-  font-weight: 500;
+.lifeline-btn.used::after {
+  content: '❌';
+  position: absolute;
+  font-size: 1.5rem;
 }
 
-/* Escalera de premios */
-.prize-ladder {
-  grid-column: 2;
-  grid-row: 1 / -1;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  overflow-y: auto;
-  z-index: 2;
-  max-height: calc(100vh - 40px);
-}
-
-.ladder-title {
-  text-align: center;
-  color: #ffd700;
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin-bottom: 20px;
-  letter-spacing: 2px;
-}
-
-.prize-item {
-  display: flex;
+/* --- MAIN LAYOUT --- */
+.main-layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 20px;
   align-items: center;
-  justify-content: space-between;
-  padding: 12px 15px;
-  margin-bottom: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  margin-top: -40px; /* Pull content up slightly */
+}
+
+.game-board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* --- QUESTION STYLING (HEXAGON) --- */
+.question-wrapper {
+  width: 100%;
+  margin-bottom: 30px;
+  position: relative;
+  padding: 0 20px;
+}
+
+/* El truco del borde hexagonal usando clip-path en dos capas */
+.hex-border {
+  background: #3f6eff; /* Color del borde */
+  padding: 2px; /* Grosor del borde */
+  clip-path: polygon(20px 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 20px 100%, 0 50%);
   transition: all 0.3s ease;
 }
 
-.prize-item.current {
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 215, 0, 0.2));
-  border-color: #ffd700;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-  transform: scale(1.05);
-}
-
-.prize-item.completed {
-  background: rgba(0, 255, 0, 0.1);
-  border-color: rgba(0, 255, 0, 0.3);
-}
-
-.prize-item.milestone {
-  background: rgba(255, 215, 0, 0.15);
-  border: 2px solid rgba(255, 215, 0, 0.4);
-}
-
-.prize-number {
-  color: #a0c4ff;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.prize-value {
-  color: white;
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-/* Botón de confirmación */
-.confirm-section {
-  grid-column: 1;
+.hex-content {
+  background: linear-gradient(180deg, #0f183d 0%, #050a1f 50%, #0f183d 100%);
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(20px 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 20px 100%, 0 50%);
   display: flex;
+  align-items: center;
   justify-content: center;
-  z-index: 2;
-  margin-top: -20px;
+  text-align: center;
 }
 
-.confirm-btn {
-  background: linear-gradient(135deg, #ff8c00, #ff6600) !important;
-  color: white !important;
-  font-size: 1.3rem !important;
-  font-weight: 700 !important;
-  padding: 18px 50px !important;
-  box-shadow: 0 10px 30px rgba(255, 140, 0, 0.4) !important;
-  border: 2px solid #ffaa00 !important;
-  letter-spacing: 1px !important;
-  animation: pulse 2s infinite;
+.question-box {
+  min-height: 100px;
+  padding: 0 50px;
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1.4;
 }
 
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+/* Líneas decorativas que salen de la pregunta */
+.line-connector {
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 2px;
+  background: #3f6eff;
+  z-index: -1;
+  opacity: 0.5;
+}
+.line-connector.left { left: -30%; }
+.line-connector.right { right: -30%; }
+
+/* --- ANSWERS STYLING --- */
+.answers-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px 30px;
+  width: 100%;
 }
 
-.confirm-btn:hover {
-  box-shadow: 0 15px 40px rgba(255, 140, 0, 0.6) !important;
+.answer-wrapper {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s;
 }
 
-/* Diálogo de fin de juego */
-.game-over-card {
-  min-width: 400px;
-  background: linear-gradient(135deg, #1a1f4d, #2d3561);
+.answer-wrapper:hover .hex-border {
+  background: #e6b800; /* Hover border gold */
+}
+
+.answer-box {
+  min-height: 60px;
+  padding: 0 35px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.option-letter {
+  color: #e6b800; /* Gold */
+  font-weight: 900;
+  font-size: 1.2rem;
+}
+
+.option-text {
+  font-size: 1.1rem;
   color: white;
-  border: 2px solid rgba(255, 215, 0, 0.5);
+}
+
+/* Estados de respuesta */
+.hex-border.selected {
+  background: #e67e22; /* Orange border */
+}
+.hex-border.selected .hex-content {
+  background: #e67e22;
+  color: black;
+}
+.hex-border.selected .option-letter,
+.hex-border.selected .option-text {
+  color: black;
+}
+
+.hex-border.correct {
+  background: #2ecc71; /* Green */
+  animation: flash 0.5s infinite alternate;
+}
+.hex-border.correct .hex-content {
+  background: #2ecc71;
+  color: black;
+}
+.hex-border.correct .option-letter,
+.hex-border.correct .option-text { color: black; }
+
+.hex-border.incorrect {
+  background: #e74c3c;
+}
+.hex-border.incorrect .hex-content { background: #e74c3c; }
+
+@keyframes flash {
+  from { opacity: 1; }
+  to { opacity: 0.7; }
+}
+
+.answer-wrapper.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* --- SIDEBAR (PRIZE LADDER) --- */
+.sidebar {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.prize-ladder {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 5px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.prize-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #e6b800; /* Default goldish text for numbers */
+}
+
+.prize-row.current-prize-header {
+  /* La caja grande de arriba mostrando el premio actual */
+  display: none; /* Oculto en la lista normal, pero útil si quieres mostrarlo aparte */
+}
+
+.row-num {
+  width: 30px;
+  color: #888;
+}
+
+.row-value {
+  color: #fff;
+  font-weight: 500;
+}
+
+.prize-row.milestone .row-value {
+  color: white;
+  font-weight: 700;
+}
+
+.prize-row.active {
+  background: linear-gradient(90deg, #e6b800, #f39c12);
   border-radius: 20px;
+  color: black;
+  box-shadow: 0 0 15px rgba(230, 184, 0, 0.4);
 }
 
-/* Scrollbar personalizado para la escalera */
-.prize-ladder::-webkit-scrollbar {
-  width: 8px;
+.prize-row.active .row-num,
+.prize-row.active .row-value {
+  color: black;
+  font-weight: 800;
 }
 
-.prize-ladder::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
+.prize-row.passed {
+  opacity: 0.5;
 }
 
-.prize-ladder::-webkit-scrollbar-thumb {
-  background: rgba(255, 215, 0, 0.3);
-  border-radius: 10px;
+/* --- FOOTER --- */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 10px;
+  margin-top: 10px;
 }
 
-.prize-ladder::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 215, 0, 0.5);
+.winnings-info {
+  border: 1px solid #3f6eff;
+  border-radius: 8px;
+  display: flex;
+  background: rgba(0, 10, 40, 0.8);
 }
 
-/* Asegurar que no haya scroll */
-:deep(body), 
-:deep(html),
-:deep(#q-app),
-:deep(.q-layout),
-:deep(.q-page-container),
-:deep(.q-page) {
-  overflow: hidden !important;
-  margin: 0 !important;
-  padding: 0 !important;
+.stat-group {
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-divider {
+  width: 1px;
+  background: #3f6eff;
+}
+
+.label {
+  font-size: 0.7rem;
+  color: #3f6eff;
+  letter-spacing: 1px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.value {
+  color: #e6b800;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.timer-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid #e67e22;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.walk-away-btn {
+  background: linear-gradient(180deg, #3f6eff 0%, #1a4bd6 100%);
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 6px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #1034a6;
+  transition: transform 0.1s;
+}
+
+.walk-away-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #1034a6;
+}
+
+/* --- MODAL --- */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-card {
+  background: #020b20;
+  border: 2px solid #e6b800;
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  max-width: 500px;
+  box-shadow: 0 0 50px rgba(230, 184, 0, 0.2);
+}
+
+.final-prize {
+  font-size: 3rem;
+  color: #e6b800;
+  margin: 20px 0;
+  font-weight: 900;
+}
+
+.btn-restart {
+  background: #2ecc71;
+  border: none;
+  padding: 15px 40px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 50px;
+  color: #004d26;
+}
+
+.notification-toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 15px 25px;
+  border-radius: 8px;
+  background: white;
+  color: black;
+  font-weight: bold;
+  z-index: 200;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Responsividad básica */
+@media (max-width: 900px) {
+  .game-container { padding: 10px; }
+  .main-layout { grid-template-columns: 1fr; margin-top: 0; }
+  .sidebar { display: none; } /* Ocultar escalera en móvil o hacerla flotante */
+  .answers-grid { grid-template-columns: 1fr; }
+  .header { height: auto; margin-bottom: 20px; }
 }
 </style>
