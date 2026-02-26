@@ -1,0 +1,76 @@
+# ─────────────────────────────────────────
+# Node.js
+# ─────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Logs
+logs/
+*.log
+*.log.*
+log.txt
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+coverage/
+*.lcov
+
+# Build output
+dist/
+build/
+
+# ─────────────────────────────────────────
+# Environment variables
+# ─────────────────────────────────────────
+.env
+.env.test
+.env.development
+.env.production
+
+# ─────────────────────────────────────────
+# VS Code
+# ─────────────────────────────────────────
+.vscode/
+.history/
+
+# ─────────────────────────────────────────
+# Sistema operativo
+# ─────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ─────────────────────────────────────────
+# Temporary files
+# ─────────────────────────────────────────
+*.tmp
+*.swp
+*.swo
+
+# ─────────────────────────────────────────
+# ZIPs u otros archivos subidos
+# ─────────────────────────────────────────
+*.zip
+*.rar
+*.7z
+*.tar
+*.tar.gz
+
+# ─────────────────────────────────────────
+# Database (si generas backups)
+# ─────────────────────────────────────────
+*.sql
+*.sqlite
+*.db
+
+# ─────────────────────────────────────────
+# Nodemon cache
+# ─────────────────────────────────────────
+.nodemonignore

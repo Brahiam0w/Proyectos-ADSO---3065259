@@ -1,0 +1,16 @@
+# Secretos - NUNCA subir esto a GitHub
+.env
+
+# Dependencias (se instalan con npm install)
+node_modules/
+
+# Archivos subidos por usuarios
+uploads/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db

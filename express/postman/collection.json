@@ -1,0 +1,74 @@
+{
+  "info": {
+    "name": "Numerologia API",
+    "_postman_id": "numerologia-collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "GET Usuarios",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:3000/api/usuarios"
+        }
+      }
+    },
+    {
+      "name": "POST Crear usuario",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Maria\",\n  \"email\": \"maria@example.com\",\n  \"fecha_nacimiento\": \"1990-05-12\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/usuarios"
+        }
+      }
+    },
+    {
+      "name": "POST Pago",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"usuario_id\": 1,\n  \"monto\": 10000,\n  \"metodo\": \"tarjeta\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/pagos"
+        }
+      }
+    },
+    {
+      "name": "POST Lectura Principal",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "http://localhost:3000/api/lecturas/principal/1"
+        }
+      }
+    },
+    {
+      "name": "POST Lectura Diaria",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "http://localhost:3000/api/lecturas/diaria/1"
+        }
+      }
+    }
+  ]
+}
