@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "nombre": "Elena Rodríguez",
+    "edad": 28,
+    "email": "elena.rodriguez@example.com",
+    "pais": "España",
+    "profesion": "UX Designer",
+    "bio": "Amante del minimalismo y la tipografía.",
+    "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop"
+  },
+  {
+    "id": 2,
+    "nombre": "Marcus Chen",
+    "edad": 32,
+    "email": "m.chen@techly.io",
+    "pais": "Canadá",
+    "profesion": "Full Stack Developer",
+    "bio": "Escribo código y escalo montañas en mi tiempo libre.",
+    "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop"
+  },
+  {
+    "id": 3,
+    "nombre": "Lucía Méndez",
+    "edad": 25,
+    "email": "lucia.mndz@creativos.net",
+    "pais": "México",
+    "profesion": "Content Creator",
+    "bio": "Contando historias a través de la fotografía.",
+    "avatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop"
+  },
+  {
+    "id": 4,
+    "nombre": "Julian Varga",
+    "edad": 41,
+    "email": "j.varga@corp.com",
+    "pais": "Alemania",
+    "profesion": "Project Manager",
+    "bio": "Optimización de procesos y liderazgo de equipos.",
+    "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop"
+  },
+  {
+    "id": 5,
+    "nombre": "Amara Diop",
+    "edad": 29,
+    "email": "amara.diop@global.org",
+    "pais": "Senegal",
+    "profesion": "Data Analyst",
+    "bio": "Transformando números en decisiones estratégicas.",
+    "avatar": "https://images.unsplash.com/photo-1531123897727-8f129e16fd3c?w=150&h=150&fit=crop"
+  },
+  {
+    "id": 6,
+    "nombre": "Santiago Paz",
+    "edad": 35,
+    "email": "santipaz@freelance.com",
+    "pais": "Argentina",
+    "profesion": "Ilustrador Digital",
+    "bio": "Dibujando mundos fantásticos desde 2015.",
+    "avatar": "https://images.unsplash.com/photo-1547037579-f0fc020ac3be?w=150&h=150&fit=crop"
+  },
+  {
+    "id": 7,
+    "nombre": "Sophie Bennett",
+    "edad": 27,
+    "email": "sophie.b@fashion.uk",
+    "pais": "Reino Unido",
+    "profesion": "Marketing Manager",
+    "bio": "Especialista en tendencias y branding digital.",
+    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop"
+  },
+  {
+    "id": 8,
+    "nombre": "Hiroshi Tanaka",
+    "edad": 38,
+    "email": "h.tanaka@cyber.jp",
+    "pais": "Japón",
+    "profesion": "Cybersecurity Engineer",
+    "bio": "Protegiendo la red, un paquete a la vez.",
+    "avatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop"
+  },
+  {
+    "id": 9,
+    "nombre": "Clara Rossi",
+    "edad": 31,
+    "email": "clara.rossi@disegno.it",
+    "pais": "Italia",
+    "profesion": "Arquitecta",
+    "bio": "Diseñando espacios sostenibles para el futuro.",
+    "avatar": "https://images.unsplash.com/photo-1554151228-14d9def656e4?w=150&h=150&fit=crop"
+  },
+  {
+    "id": 10,
+    "nombre": "David Wilson",
+    "edad": 45,
+    "email": "d.wilson@edu.com",
+    "pais": "EE.UU.",
+    "profesion": "Profesor de Historia",
+    "bio": "Apasioando por el pasado y la educación moderna.",
+    "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop"
+  }
+]
