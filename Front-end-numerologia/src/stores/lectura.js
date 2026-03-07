@@ -15,7 +15,7 @@ export const useLecturaStore = defineStore("lectura", () => {
             const response = await api.post(`/lecturas/principal/${usuarioId}`);
             if (response.data.success) {
                 lecturaActual.value = response.data.lectura;
-                return { success: true, lectura: response.data.lectura };
+                return { success: true, lectura: response.data.lectura, mensaje: response.data.mensaje };
             } else {
                 error.value = response.data.mensaje;
                 return { success: false, mensaje: error.value };
@@ -35,7 +35,7 @@ export const useLecturaStore = defineStore("lectura", () => {
             const response = await api.post(`/lecturas/diaria/${usuarioId}`);
             if (response.data.success) {
                 lecturaActual.value = response.data.lectura;
-                return { success: true, lectura: response.data.lectura };
+                return { success: true, lectura: response.data.lectura, mensaje: response.data.mensaje };
             } else {
                 error.value = response.data.mensaje;
                 return { success: false, mensaje: error.value };

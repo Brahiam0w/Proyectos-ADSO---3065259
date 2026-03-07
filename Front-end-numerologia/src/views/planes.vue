@@ -181,9 +181,15 @@ const user = computed(() => authStore.user || {});
 // Refrescar datos del usuario desde la DB al cargar
 onMounted(async () => {
   try {
-    const response = await api.get(`/usuarios/${user.value._id}`);
-    if (response.data.success) {
-      authStore.user = response.data.usuario;
+    if (user.value && user.value._id) {
+      console.log("Sincronizando usuario:", user.value._id);
+      const response = await api.get(`/usuarios/${user.value._id}`);
+      if (response.data.success) {
+        console.log("Datos recibidos:", response.data.usuario);
+        authStore.user = response.data.usuario;
+      }
+    } else {
+      console.warn("No hay ID de usuario para sincronizar");
     }
   } catch (error) {
     console.error("Error al sincronizar datos del usuario:", error);
@@ -191,11 +197,24 @@ onMounted(async () => {
 });
 
 const diasRestantes = computed(() => {
-  if (!user.value.fecha_expiracion_plan) return null;
+  if (!user.value || !user.value.fecha_expiracion_plan) return null;
+  
   const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  
   const expiracion = new Date(user.value.fecha_expiracion_plan);
-  const diferenciaMs = expiracion - hoy;
-  const dias = Math.ceil(diferenciaMs / (1000 * 60 * 60 * 24));
+  expiracion.setHours(0, 0, 0, 0);
+  
+  const diferenciaMs = expiracion.getTime() - hoy.getTime();
+  const dias = Math.round(diferenciaMs / (1000 * 60 * 60 * 24));
+  
+  console.log("Cálculo de días:", {
+    hoy,
+    expiracion,
+    diferenciaMs,
+    dias
+  });
+  
   return dias > 0 ? dias : 0;
 });
 

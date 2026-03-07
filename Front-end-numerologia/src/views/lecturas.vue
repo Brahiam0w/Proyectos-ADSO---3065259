@@ -38,14 +38,14 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <q-page-container>
-      <q-page class="main-content-dark column no-wrap items-center">
-        <div class="container column no-wrap">
+      <q-page class="main-content-dark column no-wrap items-center justify-center" @click="lecturaStore.lecturaActual = null">
+        <div class="container column no-wrap" @click.stop>
           
           <!-- Header -->
           <div class="header-section q-mb-md">
             <div class="animate-fade">
               <div class="text-gold text-caption text-uppercase text-weight-bold tracking-widest opacity-80">Portal de Sabiduría</div>
-              <div class="text-h3 text-weight-bold text-white title-font">Oráculo de Lecturas</div>
+              <div class="text-h4 text-weight-bold text-white title-font">Oráculo de Lecturas</div>
             </div>
           </div>
 
@@ -192,7 +192,7 @@ const formatFecha = (f) => {
 const handleGenerarLectura = async () => {
   const res = await lecturaStore.generarLecturaPrincipal(user.value?._id);
   if (res.success) {
-    $q.notify({ color: "positive", message: "Lectura generada", icon: "stars", position: 'top', timeout: 2000 });
+    $q.notify({ color: "positive", message: res.mensaje || "Lectura generada", icon: "stars", position: 'top', timeout: 2000 });
   } else {
     $q.notify({ color: "negative", message: res.mensaje, icon: "error", position: 'top' });
   }
@@ -201,7 +201,7 @@ const handleGenerarLectura = async () => {
 const handleGenerarDiaria = async () => {
   const res = await lecturaStore.generarLecturaDiaria(user.value?._id);
   if (res.success) {
-    $q.notify({ color: "positive", message: "Guía diaria lista", icon: "today", position: 'top', timeout: 2000 });
+    $q.notify({ color: "positive", message: res.mensaje || "Guía diaria lista", icon: "today", position: 'top', timeout: 2000 });
   } else {
     $q.notify({ color: "negative", message: res.mensaje, icon: "lock", position: 'top' });
   }
@@ -224,7 +224,9 @@ const descargarPDF = async () => {
     const canvasHeightInMm = (imgProps.height * pdfWidth) / imgProps.width;
     const finalPdf = canvasHeightInMm > pdf.internal.pageSize.getHeight() ? new jsPDF('p', 'mm', [pdfWidth, canvasHeightInMm]) : pdf;
     finalPdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, canvasHeightInMm);
-    finalPdf.save(`Lectura_${user.value.nombre}.pdf`);
+    const tipoLabel = lecturaActual.value.tipo === 'principal' ? 'Principal' : 'Diaria';
+    const fechaDescarga = new Date().toLocaleDateString('es-ES').replace(/\//g, '-');
+    finalPdf.save(`Lectura_${tipoLabel}_${user.value.nombre}_${fechaDescarga}.pdf`);
     $q.notify({ color: 'positive', message: 'Descargado', icon: 'check' });
   } catch (error) {
     $q.notify({ color: 'negative', message: 'Error PDF' });
@@ -243,11 +245,28 @@ const handleLogout = () => { authStore.logout(); router.push('/') }
 
 /* FIX LAYOUT */
 .mystic-dark-layout { background: #0a0612; color: #e0e0e0; height: 100vh; height: 100dvh; overflow: hidden; }
-.main-content-dark { height: 100vh; height: 100dvh; padding: 0 !important; background-image: radial-gradient(circle at 50% 50%, rgba(115, 17, 212, 0.05) 0%, transparent 100%); overflow: hidden; }
-.container { max-width: 1200px; width: 100%; height: 100%; padding: 20px 24px; display: flex; flex-direction: column; overflow: hidden; }
+.main-content-dark { 
+  height: 100vh; 
+  height: 100dvh; 
+  padding: 0 !important; 
+  background-image: radial-gradient(circle at 50% 50%, rgba(115, 17, 212, 0.05) 0%, transparent 100%); 
+  overflow: hidden; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.container { 
+  max-width: 1200px; 
+  width: 100%; 
+  padding: 20px 24px; 
+  display: flex; 
+  flex-direction: column; 
+  z-index: 1;
+}
 
 /* Board */
-.board-row { flex: 1; min-height: 0; overflow: hidden; margin-bottom: 10px; }
+.board-row { margin-bottom: 10px; }
 
 /* Sidebar */
 .sidebar-mystic { background: #110a1f !important; border-right: none !important; }

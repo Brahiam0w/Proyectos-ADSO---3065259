@@ -78,3 +78,12 @@ Sistema integral de numerología que utiliza Inteligencia Artificial (Google Gen
   - Se ajustó el contenedor de resultados (`result-card`) para que use `flex` y su área de texto sea la única con scroll interno.
   - Se optimizó el padding para que todo el contenido sea visible sin necesidad de scroll de página.
 - **Estado Actual:** Pantalla de lecturas con scroll interno en la sección de contenido, ajustada al viewport.
+
+
+## reglas de codigo (Estilo ES6)
+1. **Importaciones:**Usar siempre "`import x from 'y'`. No uesar 'require'.
+2. **Asincronia:** Preferir `async/await` sobre `.them()`.
+3. **Manejo de Errores:** En los controladores, envolver la logica en bloques `try/catch` y pasar el erroe al middleware global mediante `next(error)`.
+4. **Variables:** Usar `Const` por defecto, `let` solo si es necesario. Nunca usar `var`.
+5. **Funciones:** Preferor Arrow Functions para middleware y utilidades.
+6. Para el nombrado de variables y constantes utiliza camelCase.

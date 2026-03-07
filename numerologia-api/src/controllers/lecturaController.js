@@ -91,6 +91,28 @@ const generarLecturaDiaria = async (req, res) => {
       });
     }
 
+    // --- RESTRICCIÓN: Una sola lectura diaria al día ---
+    const inicioDia = new Date();
+    inicioDia.setHours(0, 0, 0, 0);
+
+    const finDia = new Date();
+    finDia.setHours(23, 59, 59, 999);
+
+    const lecturaHoy = await Lectura.findOne({
+      usuario_id,
+      tipo: 'diaria',
+      fecha_lectura: { $gte: inicioDia, $lte: finDia },
+    });
+
+    if (lecturaHoy) {
+      return res.status(200).json({
+        success: true,
+        mensaje: 'Tu guía mística de hoy ya ha sido revelada. Vuelve mañana para una nueva conexión.',
+        lectura: lecturaHoy,
+      });
+    }
+    // --------------------------------------------------
+
     // Generar la lectura diaria
     const { numero, contenido } = await generarLecturaDiariaIA(usuario);
 

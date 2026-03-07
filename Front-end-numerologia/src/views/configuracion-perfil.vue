@@ -27,13 +27,17 @@
             <q-item-section avatar><q-icon name="person" /></q-item-section>
             <q-item-section>Mi Perfil</q-item-section>
           </q-item>
-          <q-item clickable class="nav-item" @click="router.push('/Lecturas')">
+          <q-item clickable class="nav-item" @click="router.push('/lecturas')">
             <q-item-section avatar><q-icon name="menu_book" /></q-item-section>
             <q-item-section>Lecturas</q-item-section>
           </q-item>
           <q-item clickable class="nav-item" @click="router.push('/planes')">
             <q-item-section avatar><q-icon name="stars" /></q-item-section>
             <q-item-section>Planes</q-item-section>
+          </q-item>
+          <q-item clickable class="nav-item" @click="router.push('/historial')">
+            <q-item-section avatar><q-icon name="history_edu" /></q-item-section>
+            <q-item-section>Historial</q-item-section>
           </q-item>
           <q-item clickable active-class="nav-active" active class="nav-item">
             <q-item-section avatar><q-icon name="settings" /></q-item-section>

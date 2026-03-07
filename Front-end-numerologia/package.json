@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@babel/runtime": "^7.28.6",
     "@quasar/extras": "^1.17.0",
     "axios": "^1.13.5",
     "html2canvas": "^1.4.1",
