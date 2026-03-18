@@ -67,7 +67,7 @@
                   </q-input>
 
                   <div class="text-right q-mt-xs">
-                    <a href="#" class="forgot-link">
+                    <a href="#" class="forgot-link" @click.prevent="router.push('/RecuperarContrasena')">
                       ¿Olvidaste tu contraseña?
                     </a>
                   </div>
@@ -81,7 +81,7 @@
                   :loading="loading"
                   :disable="loading"
                 >
-                  <q-icon name="add_circle" class="q-mr-sm gold-icon" />
+                  <q-icon name="login" class="q-mr-sm" />
                   Iniciar sesión
                 </q-btn>
 
@@ -102,7 +102,7 @@
           </q-card>
 
           <div class="copyright">
-            © 2023 Numerología Mística. Todos los derechos reservados.
+            © 2026 Numerología Mística. Todos los derechos reservados.
           </div>
 
         </div>
@@ -129,7 +129,6 @@ const loading = ref(false)
 const showPassword = ref(false)
 
 const handleLogin = async () => {
-  // Regex para validar email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
   if (!email.value || !password.value) {
@@ -147,12 +146,11 @@ const handleLogin = async () => {
     $q.notify({
       progress: true,
       message: 'El formato del correo no es válido',
-      caption: 'Asegúrate de incluir un @ y un dominio (ej. .com)',
+      caption: 'Asegúrate de incluir un @ y un dominio',
       icon: 'mail',
       color: 'purple-10',
       textColor: 'white',
       position: 'top',
-      badgeColor: 'gold',
       actions: [{ icon: 'close', color: 'white' }]
     })
     return
@@ -166,10 +164,11 @@ const handleLogin = async () => {
     $q.notify({
       color: 'positive',
       message: `¡Bienvenido de nuevo, ${authStore.user.nombre}!`,
-      icon: 'check_circle'
+      icon: 'check_circle',
+      position: 'top'
     })
     
-    // Redirigir según el rol o a una página por defecto
+    // Redirigir según el rol
     if (authStore.user.rol === 'admin') {
       router.push('/GestionUsuarios')
     } else {
@@ -179,7 +178,8 @@ const handleLogin = async () => {
     $q.notify({
       color: 'negative',
       message: res.mensaje || 'Error al iniciar sesión',
-      icon: 'error'
+      icon: 'error',
+      position: 'top'
     })
   }
 }
@@ -268,6 +268,7 @@ const irARegistro = () => {
   font-size: 13px;
   color: #7311d4;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .register-text {
@@ -292,8 +293,6 @@ const irARegistro = () => {
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(115, 17, 212, 0.4);
 }
-
-.gold-icon { color: #eab308; }
 
 .bottom-bar {
   height: 6px;

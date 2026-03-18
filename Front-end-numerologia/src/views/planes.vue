@@ -76,61 +76,44 @@
             </div>
           </div>
 
-          <div class="row q-col-gutter-xl justify-center items-center">
+          <div class="row q-col-gutter-xl justify-center items-stretch">
             
-            <!-- PLAN BÁSICO -->
-            <div class="col-12 col-sm-6 col-md-5">
-              <q-card class="mystic-card-dark plan-card column no-wrap shadow-10" :class="{'current-plan-border': user.estado !== 'activo'}">
-                <q-card-section class="text-center q-pa-lg">
-                  <div class="text-overline text-grey-5">VIAJERO</div>
-                  <div class="text-h4 text-white title-font">Iniciado</div>
-                  <div class="text-h3 text-gold text-weight-bolder">Gratis</div>
-                </q-card-section>
-
-                <q-card-section class="col q-pa-lg">
-                  <q-list dense>
-                    <q-item v-for="feat in ['Lectura Principal', 'Perfil Básico']" :key="feat" class="q-px-none">
-                      <q-item-section avatar side><q-icon name="check" color="green-4" size="16px" /></q-item-section>
-                      <q-item-section class="text-grey-4">{{ feat }}</q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-card-section>
-
-                <div class="action-reveal">
-                  <q-btn 
-                    :label="user.estado !== 'activo' ? 'Plan Actual' : 'Plan Base'" 
-                    outline 
-                    :color="user.estado !== 'activo' ? 'amber' : 'grey-7'" 
-                    class="full-width reveal-btn" 
-                    :disable="user.estado !== 'activo'" 
-                    no-caps 
-                  />
-                </div>
-              </q-card>
-            </div>
-
-            <!-- PLAN PREMIUM -->
-            <div class="col-12 col-sm-6 col-md-5">
-              <q-card class="mystic-card-dark plan-card featured-card column no-wrap shadow-24" :class="{'current-plan-border': user.estado === 'activo'}">
-                <div v-if="user.estado === 'activo'" class="featured-badge">PLAN ACTIVO</div>
-                <div v-else class="featured-badge">RECOMENDADO</div>
+            <!-- Renderizado Dinámico de Planes desde MongoDB -->
+            <div v-for="plan in planes" :key="plan._id" class="col-12 col-sm-6 col-md-5">
+              <q-card 
+                class="mystic-card-dark plan-card column no-wrap shadow-10" 
+                :class="{
+                  'current-plan-border': (plan.precio === 0 && user.estado !== 'activo') || (plan.precio > 0 && user.estado === 'activo'),
+                  'featured-card': plan.precio > 0
+                }"
+              >
+                <!-- Badge de Estado -->
+                <div v-if="(plan.precio === 0 && user.estado !== 'activo') || (plan.precio > 0 && user.estado === 'activo')" class="featured-badge">PLAN ACTUAL</div>
+                <div v-else-if="plan.precio > 0" class="featured-badge">RECOMENDADO</div>
                 
                 <q-card-section class="text-center q-pa-lg">
-                  <div class="text-overline text-amber">ASCENDIDO</div>
-                  <div class="text-h4 text-white title-font">Místico</div>
-                  <div class="text-h3 text-gold text-weight-bolder">$9.99<span class="text-caption text-grey-5">/m</span></div>
+                  <div class="text-overline" :class="plan.precio > 0 ? 'text-amber' : 'text-grey-5'">
+                    {{ plan.tag || (plan.precio > 0 ? 'ASCENDIDO' : 'VIAJERO') }}
+                  </div>
+                  <div class="text-h4 text-white title-font">{{ plan.nombre }}</div>
+                  <div class="text-h3 text-gold text-weight-bolder">
+                    {{ plan.precio === 0 ? 'Gratis' : `$${plan.precio}` }}
+                    <span v-if="plan.precio > 0" class="text-caption text-grey-5">/{{ plan.periodo === 'mes' ? 'm' : 'a' }}</span>
+                  </div>
                 </q-card-section>
 
                 <q-card-section class="col q-pa-lg">
                   <q-list dense>
-                    <q-item v-for="feat in ['Lecturas Ilimitadas', 'Guía Diaria IA', 'Descargas PDF', 'Historial Completo']" :key="feat" class="q-px-none">
-                      <q-item-section avatar side><q-icon name="auto_awesome" color="gold" size="18px" /></q-item-section>
-                      <q-item-section class="text-grey-2">{{ feat }}</q-item-section>
+                    <q-item v-for="feat in plan.features" :key="feat" class="q-px-none">
+                      <q-item-section avatar side>
+                        <q-icon :name="plan.precio > 0 ? 'auto_awesome' : 'check'" :color="plan.precio > 0 ? 'gold' : 'green-4'" size="18px" />
+                      </q-item-section>
+                      <q-item-section :class="plan.precio > 0 ? 'text-grey-2' : 'text-grey-4'">{{ feat }}</q-item-section>
                     </q-item>
                   </q-list>
 
-                  <!-- CONTADOR DE DÍAS -->
-                  <div v-if="user.estado === 'activo' && diasRestantes !== null" class="q-mt-lg text-center days-counter animate-fade">
+                  <!-- CONTADOR DE DÍAS (Solo para el plan de pago si está activo) -->
+                  <div v-if="plan.precio > 0 && user.estado === 'activo' && diasRestantes !== null" class="q-mt-lg text-center days-counter animate-fade">
                     <div class="text-gold text-weight-bold h-countdown">{{ diasRestantes }}</div>
                     <div class="text-caption text-grey-4 text-uppercase tracking-widest">Días de conexión restantes</div>
                   </div>
@@ -138,12 +121,22 @@
 
                 <div class="action-reveal">
                   <q-btn 
+                    v-if="plan.precio === 0"
+                    :label="user.estado !== 'activo' ? 'Tu Nivel Actual' : 'Plan Base'" 
+                    outline 
+                    :color="user.estado !== 'activo' ? 'amber' : 'grey-7'" 
+                    class="full-width reveal-btn" 
+                    :disable="user.estado !== 'activo'" 
+                    no-caps 
+                  />
+                  <q-btn 
+                    v-else
                     :label="user.estado === 'activo' ? 'Gestionar Suscripción' : 'Suscribirse Ahora'" 
                     color="amber-9" 
                     class="full-width reveal-btn btn-gold-pulse text-weight-bold" 
                     unelevated 
                     no-caps 
-                    @click="handlePlanClick"
+                    @click="handlePlanClick(plan)"
                     :loading="userStore.loading"
                   />
                 </div>
@@ -175,11 +168,24 @@ const userStore = useUserStore();
 const router = useRouter();
 const $q = useQuasar();
 const drawer = ref(false);
+const planes = ref([]);
 
 const user = computed(() => authStore.user || {});
 
+const obtenerPlanes = async () => {
+  try {
+    const res = await api.get('/planes');
+    if (res.data.success) {
+      planes.value = res.data.planes;
+    }
+  } catch (err) {
+    console.error("Error al obtener planes:", err);
+  }
+};
+
 // Refrescar datos del usuario desde la DB al cargar
 onMounted(async () => {
+  obtenerPlanes();
   try {
     if (user.value && user.value._id) {
       console.log("Sincronizando usuario:", user.value._id);

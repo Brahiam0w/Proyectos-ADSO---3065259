@@ -1,154 +1,175 @@
 <template>
-  <q-layout view="hHh lpR fFf">
-
+  <q-layout view="lHh Lpr lFf" class="mystic-dark-layout">
     <q-page-container>
+      <q-page class="main-content-dark flex flex-center">
+        
+        <!-- Ambient Glow -->
+        <div class="ambient-glow">
+          <div class="glow glow-top"></div>
+          <div class="glow glow-bottom"></div>
+        </div>
 
-      <q-page class="register-page">
-
-        <div class="register-wrapper row no-wrap full-height">
-
-          <!-- LEFT PANEL -->
-          <div class="col-12 col-md-6 left-panel flex flex-center">
-
-            <div class="left-content text-center">
-
-              <div class="mandala-glow"></div>
-
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2d3OaXvmal_MQZNq_3I2lEOAbwwVQv8XhEEiwGEJB7eD2L4cqxftTVKp15EyG1nUFUErEMhktc6rW55QsYGPRp0QZObmvvmQUg3nF1b6ZNQH_OBij8P8Nt9jNHS2SZrtHXvLcr9bMwntXw5Ic9-mkBYSJ4CX3e4syBC8qOahaf0TlyoJZ6XYRMSVMBZQZ9g4G8L1PpBBnlGcrNc2YXG7tBC9MB_HegLEbtL-CADDTIckzuQgFRficoDlwrxPUS1aTKnarXKLTeOY"
-                class="mandala-image"
-              />
-
-              <div class="left-text">
-                <h2>Descubre tu propósito</h2>
-                <p>La numerología revela los secretos escritos en tus estrellas.</p>
+        <div class="register-container animate-fade">
+          <q-card class="mystic-card-dark register-card shadow-24">
+            
+            <!-- Encabezado fijo -->
+            <q-card-section class="text-center q-pt-lg q-pb-none">
+              <div class="logo-circle">
+                <q-icon name="auto_awesome" size="28px" color="amber-8" />
               </div>
 
-            </div>
+              <h1 class="title-font text-h4 text-white q-mt-sm q-mb-xs">
+                Comienza tu Viaje
+              </h1>
+              <p class="text-grey-5 text-subtitle2 q-mb-none">
+                Revela tu destino estelar.
+              </p>
+            </q-card-section>
 
-          </div>
+            <!-- Área de Formulario con scroll interno si es necesario -->
+            <q-card-section class="q-px-lg q-pb-lg scroll-area">
+              <q-form @submit.prevent="handleRegister" class="q-gutter-y-md q-mt-md">
+                
+                <q-input
+                  v-model="form.fullname"
+                  label="Nombre completo"
+                  dark
+                  filled
+                  dense
+                  label-color="amber-8"
+                >
+                  <template #prepend>
+                    <q-icon name="person_outline" color="amber-8" size="20px" />
+                  </template>
+                </q-input>
 
-          <!-- RIGHT PANEL -->
-          <div class="col-12 col-md-6 right-panel flex flex-center">
-
-            <q-card class="register-card">
-
-              <q-card-section>
-
-                <div class="tag">Registro Nuevo</div>
-
-                <h1 class="title">Comienza tu viaje</h1>
-                <p class="subtitle">
-                  Ingresa tus datos para generar tu carta natal personalizada.
-                </p>
-
-              </q-card-section>
-
-              <q-card-section>
-
-                <q-form @submit.prevent="handleRegister" class="q-gutter-md">
-
-                  <q-input v-model="form.fullname" label="Nombre completo" filled>
-                    <template #prepend>
-                      <q-icon name="person_outline" />
-                    </template>
-                  </q-input>
-
-                  <!-- Fecha destacada -->
-                  <div>
-                    <label class="birth-label">
-                      <q-icon name="stars" size="16px" />
-                      Fecha de nacimiento
-                    </label>
-
-                    <q-input
-                      v-model="form.birthdate"
-                      type="date"
-                      filled
-                      class="birth-input"
-                    />
-
-                    <div class="birth-hint">
-                      Este dato es esencial para tu lectura numerológica.
-                    </div>
+                <div class="birth-container">
+                  <div class="custom-label q-mb-xs flex items-center">
+                    <q-icon name="stars" size="12px" class="q-mr-xs" />
+                    Fecha de Nacimiento
                   </div>
-
-                  <q-input v-model="form.email" type="text" label="Correo electrónico" filled>
-                    <template #prepend>
-                      <q-icon name="alternate_email" />
-                    </template>
-                  </q-input>
-
                   <q-input
-                    v-model="form.password"
-                    :type="showPassword ? 'text' : 'password'"
-                    label="Contraseña"
+                    v-model="form.birthdate"
+                    type="date"
+                    dark
                     filled
-                  >
-                    <template #prepend>
-                      <q-icon name="lock_outline" />
-                    </template>
-                    <template #append>
-                      <q-icon
-                        :name="showPassword ? 'visibility' : 'visibility_off'"
-                        class="cursor-pointer"
-                        @click="showPassword = !showPassword"
-                      />
-                    </template>
-                  </q-input>
-
-                  <!-- Opcionales -->
-                  <q-expansion-item
-                    icon="tune"
-                    label="Datos Opcionales (Mejora la precisión)"
                     dense
-                    class="optional-box"
-                  >
-                    <div class="row q-col-gutter-md">
-                      <div class="col-12 col-md-6">
-                        <q-input v-model="form.birthtime" type="time" label="Hora de nacimiento" dense outlined />
-                      </div>
-                      <div class="col-12 col-md-6">
-                        <q-input v-model="form.birthplace" label="Lugar de nacimiento" dense outlined />
-                      </div>
-                    </div>
-                  </q-expansion-item>
-
-                  <q-checkbox
-                    v-model="form.terms"
-                    label="Acepto los Términos del Servicio y la Política de Privacidad"
+                    class="birth-input"
                   />
-
-                  <q-btn
-                    type="submit"
-                    class="register-btn"
-                    unelevated
-                    no-caps
-                    :loading="loading"
-                    :disable="loading"
-                  >
-                    REGISTRARSE
-                  </q-btn>
-
-                </q-form>
-
-                <div class="login-link text-center">
-                  ¿Ya tienes una cuenta?
-                  <a @click.prevent="irALogin" href="#" class="cursor-pointer">Inicia sesión</a>
                 </div>
 
-              </q-card-section>
+                <q-input
+                  v-model="form.email"
+                  type="email"
+                  label="Correo electrónico"
+                  dark
+                  filled
+                  dense
+                  label-color="amber-8"
+                >
+                  <template #prepend>
+                    <q-icon name="alternate_email" color="amber-8" size="20px" />
+                  </template>
+                </q-input>
 
-            </q-card>
+                <q-input
+                  v-model="form.password"
+                  :type="showPassword ? 'text' : 'password'"
+                  label="Contraseña"
+                  dark
+                  filled
+                  dense
+                  label-color="amber-8"
+                >
+                  <template #prepend>
+                    <q-icon name="lock_outline" color="amber-8" size="20px" />
+                  </template>
+                  <template #append>
+                    <q-icon
+                      :name="showPassword ? 'visibility' : 'visibility_off'"
+                      class="cursor-pointer"
+                      color="grey-5"
+                      size="18px"
+                      @click="showPassword = !showPassword"
+                    />
+                  </template>
+                </q-input>
 
+                <div class="row q-col-gutter-sm">
+                  <div class="col-6">
+                    <q-select
+                      v-model="form.genero"
+                      :options="genderOptions"
+                      label="Género"
+                      dark
+                      filled
+                      dense
+                      emit-value
+                      map-options
+                      label-color="amber-8"
+                    >
+                      <template #prepend>
+                        <q-icon name="transgender" color="amber-8" size="20px" />
+                      </template>
+                    </q-select>
+                  </div>
+                  <div class="col-6">
+                    <q-input
+                      v-model="form.pais"
+                      label="País"
+                      dark
+                      filled
+                      dense
+                      label-color="amber-8"
+                    >
+                      <template #prepend>
+                        <q-icon name="public" color="amber-8" size="20px" />
+                      </template>
+                    </q-input>
+                  </div>
+                </div>
+
+                <q-checkbox
+                  v-model="form.terms"
+                  dark
+                  dense
+                  color="amber-8"
+                  class="text-caption text-grey-4 terms-check"
+                >
+                  Acepto los <span class="text-amber-8">Términos</span> y la <span class="text-amber-8">Privacidad</span>
+                </q-checkbox>
+
+                <q-btn
+                  type="submit"
+                  class="register-btn full-width q-py-sm q-mt-sm"
+                  unelevated
+                  no-caps
+                  :loading="loading"
+                  :disable="loading"
+                >
+                  <q-icon name="auto_fix_high" class="q-mr-sm" />
+                  REGISTRARSE
+                </q-btn>
+
+              </q-form>
+
+              <div class="text-center q-mt-md">
+                <span class="text-grey-5 text-caption">¿Ya tienes cuenta?</span>
+                <a @click.prevent="irALogin" href="#" class="login-link q-ml-sm cursor-pointer text-caption">
+                  Inicia sesión
+                </a>
+              </div>
+            </q-card-section>
+
+          </q-card>
+
+          <div class="copyright text-center q-mt-md text-grey-8 text-caption">
+            © 2026 Oráculo de Sabiduría.
           </div>
-
         </div>
 
       </q-page>
-
     </q-page-container>
-
   </q-layout>
 </template>
 
@@ -170,20 +191,27 @@ const form = reactive({
   birthdate: '',
   email: '',
   password: '',
-  birthtime: '',
-  birthplace: '',
+  genero: 'prefiero no decirlo',
+  pais: '',
   terms: false
 })
 
+const genderOptions = [
+  { label: 'Masculino', value: 'masculino' },
+  { label: 'Femenino', value: 'femenino' },
+  { label: 'Otro', value: 'otro' },
+  { label: 'Prefiero no decirlo', value: 'prefiero no decirlo' }
+]
+
 const handleRegister = async () => {
-  // Regex para validar email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
   if (!form.terms) {
     $q.notify({
       color: 'warning',
       message: 'Debes aceptar los términos y condiciones',
-      icon: 'warning'
+      icon: 'warning',
+      position: 'top'
     })
     return
   }
@@ -192,21 +220,20 @@ const handleRegister = async () => {
     $q.notify({
       color: 'negative',
       message: 'Por favor, completa los campos obligatorios',
-      icon: 'report_problem'
+      icon: 'report_problem',
+      position: 'top'
     })
     return
   }
 
   if (!emailRegex.test(form.email)) {
     $q.notify({
-      progress: true,
       message: 'Email no válido',
-      caption: 'Por favor, introduce un correo con formato correcto (ejemplo@mail.com)',
+      caption: 'Formato incorrecto',
       icon: 'alternate_email',
-      color: 'deep-purple-9',
+      color: 'purple-10',
       textColor: 'white',
-      position: 'top',
-      actions: [{ icon: 'close', color: 'white' }]
+      position: 'top'
     })
     return
   }
@@ -216,7 +243,9 @@ const handleRegister = async () => {
     nombre: form.fullname,
     email: form.email,
     password: form.password,
-    fecha_nacimiento: form.birthdate
+    fecha_nacimiento: form.birthdate,
+    genero: form.genero,
+    pais: form.pais
   })
   loading.value = false
 
@@ -224,166 +253,183 @@ const handleRegister = async () => {
     $q.notify({
       color: 'positive',
       message: `¡Registro exitoso! Bienvenido, ${authStore.user.nombre}.`,
-      icon: 'check_circle'
+      icon: 'stars',
+      position: 'top'
     })
     router.push('/perfil')
   } else {
     $q.notify({
       color: 'negative',
       message: res.mensaje || 'Error al registrarse',
-      icon: 'error'
+      icon: 'error',
+      position: 'top'
     })
   }
 }
 
 const irALogin = () => {
-  router.push('/') // Asumiendo que / es el login
+  router.push('/')
 }
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
 
-/* Fondo general */
-.register-page {
-  min-height: 100vh;
-}
+.title-font { font-family: 'Playfair Display', serif; }
 
-/* Layout wrapper */
-.register-wrapper {
-  min-height: 100vh;
-}
-
-/* LEFT */
-.left-panel {
-  background: linear-gradient(135deg, #191022 0%, #2d1b3e 50%, #4a192c 100%);
-  position: relative;
+/* Layout Base - ELIMINAR SCROLL */
+.mystic-dark-layout { 
+  background: #0a0612; 
+  color: #e0e0e0; 
+  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
-.mandala-glow {
+.main-content-dark {
+  height: 100vh;
+  height: 100dvh;
+  background-image: 
+    radial-gradient(circle at 0% 0%, rgba(115, 17, 212, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(212, 175, 55, 0.08) 0%, transparent 50%);
+  position: relative;
+  overflow: hidden;
+  padding: 0 !important;
+}
+
+/* Ambient Glow */
+.ambient-glow {
   position: absolute;
-  width: 300px;
-  height: 300px;
-  background: rgba(115,17,212,0.4);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glow {
+  position: absolute;
+  width: 40vw;
+  height: 40vw;
+  background: rgba(115, 17, 212, 0.12);
   border-radius: 50%;
   filter: blur(120px);
-  animation: pulse 4s infinite ease-in-out;
+  animation: float 10s infinite ease-in-out;
 }
 
-.mandala-image {
-  width: 70%;
-  max-width: 400px;
+.glow-top { top: -10%; left: -10%; }
+.glow-bottom { bottom: -10%; right: -10%; animation-delay: -5s; }
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(15px, 30px) scale(1.05); }
+}
+
+/* Container & Card */
+.register-container {
+  width: 100%;
+  max-width: 440px;
+  padding: 16px;
   position: relative;
-  z-index: 2;
-  mix-blend-mode: screen;
-}
-
-.left-text {
-  margin-top: 40px;
-  color: white;
-}
-
-.left-text h2 {
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.left-text p {
-  opacity: 0.7;
-}
-
-/* RIGHT */
-.right-panel {
-  background: #f7f6f8;
-  padding: 40px;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
 }
 
 .register-card {
-  width: 100%;
-  max-width: 480px;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  border-radius: 24px;
+  background: rgba(22, 15, 36, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh; /* Altura máxima para asegurar que quepa sin scroll de página */
 }
 
-/* Text */
-.tag {
-  background: rgba(115,17,212,0.1);
-  color: #7311d4;
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: bold;
-  display: inline-block;
-  margin-bottom: 16px;
+.scroll-area {
+  overflow-y: auto;
+  flex: 1;
+  /* Ocultar barra de scroll en Firefox */
+  scrollbar-width: none; 
+  /* Ocultar barra de scroll en IE/Edge */
+  -ms-overflow-style: none; 
 }
 
-.title {
-  font-size: 32px;
-  font-weight: 800;
+/* Ocultar barra de scroll en Chrome, Safari y Opera */
+.scroll-area::-webkit-scrollbar { 
+  display: none; 
 }
 
-.subtitle {
-  color: #666;
-  margin-bottom: 20px;
-}
-
-/* Fecha destacada */
-.birth-label {
-  font-weight: bold;
-  color: #7311d4;
+.logo-circle {
+  margin: 0 auto 8px auto;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.1);
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 4px;
+  justify-content: center;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+}
+
+/* Inputs & Form */
+.custom-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: #d4af37;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .birth-input {
-  border: 2px solid rgba(115,17,212,0.3);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 8px;
 }
 
-.birth-hint {
-  font-size: 12px;
-  color: #7311d4;
-  margin-top: 4px;
-  opacity: 0.7;
+.terms-check {
+  font-size: 11px !important;
 }
 
-.optional-box {
-  background: #f1edf7;
-  border-radius: 12px;
-}
-
-/* Botón */
+/* Buttons */
 .register-btn {
-  width: 100%;
-  background: linear-gradient(to right, #D4AF37, #b8860b);
-  color: white;
-  font-weight: bold;
-  padding: 14px;
+  background: linear-gradient(45deg, #d4af37, #b8860b);
+  color: #0a0612;
+  font-weight: 800;
   border-radius: 12px;
-  margin-top: 10px;
-  transition: 0.3s;
+  box-shadow: 0 6px 15px rgba(212, 175, 55, 0.2);
+  transition: all 0.3s ease;
 }
 
 .register-btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
 }
 
 .login-link {
-  margin-top: 20px;
-}
-
-.login-link a {
-  color: #7311d4;
-  font-weight: bold;
+  color: #d4af37;
+  font-weight: 700;
   text-decoration: none;
 }
 
-/* Animación glow */
-@keyframes pulse {
-  0%,100% { transform: scale(1); opacity: 0.6; }
-  50% { transform: scale(1.05); opacity: 1; }
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
+.animate-fade {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 600px) {
+  .register-container { max-width: 100%; }
+  .register-card { max-height: 90vh; }
+  .q-px-lg { padding-left: 16px !important; padding-right: 16px !important; }
+}
 </style>

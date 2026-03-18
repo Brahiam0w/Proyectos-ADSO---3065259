@@ -16,7 +16,7 @@ const generarToken = (id) => {
  */
 const registro = async (req, res) => {
   try {
-    const { nombre, email, password, fecha_nacimiento } = req.body;
+    const { nombre, email, password, fecha_nacimiento, genero, pais, estado } = req.body;
 
     // Verificar si el usuario ya existe
     const usuarioExiste = await Usuario.findOne({ email });
@@ -30,6 +30,9 @@ const registro = async (req, res) => {
       email,
       password,
       fecha_nacimiento,
+      genero,
+      pais,
+      estado: estado || 'inactivo',
     });
 
     const token = generarToken(usuario._id);
@@ -110,7 +113,7 @@ const perfil = async (req, res) => {
  */
 const crearAdmin = async (req, res) => {
   try {
-    const { nombre, email, password, fecha_nacimiento } = req.body;
+    const { nombre, email, password, fecha_nacimiento, genero, pais, estado } = req.body;
 
     const adminExiste = await Usuario.findOne({ email });
     if (adminExiste) {
@@ -122,8 +125,10 @@ const crearAdmin = async (req, res) => {
       email,
       password,
       fecha_nacimiento,
+      genero,
+      pais,
       rol: 'admin',
-      estado: 'activo', // Los admins suelen estar activos por defecto
+      estado: estado || 'activo',
     });
 
     res.status(201).json({

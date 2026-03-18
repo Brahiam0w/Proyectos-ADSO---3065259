@@ -1,322 +1,375 @@
 <template>
-  <q-layout view="hHh lpR fff" class="bg-background-light font-display">
+  <q-layout view="lHh Lpr lFf" class="mystic-dark-layout">
     
-    <q-header elevated class="bg-white/80 backdrop-blur text-grey-9 q-py-sm q-px-md lg-px-xl border-bottom-light">
-      <q-toolbar class="justify-between">
-        <div class="row items-center q-gutter-x-xl">
-          <div class="row items-center q-gutter-x-sm text-primary">
-            <div class="bg-primary-10 rounded-lg p-2 flex flex-center">
-              <q-icon name="auto_awesome" size="sm" color="primary" />
-            </div>
-            <div class="text-subtitle1 text-weight-bold tracking-tight">Numerología Admin</div>
-          </div>
+    <!-- SIDEBAR (Administración) -->
+    <q-drawer v-model="drawer" side="left" overlay behavior="mobile" :width="280" class="sidebar-mystic">
+      <div class="sidebar-content column full-height">
+        <div class="column items-center q-py-xl sidebar-header">
+          <q-avatar size="80px" class="avatar-mystic-static q-mb-md">
+            <img v-if="adminUser.avatar" :src="adminUser.avatar">
+            <span v-else>{{ adminUser.nombre ? adminUser.nombre.charAt(0).toUpperCase() : 'A' }}</span>
+          </q-avatar>
+          <div class="text-gold text-h6 title-font">{{ adminUser.nombre }}</div>
+          <div class="text-grey-5 text-caption">Administrador</div>
           
-          <q-input 
-            v-model="filtroBusqueda" 
-            dense 
-            standout="bg-grey-2 text-grey-9"
-            bg-color="grey-2"
-            placeholder="Buscar suscriptores..." 
-            class="gt-sm"
-            style="min-width: 250px; border-radius: 8px; overflow: hidden;"
-          >
-            <template v-slot:prepend>
-              <q-icon name="search" color="grey-5" />
-            </template>
-          </q-input>
+          <q-btn flat round icon="close" color="gold" class="absolute-top-right q-ma-sm" @click="drawer = false" />
         </div>
 
-        <div class="row items-center q-gutter-x-lg">
-          <div class="gt-sm row items-center q-gutter-x-md">
-            <a href="#" class="text-grey-6 text-weight-medium text-subtitle2 nav-link">Dashboard</a>
-            <a href="#" class="text-grey-6 text-weight-medium text-subtitle2 nav-link">Usuarios</a>
-            <a href="#" class="text-primary text-weight-bold text-subtitle2 nav-link active">Suscripciones</a>
-            <a href="#" class="text-grey-6 text-weight-medium text-subtitle2 nav-link">Reportes</a>
-          </div>
-          
-          <div class="row items-center q-gutter-x-sm">
-            <q-btn flat round color="grey-7" class="bg-grey-2 q-mr-sm" size="sm" icon="notifications" />
-            <q-avatar size="40px" class="border-primary-light cursor-pointer">
-              <img src="https://cdn.quasar.dev/img/avatar4.jpg" />
-            </q-avatar>
-          </div>
-        </div>
-      </q-toolbar>
-    </q-header>
+        <q-separator color="rgba(212, 175, 55, 0.2)" inset />
 
+        <q-list padding class="q-px-md q-mt-md">
+          <q-item clickable class="nav-item" @click="router.push('/GestionUsuarios')">
+            <q-item-section avatar><q-icon name="people" /></q-item-section>
+            <q-item-section>Gestión de Usuarios</q-item-section>
+          </q-item>
+
+          <q-item clickable active-class="nav-active" active class="nav-item">
+            <q-item-section avatar><q-icon name="card_membership" /></q-item-section>
+            <q-item-section>Gestión de Planes</q-item-section>
+          </q-item>
+
+          <q-separator color="rgba(212, 175, 55, 0.1)" class="q-my-md" />
+
+          <q-item clickable class="nav-item" @click="router.push('/AdminPerfil')">
+            <q-item-section avatar><q-icon name="account_circle" /></q-item-section>
+            <q-item-section>Mi Perfil</q-item-section>
+          </q-item>
+        </q-list>
+
+        <q-space />
+
+        <div class="q-pa-md">
+          <q-btn flat no-caps color="red-4" icon="logout" label="Cerrar Sesión" class="full-width logout-btn" @click="handleLogout" />
+        </div>
+      </div>
+    </q-drawer>
+
+    <!-- AVATAR TRIGGER -->
+    <div v-if="!drawer" class="fixed-top-left z-top q-ma-lg">
+      <div class="avatar-trigger-wrapper">
+        <div class="pulse-ring"></div>
+        <q-avatar size="64px" class="avatar-mystic-trigger cursor-pointer shadow-10" @click="drawer = true">
+          <img v-if="adminUser.avatar" :src="adminUser.avatar">
+          <span v-else>{{ adminUser.nombre ? adminUser.nombre.charAt(0).toUpperCase() : 'A' }}</span>
+        </q-avatar>
+      </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
     <q-page-container>
-      <q-page class="q-pa-md lg-px-xl q-pb-xl mx-auto" style="max-width: 1280px;">
-        
-        <div class="row justify-between items-center q-mb-xl q-mt-md">
-          <div class="col-12 col-md-auto q-mb-md-none q-mb-sm">
-            <h1 class="text-h4 text-weight-bolder text-grey-9 q-my-none tracking-tight">Gestión de Suscripciones</h1>
-            <p class="text-subtitle1 text-neutral-muted q-mt-sm q-mb-none">Administra los niveles de acceso y monitorea las renovaciones de los místicos.</p>
-          </div>
-          <div class="col-12 col-md-auto">
-            <q-btn 
-              color="primary" 
-              icon="add" 
-              label="Crear Nuevo Plan" 
-              unelevated
-              class="rounded-lg q-px-md shadow-primary font-bold"
-            />
-          </div>
-        </div>
-
-        <div class="row q-col-gutter-lg q-mb-xl">
+      <q-page class="main-content-dark column no-wrap">
+        <div class="container column no-wrap full-height scroll-area-custom">
           
-          <div class="col-12 col-md-4">
-            <q-card flat class="plan-card border-light rounded-xl h-full column relative-position overflow-hidden">
-              <q-icon name="brightness_5" class="bg-icon" />
-              <q-card-section class="q-pb-none z-top">
-                <div class="row justify-between items-center q-mb-sm">
-                  <div class="text-h6 text-weight-bold">Plan Básico</div>
-                  <q-badge class="bg-accent-gold-10 text-accent-gold text-weight-bold text-caption uppercase q-px-sm py-1">Iniciante</q-badge>
-                </div>
-                <div class="row items-baseline q-gutter-x-xs">
-                  <span class="text-h3 text-weight-bolder">$9.99</span>
-                  <span class="text-neutral-muted text-weight-medium">/ mes</span>
-                </div>
-              </q-card-section>
-              <q-card-section class="col grow column justify-between z-top">
-                <div class="q-gutter-y-sm q-mb-lg text-grey-7">
-                  <div class="row items-center q-gutter-x-sm"><q-icon name="check_circle" color="primary" size="sm" /><span>Lectura diaria de numerología</span></div>
-                  <div class="row items-center q-gutter-x-sm"><q-icon name="check_circle" color="primary" size="sm" /><span>Calculadora de nombre básico</span></div>
-                  <div class="row items-center q-gutter-x-sm"><q-icon name="check_circle" color="primary" size="sm" /><span>Soporte por email</span></div>
-                </div>
-                <q-btn outline color="primary" class="full-width rounded-lg font-bold bg-primary-5" icon="edit" label="Editar Plan" />
-              </q-card-section>
-            </q-card>
+          <!-- Header de Sección -->
+          <div class="header-section q-mb-lg animate-fade">
+            <div class="row justify-between items-end q-col-gutter-md">
+              <div class="col-12 col-md-auto">
+                <div class="text-gold text-caption text-uppercase text-weight-bold tracking-widest opacity-80">Administración</div>
+                <div class="text-h3 text-weight-bold text-white title-font">Gestión de Planes</div>
+              </div>
+            </div>
           </div>
 
-          <div class="col-12 col-md-4">
-            <q-card flat class="plan-card border-primary-thick shadow-xl rounded-xl h-full column relative-position overflow-hidden scale-card">
-              <div class="badge-popular">Más Popular</div>
-              <q-icon name="auto_fix_high" class="bg-icon" />
-              <q-card-section class="q-pb-none z-top q-mt-sm">
-                <div class="row justify-between items-center q-mb-sm">
-                  <div class="text-h6 text-weight-bold text-primary">Plan Astral</div>
-                  <q-badge class="bg-primary-10 text-primary text-weight-bold text-caption uppercase q-px-sm py-1">Místico</q-badge>
-                </div>
-                <div class="row items-baseline q-gutter-x-xs">
-                  <span class="text-h3 text-weight-bolder">$19.99</span>
-                  <span class="text-neutral-muted text-weight-medium">/ mes</span>
-                </div>
-              </q-card-section>
-              <q-card-section class="col grow column justify-between z-top">
-                <div class="q-gutter-y-sm q-mb-lg text-grey-8 text-weight-medium">
-                  <div class="row items-center q-gutter-x-sm"><q-icon name="check_circle" color="primary" size="sm" /><span>Todo lo del Plan Básico</span></div>
-                  <div class="row items-center q-gutter-x-sm"><q-icon name="check_circle" color="primary" size="sm" /><span>Mapa natal detallado</span></div>
-                  <div class="row items-center q-gutter-x-sm"><q-icon name="check_circle" color="primary" size="sm" /><span>Predicciones mensuales personalizadas</span></div>
-                  <div class="row items-center q-gutter-x-sm"><q-icon name="check_circle" color="primary" size="sm" /><span>Chat con numerólogo experto</span></div>
-                </div>
-                <q-btn unelevated color="primary" class="full-width rounded-lg font-bold shadow-md" icon="edit" label="Editar Plan" />
-              </q-card-section>
-            </q-card>
+          <!-- Cards de Planes -->
+          <div class="row q-col-gutter-lg q-mb-xl animate-fade justify-center" style="animation-delay: 0.2s">
+            <div v-for="plan in planes" :key="plan._id" class="col-12 col-sm-6 col-md-4">
+              <q-card class="mystic-card-dark plan-admin-card relative-position overflow-hidden">
+                <q-icon :name="plan.icon || 'stars'" class="bg-icon-float" />
+                <q-card-section>
+                  <div class="row justify-between items-center q-mb-md">
+                    <div class="text-h6 text-white text-weight-bold">{{ plan.nombre }}</div>
+                    <q-badge color="amber-10" outline class="q-px-sm">{{ plan.tag }}</q-badge>
+                  </div>
+                  <div class="row items-baseline q-gutter-x-xs q-mb-lg">
+                    <span class="text-h4 text-gold text-weight-bolder">${{ plan.precio }}</span>
+                    <span class="text-grey-5">/ {{ plan.periodo }}</span>
+                  </div>
+                  <q-separator color="rgba(212, 175, 55, 0.1)" class="q-mb-lg" />
+                  <div class="q-gutter-y-sm q-mb-xl" style="min-height: 120px">
+                    <div v-for="feature in plan.features" :key="feature" class="row items-center q-gutter-x-sm">
+                      <q-icon name="check_circle" color="amber-8" size="xs" />
+                      <span class="text-grey-4 text-caption">{{ feature }}</span>
+                    </div>
+                  </div>
+                  <q-btn outline color="amber-8" label="Editar Plan" icon="edit" class="full-width q-py-sm hover-scale" no-caps @click="abrirDialogoEditar(plan)" />
+                </q-card-section>
+              </q-card>
+            </div>
           </div>
 
-          <div class="col-12 col-md-4">
-            <q-card flat class="plan-card border-light rounded-xl h-full column relative-position overflow-hidden">
-              <q-icon name="stars" class="bg-icon" />
-              <q-card-section class="q-pb-none z-top">
-                <div class="row justify-between items-center q-mb-sm">
-                  <div class="text-h6 text-weight-bold">Plan Cósmico</div>
-                  <q-badge class="bg-primary-10 text-primary text-weight-bold text-caption uppercase q-px-sm py-1">Premium</q-badge>
+          <!-- Historial de Pagos -->
+          <div class="animate-fade" style="animation-delay: 0.4s">
+            <div class="row justify-between items-center q-mb-md">
+              <h2 class="text-h5 text-white title-font q-my-none">Historial de Pagos Recientes</h2>
+              <div class="row q-gutter-sm">
+                <q-input v-model="filtroPago" dark dense filled placeholder="Buscar por cliente..." class="search-input-mystic" style="min-width: 250px">
+                  <template #prepend><q-icon name="search" color="amber-8" /></template>
+                </q-input>
+              </div>
+            </div>
+
+            <q-table
+              :rows="pagosFiltrados"
+              :columns="columnasPagos"
+              row-key="_id"
+              flat dark
+              class="mystic-table-dark"
+              :pagination="{ rowsPerPage: 10 }"
+              :loading="loading"
+            >
+              <template v-slot:body-cell-usuario="props">
+                <q-td :props="props">
+                  <div class="row items-center q-gutter-x-md">
+                    <q-avatar size="32px" class="avatar-mystic-static">
+                      <img v-if="props.row.usuario_id?.avatar" :src="props.row.usuario_id?.avatar">
+                      <span v-else>{{ props.row.usuario_id?.nombre ? props.row.usuario_id?.nombre.charAt(0).toUpperCase() : '?' }}</span>
+                    </q-avatar>
+                    <div class="column">
+                      <span class="text-weight-bold text-white">{{ props.row.usuario_id?.nombre || 'Desconocido' }}</span>
+                      <span class="text-tiny text-grey-5">{{ props.row.usuario_id?.email || '---' }}</span>
+                    </div>
+                  </div>
+                </q-td>
+              </template>
+
+              <template v-slot:body-cell-monto="props">
+                <q-td :props="props">
+                  <span class="text-weight-bold text-green-4">{{ props.value }}</span>
+                </q-td>
+              </template>
+
+              <template v-slot:body-cell-metodo="props">
+                <q-td :props="props">
+                  <q-badge color="indigo-10" outline class="q-px-sm text-uppercase">
+                    <q-icon name="payments" size="12px" class="q-mr-xs" />
+                    {{ props.value }}
+                  </q-badge>
+                </q-td>
+              </template>
+
+              <template v-slot:no-data>
+                <div class="full-width row flex-center q-pa-xl text-grey-6">
+                  <q-icon name="money_off" size="48px" class="q-mr-md" />
+                  <span class="text-h6">No hay registros de pagos disponibles.</span>
                 </div>
-                <div class="row items-baseline q-gutter-x-xs">
-                  <span class="text-h3 text-weight-bolder">$49.99</span>
-                  <span class="text-neutral-muted text-weight-medium">/ año</span>
-                </div>
-              </q-card-section>
-              <q-card-section class="col grow column justify-between z-top">
-                <div class="q-gutter-y-sm q-mb-lg text-grey-7">
-                  <div class="row items-center q-gutter-x-sm"><q-icon name="check_circle" color="primary" size="sm" /><span>Acceso ilimitado total</span></div>
-                  <div class="row items-center q-gutter-x-sm"><q-icon name="check_circle" color="primary" size="sm" /><span>Análisis de compatibilidad estelar</span></div>
-                  <div class="row items-center q-gutter-x-sm"><q-icon name="check_circle" color="primary" size="sm" /><span>Soporte VIP 24/7</span></div>
-                </div>
-                <q-btn outline color="primary" class="full-width rounded-lg font-bold bg-primary-5" icon="edit" label="Editar Plan" />
-              </q-card-section>
-            </q-card>
+              </template>
+            </q-table>
           </div>
 
         </div>
-
-        <div>
-          <div class="row justify-between items-center q-mb-md">
-            <h2 class="text-h5 text-weight-bold tracking-tight q-my-none">Suscripciones Activas</h2>
-            <q-btn flat class="bg-grey-2 text-neutral-muted rounded-lg q-px-sm" icon="filter_list" label="Filtrar" size="sm" />
-          </div>
-
-          <q-table
-            :rows="suscripciones"
-            :columns="columnas"
-            row-key="nombre"
-            flat
-            bordered
-            class="rounded-xl border-light shadow-sm"
-            table-header-class="bg-grey-1 text-grey-9 text-weight-bold uppercase"
-            :pagination="{ rowsPerPage: 5 }"
-          >
-            <template v-slot:body-cell-usuario="props">
-              <q-td :props="props">
-                <div class="row items-center q-gutter-x-md">
-                  <q-avatar size="32px">
-                    <img :src="props.row.avatar">
-                  </q-avatar>
-                  <span class="text-weight-bold text-grey-9">{{ props.row.nombre }}</span>
-                </div>
-              </q-td>
-            </template>
-
-            <template v-slot:body-cell-plan="props">
-              <q-td :props="props">
-                <q-chip 
-                  dense
-                  :class="obtenerClasePlan(props.row.plan)"
-                  class="text-weight-bold text-caption q-px-sm"
-                >
-                  <q-icon :name="obtenerIconoPlan(props.row.plan)" size="xs" class="q-mr-xs" />
-                  {{ props.row.plan }}
-                </q-chip>
-              </q-td>
-            </template>
-
-            <template v-slot:body-cell-acciones="props">
-              <q-td :props="props" class="text-center">
-                <q-btn flat round size="sm" color="grey-6" icon="settings_backup_restore" class="hover-primary q-mr-xs">
-                  <q-tooltip>Modificar Plan</q-tooltip>
-                </q-btn>
-                <q-btn flat round size="sm" color="grey-6" icon="cancel" class="hover-negative">
-                  <q-tooltip>Cancelar</q-tooltip>
-                </q-btn>
-              </q-td>
-            </template>
-          </q-table>
-        </div>
-
       </q-page>
     </q-page-container>
+
+    <!-- DIÁLOGO PARA EDITAR PLAN -->
+    <q-dialog v-model="modalAbierto" persistent backdrop-filter="blur(10px)">
+      <q-card class="mystic-card-dark modal-form-mystic shadow-24 column no-wrap" style="max-height: 90vh; width: 500px;">
+        <q-card-section class="row items-center q-pb-none relative-position q-pt-lg q-px-xl shrink-0">
+          <div class="column">
+            <div class="text-gold text-overline tracking-widest">Configuración de Oferta</div>
+            <div class="text-h5 title-font text-white">Editar Plan</div>
+          </div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup color="amber-8" />
+          <div class="header-glow"></div>
+        </q-card-section>
+
+        <q-card-section class="q-pa-xl col scroll-area-mystic">
+          <q-form @submit.prevent="guardarPlan" class="q-gutter-y-lg">
+            <div class="form-section-mystic">
+              <div class="section-tag-mystic q-mb-md">Información Básica</div>
+              <q-input v-model="formPlan.nombre" label="Nombre del Plan" dark filled dense label-color="amber-5" class="mystic-input q-mb-md" />
+              <div class="row q-col-gutter-sm">
+                <div class="col-6">
+                  <q-input v-model.number="formPlan.precio" label="Precio ($)" type="number" step="0.01" dark filled dense label-color="amber-5" class="mystic-input" />
+                </div>
+                <div class="col-6">
+                  <q-input v-model="formPlan.tag" label="Etiqueta (Tag)" dark filled dense label-color="amber-5" class="mystic-input" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section-mystic">
+              <div class="section-tag-mystic q-mb-md">Beneficios (Uno por línea)</div>
+              <q-input
+                v-model="featuresText"
+                type="textarea"
+                dark filled dense
+                label-color="amber-5"
+                placeholder="Ej: Lecturas ilimitadas"
+                class="mystic-input"
+                rows="5"
+              />
+              <div class="text-tiny text-grey-6 q-mt-xs">Cada salto de línea será una viñeta en la tarjeta.</div>
+            </div>
+          </q-form>
+        </q-card-section>
+
+        <q-card-section class="row justify-end q-pa-lg shrink-0 border-top-mystic">
+          <q-btn flat label="Cancelar" color="grey-6" v-close-popup no-caps />
+          <q-btn label="Guardar Cambios" class="btn-gold-glow q-px-xl q-ml-md" unelevated no-caps :loading="guardando" @click="guardarPlan" />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
   </q-layout>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
+import { useQuasar } from 'quasar'
+import api from '../api/axios'
 
-const filtroBusqueda = ref('')
+const router = useRouter()
+const authStore = useAuthStore()
+const $q = useQuasar()
 
-// Configuración de las columnas de la tabla
-const columnas = [
-  { name: 'usuario', label: 'Usuario', field: 'nombre', align: 'left', sortable: true },
-  { name: 'plan', label: 'Plan Actual', field: 'plan', align: 'left', sortable: true },
-  { name: 'inicio', label: 'Fecha de Inicio', field: 'inicio', align: 'left', sortable: true },
-  { name: 'renovacion', label: 'Próxima Renovación', field: 'renovacion', align: 'left', sortable: true },
-  { name: 'monto', label: 'Monto', field: 'monto', align: 'right', sortable: true, classes: 'text-weight-bold text-grey-9' },
-  { name: 'acciones', label: 'Acciones', align: 'center' }
+const drawer = ref(false)
+const loading = ref(false)
+const guardando = ref(false)
+const filtroPago = ref('')
+const planes = ref([])
+const pagos = ref([])
+
+const modalAbierto = ref(false)
+const planIdActual = ref(null)
+const featuresText = ref('')
+const formPlan = reactive({
+  nombre: '',
+  precio: 0,
+  tag: '',
+  features: []
+})
+
+const adminUser = computed(() => authStore.user || {})
+
+const obtenerDatos = async () => {
+  loading.value = true
+  try {
+    const resPlanes = await api.get('/planes/admin')
+    if (resPlanes.data.success) {
+      planes.value = resPlanes.data.planes
+    }
+    const resPagos = await api.get('/pagos')
+    if (resPagos.data.success) {
+      pagos.value = resPagos.data.pagos
+    }
+  } catch (err) {
+    $q.notify({ color: 'negative', message: 'Error al sincronizar con el cosmos' })
+  } finally {
+    loading.value = false
+  }
+}
+
+const abrirDialogoEditar = (plan) => {
+  planIdActual.value = plan._id
+  formPlan.nombre = plan.nombre
+  formPlan.precio = plan.precio
+  formPlan.tag = plan.tag
+  featuresText.value = (plan.features || []).join('\n')
+  modalAbierto.value = true
+}
+
+const guardarPlan = async () => {
+  guardando.value = true
+  formPlan.features = featuresText.value.split('\n').filter(f => f.trim() !== '')
+  
+  try {
+    const res = await api.put(`/planes/${planIdActual.value}`, formPlan)
+    if (res.data.success) {
+      $q.notify({ color: 'positive', message: 'Plan actualizado correctamente', icon: 'check_circle' })
+      obtenerDatos()
+      modalAbierto.value = false
+    }
+  } catch (err) {
+    $q.notify({ color: 'negative', message: 'Error al actualizar el plan' })
+  } finally {
+    guardando.value = false
+  }
+}
+
+onMounted(() => {
+  obtenerDatos()
+})
+
+const columnasPagos = [
+  { name: 'usuario', label: 'Usuario', field: row => row.usuario_id?.nombre || 'Desconocido', align: 'left', sortable: true },
+  { name: 'monto', label: 'Monto', field: 'monto', align: 'left', sortable: true, format: val => `$${val.toFixed(2)}` },
+  { name: 'fecha', label: 'Fecha de Pago', field: 'fecha_pago', align: 'left', sortable: true, format: val => new Date(val).toLocaleDateString() },
+  { name: 'metodo', label: 'Método', field: 'metodo', align: 'left', sortable: true },
+  { name: 'vencimiento', label: 'Vence', field: 'fecha_vencimiento', align: 'left', sortable: true, format: val => new Date(val).toLocaleDateString() }
 ]
 
-// Datos simulados extraídos de tu diseño HTML
-const suscripciones = ref([
-  { nombre: 'Ana García', avatar: 'https://cdn.quasar.dev/img/avatar2.jpg', plan: 'Astral', inicio: '01/10/2023', renovacion: '01/11/2023', monto: '$19.99' },
-  { nombre: 'Roberto Luna', avatar: 'https://cdn.quasar.dev/img/avatar3.jpg', plan: 'Cósmico', inicio: '15/09/2023', renovacion: '15/09/2024', monto: '$49.99' },
-  { nombre: 'Lucía Estelar', avatar: 'https://cdn.quasar.dev/img/avatar4.jpg', plan: 'Básico', inicio: '20/10/2023', renovacion: '20/11/2023', monto: '$9.99' },
-  { nombre: 'Marcos Zen', avatar: 'https://cdn.quasar.dev/img/avatar5.jpg', plan: 'Astral', inicio: '05/10/2023', renovacion: '05/11/2023', monto: '$19.99' }
-])
+const pagosFiltrados = computed(() => {
+  if (!filtroPago.value) return pagos.value
+  const term = filtroPago.value.toLowerCase()
+  return pagos.value.filter(p => 
+    (p.usuario_id?.nombre || '').toLowerCase().includes(term) || 
+    (p.usuario_id?.email || '').toLowerCase().includes(term)
+  )
+})
 
-// Utilidades para los estilos de los chips según el plan
-const obtenerClasePlan = (plan) => {
-  switch(plan) {
-    case 'Astral': return 'bg-primary-10 text-primary'
-    case 'Cósmico': return 'bg-accent-gold-10 text-accent-gold'
-    case 'Básico': return 'bg-grey-2 text-grey-7'
-    default: return 'bg-grey-2'
-  }
-}
-
-const obtenerIconoPlan = (plan) => {
-  switch(plan) {
-    case 'Astral': return 'auto_fix_high'
-    case 'Cósmico': return 'stars'
-    case 'Básico': return 'brightness_5'
-    default: return 'help'
-  }
-}
+const handleLogout = () => { authStore.logout(); router.push('/') }
 </script>
 
 <style scoped>
-/* Variables de color base */
-:root {
-  --q-primary: #7311d4;
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+
+.title-font { font-family: 'Playfair Display', serif; }
+.text-gold { color: #d4af37; }
+
+.mystic-dark-layout { background: #0a0612; color: #e0e0e0; height: 100vh; overflow: hidden; }
+.main-content-dark { 
+  height: 100vh; padding: 0 !important;
+  background-image: radial-gradient(circle at 50% 50%, rgba(115, 17, 212, 0.05) 0%, transparent 100%); 
 }
 
-/* Colores personalizados */
-.text-primary { color: #7311d4 !important; }
-.bg-primary { background-color: #7311d4 !important; }
-.text-accent-gold { color: #eab308 !important; }
-.text-neutral-muted { color: #756189 !important; }
-.bg-background-light { background-color: #f7f6f8; }
+.container { max-width: 1200px; width: 100%; margin: 0 auto; padding: 40px 24px; }
+.scroll-area-custom { overflow-y: auto; height: 100vh; padding-bottom: 80px; scrollbar-width: none; }
+.scroll-area-custom::-webkit-scrollbar { display: none; }
 
-/* Transparencias y bordes */
-.bg-primary-5 { background-color: rgba(115, 17, 212, 0.05) !important; }
-.bg-primary-10 { background-color: rgba(115, 17, 212, 0.1) !important; }
-.bg-accent-gold-10 { background-color: rgba(234, 179, 8, 0.1) !important; }
-.border-light { border: 1px solid rgba(115, 17, 212, 0.1); }
-.border-bottom-light { border-bottom: 1px solid rgba(115, 17, 212, 0.1); }
-.border-primary-thick { border: 2px solid #7311d4; }
-.border-primary-light { border: 2px solid rgba(115, 17, 212, 0.2); }
+/* Sidebar */
+.sidebar-mystic { background: #110a1f !important; border-right: 1px solid rgba(212, 175, 55, 0.2); }
+.nav-item { border-radius: 10px; margin-bottom: 4px; color: #a094b8; transition: 0.3s; }
+.nav-active { background: rgba(212, 175, 55, 0.1) !important; color: #d4af37 !important; border: 1px solid rgba(212, 175, 55, 0.2); }
 
-/* Sombras */
-.shadow-primary { box-shadow: 0 10px 15px -3px rgba(115, 17, 212, 0.2); }
+/* Avatar Trigger */
+.avatar-mystic-trigger { background: #110a1f; border: 2px solid #d4af37; color: #d4af37; font-weight: 900; position: relative; z-index: 2; }
+.pulse-ring { position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 50%; border: 4px solid #d4af37; animation: pulse-gold 2s infinite; }
+@keyframes pulse-gold { 0% { transform: scale(0.9); opacity: 1; } 100% { transform: scale(1.2); opacity: 0; } }
+.avatar-mystic-static { background: #1a0f2e; border: 1px solid #d4af37; color: #d4af37; font-weight: 900; }
 
-/* Tipografía */
-.font-display { font-family: 'Inter', sans-serif; }
-.tracking-tight { letter-spacing: -0.025em; }
+/* Cards */
+.mystic-card-dark { background: rgba(22, 15, 36, 0.6) !important; border: 1px solid rgba(212, 175, 55, 0.1); border-radius: 24px; transition: 0.3s; }
+.plan-admin-card:hover { transform: translateY(-5px); border-color: rgba(212, 175, 55, 0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-/* Formas y layouts */
-.rounded-lg { border-radius: 0.5rem; }
-.rounded-xl { border-radius: 0.75rem; }
-.mx-auto { margin-left: auto; margin-right: auto; }
-.z-top { z-index: 10; }
-
-/* Tarjetas de Planes - Efectos CSS de Tailwind adaptados */
-.plan-card { transition: all 0.3s ease; }
-.plan-card:hover { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
-.plan-card .bg-icon {
-  position: absolute;
-  top: 0;
-  right: 0;
-  font-size: 80px;
-  color: #7311d4;
-  opacity: 0.05;
-  padding: 16px;
-  transition: opacity 0.3s ease;
-  z-index: 1;
-}
-.plan-card:hover .bg-icon { opacity: 0.15; }
-
-/* Plan destacado */
-.scale-card { transform: scale(1.03); z-index: 5; }
-.badge-popular {
-  position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #7311d4;
-  color: white;
-  font-size: 10px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  padding: 4px 16px;
-  border-radius: 9999px;
-  z-index: 20;
+.bg-icon-float {
+  position: absolute; top: -10px; right: -10px; font-size: 100px;
+  color: #d4af37; opacity: 0.03; transform: rotate(-15deg);
 }
 
-/* Efectos Hover de tabla */
-.hover-primary:hover { color: #7311d4 !important; }
-.hover-negative:hover { color: #f44336 !important; }
+.search-input-mystic :deep(.q-field__control) {
+  border-radius: 12px; background: rgba(255, 255, 255, 0.03) !important; border: 1px solid rgba(212, 175, 55, 0.2);
+}
 
-/* Navegación Desktop */
-.nav-link { text-decoration: none; position: relative; transition: color 0.3s ease; }
-.nav-link:hover { color: #7311d4 !important; }
-.nav-link.active { border-bottom: 2px solid #7311d4; padding-bottom: 4px; }
+.mystic-table-dark { background: transparent !important; }
+.btn-gold { background: linear-gradient(45deg, #d4af37, #b8860b); color: #0a0612; border-radius: 10px; }
+
+.hover-scale:hover { transform: scale(1.1); transition: 0.2s; }
+
+/* MODAL */
+.modal-form-mystic { background: rgba(15, 10, 25, 0.95) !important; backdrop-filter: blur(15px); border: 1px solid rgba(212, 175, 55, 0.3) !important; border-radius: 24px !important; }
+.header-glow { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 80%; height: 2px; background: linear-gradient(90deg, transparent, #d4af37, transparent); box-shadow: 0 0 15px #d4af37; }
+.form-section-mystic { background: rgba(255, 255, 255, 0.02); padding: 20px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.05); }
+.section-tag-mystic { color: #d4af37; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; }
+.mystic-input :deep(.q-field__control) { border-radius: 10px !important; background: rgba(255, 255, 255, 0.03) !important; }
+.btn-gold-glow { background: linear-gradient(45deg, #d4af37, #b8860b); color: #0a0612; font-weight: 800; border-radius: 12px; box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); }
+.scroll-area-mystic { overflow-y: auto; scrollbar-width: none; }
+.scroll-area-mystic::-webkit-scrollbar { display: none; }
+.shrink-0 { flex-shrink: 0; }
+.border-top-mystic { border-top: 1px solid rgba(212, 175, 55, 0.1); }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade { animation: fadeIn 0.8s ease-out forwards; }
 </style>

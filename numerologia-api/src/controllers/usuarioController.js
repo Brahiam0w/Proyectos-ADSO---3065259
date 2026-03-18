@@ -36,7 +36,23 @@ const obtenerUsuario = async (req, res) => {
  */
 const actualizarUsuario = async (req, res) => {
   try {
-    const usuarioActualizado = await Usuario.findByIdAndUpdate(req.params.id, req.body, {
+    const dataActualizacion = { ...req.body };
+
+    // Si el administrador cambia el estado a 'activo', nos aseguramos de que tenga fecha de expiración
+    if (dataActualizacion.estado === 'activo') {
+      const usuarioActual = await Usuario.findById(req.params.id);
+      if (usuarioActual) {
+        const hoy = new Date();
+        // Si no tiene fecha o ya expiró, le damos 30 días por defecto
+        if (!usuarioActual.fecha_expiracion_plan || usuarioActual.fecha_expiracion_plan < hoy) {
+          const nuevaFecha = new Date();
+          nuevaFecha.setDate(nuevaFecha.getDate() + 30);
+          dataActualizacion.fecha_expiracion_plan = nuevaFecha;
+        }
+      }
+    }
+
+    const usuarioActualizado = await Usuario.findByIdAndUpdate(req.params.id, dataActualizacion, {
       new: true,
       runValidators: true,
     });

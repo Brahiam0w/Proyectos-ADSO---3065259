@@ -10,6 +10,7 @@ import GestionUsuarios from "../views/gestio_usuario.vue"
 import Gestion_planes from "../views/gestion_planes.vue"
 import RecuperarContraseña from "../views/recuperar_contraseña.vue"
 import ConfiguracionPerfil from "../views/configuracion-perfil.vue"
+import AdminPerfil from "../views/admin-perfil.vue"
 import { createRouter, createWebHashHistory } from "vue-router"
 
 
@@ -25,7 +26,8 @@ const routes = [
     {path:"/GestionUsuarios", component:GestionUsuarios},
     {path:"/GestionPlanes", component:Gestion_planes},
     {path:"/RecuperarContrasena", component:RecuperarContraseña},
-    {path:"/configuracion", component:ConfiguracionPerfil}
+    {path:"/configuracion", component:ConfiguracionPerfil},
+    {path:"/AdminPerfil", component:AdminPerfil}
 ]
 
 export const router = createRouter({

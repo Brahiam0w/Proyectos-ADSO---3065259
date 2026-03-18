@@ -23,7 +23,7 @@ router.post('/perfil/activar-plan', activarPlanMistico);
 
 router.get('/', soloRoles('admin'), listarUsuarios);
 router.get('/:id', obtenerUsuario);
-router.put('/:id', actualizarUsuario);
+router.put('/:id', soloRoles('admin'), actualizarUsuario);
 router.patch('/:id/estado', soloRoles('admin'), cambiarEstado);
 router.delete('/:id', soloRoles('admin'), eliminarUsuario);
 

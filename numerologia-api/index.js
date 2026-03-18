@@ -9,6 +9,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const usuarioRoutes = require('./src/routes/usuarioRoutes');
 const pagoRoutes = require('./src/routes/pagoRoutes');
 const lecturaRoutes = require('./src/routes/lecturaRoutes');
+const planRoutes = require('./src/routes/planRoutes');
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/pagos', pagoRoutes);
 app.use('/api/lecturas', lecturaRoutes);
+app.use('/api/planes', planRoutes);
 
 // Ruta raíz de bienvenida
 app.get('/', (req, res) => {
