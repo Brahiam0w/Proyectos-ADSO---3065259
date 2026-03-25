@@ -168,8 +168,8 @@ const generarLecturaPrincipalIA = async (usuario) => {
     try {
       console.log(`GEMINI: Intentando con clave de longitud ${apiKey.length}. Comienza con ${apiKey.substring(0, 4)}...`);
       const { GoogleGenerativeAI } = require('@google/generative-ai');
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const genAI = new GoogleGenerativeAI(apiKey);q
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
       const prompt = `Eres un maestro numerólogo. Genera una lectura numerológica personal y profunda para ${usuario.nombre}.
 Su número de Camino de Vida es el ${numero} (${interp.titulo}).
@@ -237,7 +237,7 @@ const generarLecturaDiariaIA = async (usuario) => {
     try {
       const { GoogleGenerativeAI } = require('@google/generative-ai');
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
       const prompt = `Eres un maestro numerólogo. Genera una lectura diaria breve y poderosa para ${usuario.nombre}.
 Hoy es ${new Date().toLocaleDateString('es-CO', { dateStyle: 'full' })}.

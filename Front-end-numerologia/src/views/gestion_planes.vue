@@ -174,16 +174,45 @@
         </q-card-section>
 
         <q-card-section class="q-pa-xl col scroll-area-mystic">
-          <q-form @submit.prevent="guardarPlan" class="q-gutter-y-lg">
+          <q-form ref="planForm" @submit.prevent="guardarPlan" class="q-gutter-y-lg">
             <div class="form-section-mystic">
               <div class="section-tag-mystic q-mb-md">Información Básica</div>
-              <q-input v-model="formPlan.nombre" label="Nombre del Plan" dark filled dense label-color="amber-5" class="mystic-input q-mb-md" />
+              <q-input 
+                v-model="formPlan.nombre" 
+                label="Nombre del Plan" 
+                dark 
+                filled 
+                dense 
+                label-color="amber-5" 
+                class="mystic-input q-mb-md" 
+                :rules="[val => !!val || 'El nombre es requerido']" 
+              />
               <div class="row q-col-gutter-sm">
                 <div class="col-6">
-                  <q-input v-model.number="formPlan.precio" label="Precio ($)" type="number" step="0.01" dark filled dense label-color="amber-5" class="mystic-input" />
+                  <q-input 
+                    v-model.number="formPlan.precio" 
+                    label="Precio ($)" 
+                    type="number" 
+                    step="0.01" 
+                    dark 
+                    filled 
+                    dense 
+                    label-color="amber-5" 
+                    class="mystic-input" 
+                    :rules="[val => val !== null && val !== undefined || 'El precio es requerido']" 
+                  />
                 </div>
                 <div class="col-6">
-                  <q-input v-model="formPlan.tag" label="Etiqueta (Tag)" dark filled dense label-color="amber-5" class="mystic-input" />
+                  <q-input 
+                    v-model="formPlan.tag" 
+                    label="Etiqueta (Tag)" 
+                    dark 
+                    filled 
+                    dense 
+                    label-color="amber-5" 
+                    class="mystic-input" 
+                    :rules="[val => !!val || 'El tag es requerido']" 
+                  />
                 </div>
               </div>
             </div>
@@ -198,6 +227,7 @@
                 placeholder="Ej: Lecturas ilimitadas"
                 class="mystic-input"
                 rows="5"
+                :rules="[val => !!val || 'Debes ingresar al menos un beneficio']"
               />
               <div class="text-tiny text-grey-6 q-mt-xs">Cada salto de línea será una viñeta en la tarjeta.</div>
             </div>
@@ -233,6 +263,7 @@ const planes = ref([])
 const pagos = ref([])
 
 const modalAbierto = ref(false)
+const planForm = ref(null)
 const planIdActual = ref(null)
 const featuresText = ref('')
 const formPlan = reactive({
@@ -272,6 +303,9 @@ const abrirDialogoEditar = (plan) => {
 }
 
 const guardarPlan = async () => {
+  const isValid = await planForm.value.validate()
+  if (!isValid) return
+
   guardando.value = true
   formPlan.features = featuresText.value.split('\n').filter(f => f.trim() !== '')
   

@@ -46,7 +46,8 @@ const actualizarUsuario = async (req, res) => {
         // Si no tiene fecha o ya expiró, le damos 30 días por defecto
         if (!usuarioActual.fecha_expiracion_plan || usuarioActual.fecha_expiracion_plan < hoy) {
           const nuevaFecha = new Date();
-          nuevaFecha.setDate(nuevaFecha.getDate() + 30);
+          nuevaFecha.setDate(nuevaFecha.getDate() + 31);
+          nuevaFecha.setHours(0, 0, 0, 0);
           dataActualizacion.fecha_expiracion_plan = nuevaFecha;
         }
       }
@@ -73,6 +74,7 @@ const actualizarUsuario = async (req, res) => {
         avatar: usuarioActualizado.avatar,
         pais: usuarioActualizado.pais,
         estado: usuarioActualizado.estado,
+        plan: usuarioActualizado.plan,
         rol: usuarioActualizado.rol,
         fecha_expiracion_plan: usuarioActualizado.fecha_expiracion_plan
       }
@@ -93,19 +95,6 @@ const cambiarEstado = async (req, res) => {
     res.status(200).json({ success: true, usuario });
   } catch (error) {
     res.status(400).json({ success: false, mensaje: error.message });
-  }
-};
-
-/**
- * DELETE /api/usuarios/:id
- * [Admin] Elimina un usuario definitivamente
- */
-const eliminarUsuario = async (req, res) => {
-  try {
-    await Usuario.findByIdAndDelete(req.params.id);
-    res.status(200).json({ success: true, mensaje: 'Usuario eliminado correctamente.' });
-  } catch (error) {
-    res.status(500).json({ success: false, mensaje: error.message });
   }
 };
 
@@ -132,19 +121,6 @@ const actualizarPassword = async (req, res) => {
 };
 
 /**
- * DELETE /api/usuarios/perfil/eliminar
- * [Usuario] Elimina su propia cuenta
- */
-const eliminarMiCuenta = async (req, res) => {
-  try {
-    await Usuario.findByIdAndDelete(req.usuario._id);
-    res.status(200).json({ success: true, mensaje: 'Tu cuenta ha sido eliminada permanentemente.' });
-  } catch (error) {
-    res.status(500).json({ success: false, mensaje: error.message });
-  }
-};
-
-/**
  * POST /api/usuarios/perfil/activar-plan
  * [Usuario] Simula la activación del plan místico
  */
@@ -154,9 +130,11 @@ const activarPlanMistico = async (req, res) => {
     if (!usuario) return res.status(404).json({ success: false, mensaje: 'Usuario no encontrado' });
 
     const fechaExpiracion = new Date();
-    fechaExpiracion.setDate(fechaExpiracion.getDate() + 30);
+    fechaExpiracion.setDate(fechaExpiracion.getDate() + 31);
+    fechaExpiracion.setHours(0, 0, 0, 0);
 
     usuario.estado = 'activo';
+    usuario.plan = 'mistico';
     usuario.fecha_expiracion_plan = fechaExpiracion;
     await usuario.save();
 
@@ -178,9 +156,99 @@ const activarPlanMistico = async (req, res) => {
         genero: usuario.genero,
         avatar: usuario.avatar,
         estado: usuario.estado,
+        plan: usuario.plan,
         rol: usuario.rol,
         fecha_expiracion_plan: usuario.fecha_expiracion_plan
       }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, mensaje: error.message });
+  }
+};
+
+/**
+ * PUT /api/usuarios/perfil
+ * [Usuario] Actualiza su propio perfil (nombre, genero, avatar, país)
+ */
+const actualizarPerfil = async (req, res) => {
+  try {
+    const { nombre, genero, avatar, pais } = req.body;
+    const usuarioId = req.usuario._id;
+
+    const datosPermitidos = {};
+    if (nombre) datosPermitidos.nombre = nombre;
+    if (genero) datosPermitidos.genero = genero;
+    if (avatar) datosPermitidos.avatar = avatar;
+    if (pais) datosPermitidos.pais = pais;
+
+    const usuarioActualizado = await Usuario.findByIdAndUpdate(
+      usuarioId,
+      datosPermitidos,
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!usuarioActualizado) {
+      return res.status(404).json({ success: false, mensaje: 'Usuario no encontrado.' });
+    }
+
+    res.status(200).json({
+      success: true,
+      mensaje: 'Su perfil ha sido actualizado con éxito.',
+      usuario: usuarioActualizado
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, mensaje: error.message });
+  }
+};
+
+/**
+ * POST /api/usuarios/perfil/suspender-plan
+ * [Usuario] Suspende su plan místico y vuelve al gratuito
+ */
+const suspenderPlanMistico = async (req, res) => {
+  try {
+    const usuario = await Usuario.findById(req.usuario._id);
+    if (!usuario) return res.status(404).json({ success: false, mensaje: 'Usuario no encontrado' });
+
+    usuario.plan = 'gratuito';
+    usuario.fecha_expiracion_plan = null;
+    await usuario.save();
+
+    res.status(200).json({ 
+      success: true, 
+      mensaje: 'Su vínculo místico ha sido suspendido. Ha vuelto al Plan Estelar Gratuito.',
+      usuario: {
+        _id: usuario._id,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        genero: usuario.genero,
+        avatar: usuario.avatar,
+        estado: usuario.estado,
+        plan: usuario.plan,
+        rol: usuario.rol,
+        fecha_expiracion_plan: usuario.fecha_expiracion_plan
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, mensaje: error.message });
+  }
+};
+
+/**
+ * DELETE /api/usuarios/perfil/desactivar
+ * [Usuario] Cambia su propio estado a inactivo (soft-delete)
+ */
+const desactivarCuenta = async (req, res) => {
+  try {
+    const usuario = await Usuario.findById(req.usuario._id);
+    if (!usuario) return res.status(404).json({ success: false, mensaje: 'Usuario no encontrado' });
+
+    usuario.estado = 'inactivo';
+    await usuario.save();
+
+    res.status(200).json({ 
+      success: true, 
+      mensaje: 'Su rastro ha sido desvanecido. Su cuenta ahora está inactiva.' 
     });
   } catch (error) {
     res.status(500).json({ success: false, mensaje: error.message });
@@ -191,9 +259,10 @@ module.exports = {
   listarUsuarios,
   obtenerUsuario,
   actualizarUsuario,
+  actualizarPerfil,
   cambiarEstado,
-  eliminarUsuario,
   actualizarPassword,
-  eliminarMiCuenta,
   activarPlanMistico,
+  suspenderPlanMistico,
+  desactivarCuenta
 };

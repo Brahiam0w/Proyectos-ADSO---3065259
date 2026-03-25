@@ -9,6 +9,7 @@ import Lecturas from "../views/lecturas.vue"
 import GestionUsuarios from "../views/gestio_usuario.vue"
 import Gestion_planes from "../views/gestion_planes.vue"
 import RecuperarContraseña from "../views/recuperar_contraseña.vue"
+import RestablecerPassword from "../views/restablecer-password.vue"
 import ConfiguracionPerfil from "../views/configuracion-perfil.vue"
 import AdminPerfil from "../views/admin-perfil.vue"
 import { createRouter, createWebHashHistory } from "vue-router"
@@ -26,6 +27,7 @@ const routes = [
     {path:"/GestionUsuarios", component:GestionUsuarios},
     {path:"/GestionPlanes", component:Gestion_planes},
     {path:"/RecuperarContrasena", component:RecuperarContraseña},
+    {path:"/recuperar-password/:token", component:RestablecerPassword},
     {path:"/configuracion", component:ConfiguracionPerfil},
     {path:"/AdminPerfil", component:AdminPerfil}
 ]

@@ -74,8 +74,8 @@
                 <q-card-section class="q-pa-xl">
                   <div class="text-h6 text-gold q-mb-xl">Datos Personales</div>
                   
-                  <q-form @submit.prevent="updateProfile" class="q-gutter-y-lg">
-                    <q-input v-model="form.nombre" label="Nombre Completo" dark filled dense label-color="amber-5" class="mystic-input" />
+                  <q-form ref="profileFormRef" @submit.prevent="updateProfile" class="q-gutter-y-lg">
+                    <q-input v-model="form.nombre" label="Nombre Completo" dark filled dense label-color="amber-5" class="mystic-input" :rules="[val => !!val || 'El nombre es obligatorio']" />
                     <q-input v-model="form.email" label="Correo Electrónico" dark filled dense label-color="amber-5" class="mystic-input" disable />
                     
                     <div class="row items-center q-col-gutter-md q-mt-md">
@@ -98,24 +98,9 @@
               </q-card>
             </div>
 
-            <!-- Seguridad -->
+            <!-- Nivel de Acceso (Antes estaba debajo de seguridad) -->
             <div class="col-12 col-md-5">
               <q-card class="mystic-card-dark">
-                <q-card-section class="q-pa-xl">
-                  <div class="text-h6 text-gold q-mb-xl">Seguridad</div>
-                  
-                  <q-form @submit.prevent="updatePassword" class="q-gutter-y-md">
-                    <q-input v-model="passForm.passwordActual" label="Contraseña Actual" type="password" dark filled dense label-color="amber-5" class="mystic-input" />
-                    <q-input v-model="passForm.nuevaPassword" label="Nueva Contraseña" type="password" dark filled dense label-color="amber-5" class="mystic-input" />
-                    
-                    <div class="row justify-end q-mt-xl">
-                      <q-btn label="Cambiar Contraseña" color="indigo-9" unelevated no-caps type="submit" class="full-width" :loading="loading" />
-                    </div>
-                  </q-form>
-                </q-card-section>
-              </q-card>
-
-              <q-card class="mystic-card-dark q-mt-lg">
                 <q-card-section class="q-pa-lg text-center">
                   <div class="text-grey-5 text-caption">Nivel de Acceso</div>
                   <q-badge color="amber-10" label="Súper Administrador" class="q-mt-sm q-px-md q-py-xs" />
@@ -143,6 +128,7 @@ const router = useRouter()
 const $q = useQuasar()
 
 const drawer = ref(false)
+const profileFormRef = ref(null)
 const loading = ref(false)
 const tempFile = ref(null)
 
@@ -152,11 +138,6 @@ const form = reactive({
   nombre: '',
   email: '',
   avatar: ''
-})
-
-const passForm = reactive({
-  passwordActual: '',
-  nuevaPassword: ''
 })
 
 onMounted(() => {
@@ -173,23 +154,14 @@ const onFileSelected = (file) => {
 }
 
 const updateProfile = async () => {
+  const isValid = await profileFormRef.value.validate()
+  if (!isValid) return
+
   loading.value = true
   const res = await userStore.actualizarPerfil({ nombre: form.nombre, avatar: form.avatar })
   loading.value = false
   if (res.success) $q.notify({ color: 'positive', message: 'Perfil administrativo actualizado', icon: 'check' })
   else $q.notify({ color: 'negative', message: res.mensaje })
-}
-
-const updatePassword = async () => {
-  if (!passForm.passwordActual || !passForm.nuevaPassword) return
-  loading.value = true
-  const res = await userStore.cambiarPassword(passForm)
-  loading.value = false
-  if (res.success) {
-    $q.notify({ color: 'positive', message: 'Contraseña cambiada con éxito', icon: 'lock' })
-    passForm.passwordActual = ''
-    passForm.nuevaPassword = ''
-  } else $q.notify({ color: 'negative', message: res.mensaje })
 }
 
 const handleLogout = () => { authStore.logout(); router.push('/') }

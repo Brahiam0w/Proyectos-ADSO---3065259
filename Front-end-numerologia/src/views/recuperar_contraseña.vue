@@ -1,82 +1,98 @@
 <template>
-  <div class="fullscreen flex flex-center mystical-gradient font-display q-pa-md">
-    
-    <q-card class="auth-card w-full rounded-xl shadow-xl overflow-hidden bg-white border-light z-top" style="max-width: 480px;">
+  <q-layout view="lHh Lpr lFf">
+    <q-page-container>
       
-      <div class="relative-position h-48 bg-primary-5 flex flex-center overflow-hidden">
-        <div class="absolute-full opacity-20 safe-pattern-bg"></div>
-        
-        <div class="relative-position z-top column items-center">
-          <div class="size-16 rounded-full bg-primary-10 flex flex-center text-primary">
-            <q-icon name="lock_reset" size="xl" />
+      <q-page class="login-page flex flex-center">
+
+        <div class="ambient-glow">
+          <div class="glow glow-top"></div>
+          <div class="glow glow-bottom"></div>
+        </div>
+
+        <div class="login-container">
+
+          <q-card class="login-card">
+
+            <q-card-section class="text-center q-pt-xl q-pb-lg">
+              <div class="logo-circle">
+                <q-icon name="auto_awesome" size="32px" color="primary" />
+              </div>
+
+              <h1 class="title">
+                Recuperar Acceso
+              </h1>
+
+              <p class="subtitle">
+                Ingresa tu correo para que las estrellas te guíen de vuelta a tu portal.
+              </p>
+            </q-card-section>
+
+            <q-card-section class="q-px-xl q-pb-xl">
+              <q-form @submit.prevent="onSubmit" class="q-gutter-md">
+
+                <q-input
+                  v-model="email"
+                  type="email"
+                  label="Correo electrónico"
+                  placeholder="tu-email@ejemplo.com"
+                  filled
+                  dense
+                  lazy-rules
+                  :rules="reglasEmail"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="mail_outline" />
+                  </template>
+                </q-input>
+
+                <q-btn
+                  type="submit"
+                  class="login-btn"
+                  unelevated
+                  no-caps
+                  :loading="cargando"
+                  :disable="cargando"
+                >
+                  <q-icon name="send" class="q-mr-sm" size="xs" />
+                  Enviar enlace de recuperación
+                </q-btn>
+
+              </q-form>
+
+              <div class="text-center q-mt-lg">
+                <p class="register-text">
+                  ¿Recordaste tu contraseña?
+                  <a @click.prevent="volverAlLogin" href="#" class="register-link cursor-pointer">
+                    Inicia sesión aquí
+                  </a>
+                </p>
+              </div>
+            </q-card-section>
+
+            <div class="bottom-bar"></div>
+
+          </q-card>
+
+          <div class="copyright">
+            © 2026 Numerología Mística. Todos los derechos reservados.
           </div>
-        </div>
-        
-        <div class="absolute blur-circle top-right"></div>
-        <div class="absolute blur-circle bottom-left"></div>
-      </div>
 
-      <q-card-section class="q-pa-xl">
-        <div class="q-mb-lg">
-          <h1 class="text-h5 text-weight-bold text-grey-9 q-my-none tracking-tight">Recuperar Contraseña</h1>
-          <p class="text-body1 text-grey-6 text-weight-regular q-mt-sm q-mb-none leading-relaxed">
-            Ingresa el correo electrónico asociado a tu cuenta para recibir las instrucciones de recuperación.
-          </p>
         </div>
 
-        <q-form @submit.prevent="onSubmit">
-          <div class="q-mb-xl">
-            <label class="block text-caption text-weight-bolder text-grey-7 uppercase tracking-wider q-mb-sm">
-              Correo electrónico
-            </label>
-            <q-input 
-              v-model="email" 
-              outlined 
-              type="email"
-              placeholder="ejemplo@correo.com"
-              bg-color="grey-1"
-              color="primary"
-              :rules="reglasEmail"
-              lazy-rules
-              hide-bottom-space
-            >
-              <template v-slot:prepend>
-                <q-icon name="mail" color="grey-5" class="q-pl-sm" />
-              </template>
-            </q-input>
-          </div>
+      </q-page>
 
-          <q-btn 
-            type="submit" 
-            color="primary" 
-            label="Enviar enlace de recuperación" 
-            class="full-width rounded-lg text-weight-bold tracking-wide shadow-primary custom-btn h-14 q-mb-md"
-            no-caps
-            :loading="cargando"
-          />
-        </q-form>
-
-        <div class="q-pt-md border-top-light text-center">
-          <a href="#" class="inline-flex flex-center q-gutter-x-sm text-primary text-weight-bold text-subtitle2 link-hover">
-            <q-icon name="arrow_back" size="sm" />
-            <span>Volver al inicio de sesión</span>
-          </a>
-        </div>
-      </q-card-section>
-    </q-card>
-
-    <div class="absolute-bottom text-center text-grey-6 q-pb-lg z-top pointer-events-none">
-      <div class="row justify-center q-gutter-x-md q-mb-sm opacity-50">
-      </div>
-      <p class="text-caption q-my-none">© 2024 Numerología Mística. Todos los derechos reservados.</p>
-    </div>
-
-  </div>
+    </q-page-container>
+  </q-layout>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import axios from '../api/axios'
+import { useQuasar } from 'quasar'
+import { useRouter } from 'vue-router'
 
+const $q = useQuasar()
+const router = useRouter()
 const email = ref('')
 const cargando = ref(false)
 
@@ -85,78 +101,158 @@ const reglasEmail = [
   val => /.+@.+\..+/.test(val) || 'Ingresa un correo válido'
 ]
 
-const onSubmit = () => {
+const onSubmit = async () => {
   cargando.value = true
-  
-  setTimeout(() => {
+  try {
+    const response = await axios.post('/auth/olvido-password', { email: email.value })
+    
+    if (response.data.success) {
+      $q.notify({
+        color: 'positive',
+        message: response.data.mensaje || 'Enlace enviado. Revisa tu correo.',
+        icon: 'check_circle',
+        position: 'top',
+        timeout: 5000
+      })
+      email.value = ''
+    }
+  } catch (error) {
+    $q.notify({
+      color: 'negative',
+      message: error.response?.data?.mensaje || 'No pudimos encontrar tu rastro estelar.',
+      icon: 'error',
+      position: 'top'
+    })
+  } finally {
     cargando.value = false
-    email.value = ''
-  }, 1500)
+  }
+}
+
+const volverAlLogin = () => {
+  router.push('/')
 }
 </script>
 
 <style scoped>
-:root {
-  --q-primary: #7311d4;
-}
-.font-display { font-family: 'Inter', sans-serif; }
-.text-primary { color: #7311d4 !important; }
-.bg-primary { background-color: #7311d4 !important; }
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
 
-/* Tallas y Posiciones */
-.h-48 { height: 12rem; }
-.h-14 { height: 3.5rem; }
-.size-8 { width: 2rem; height: 2rem; }
-.size-16 { width: 4rem; height: 4rem; }
-.absolute-full { position: absolute; top: 0; right: 0; bottom: 0; left: 0; }
-.z-top { z-index: 10; }
-.pointer-events-none { pointer-events: none; }
-
-/* Bordes y Sombras */
-.rounded-lg { border-radius: 0.5rem; }
-.rounded-xl { border-radius: 0.75rem; }
-.border-light { border: 1px solid rgba(115, 17, 212, 0.05); }
-.border-top-light { border-top: 1px solid #f1f5f9; }
-.shadow-primary { box-shadow: 0 10px 15px -3px rgba(115, 17, 212, 0.2); }
-
-/* Fondos y Opacidades */
-.bg-primary-5 { background-color: rgba(115, 17, 212, 0.05) !important; }
-.bg-primary-10 { background-color: rgba(115, 17, 212, 0.1) !important; }
-.opacity-50 { opacity: 0.5; }
-
-/* Textos */
-.tracking-tight { letter-spacing: -0.015em; }
-.tracking-wider { letter-spacing: 0.05em; }
-.leading-relaxed { line-height: 1.625; }
-
-/* ===== EFECTOS MÍSTICOS ===== */
-.mystical-gradient {
-  background-color: #f7f6f8;
-  background-image: 
-    radial-gradient(circle at top right, rgba(115, 17, 212, 0.08), transparent 40%),
-    radial-gradient(circle at bottom left, rgba(115, 17, 212, 0.05), transparent 40%);
+.login-page {
+  min-height: 100vh !important;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  background-color: #191022;
+  background-image:
+    radial-gradient(circle at 100% 0%, #2e1065 0%, transparent 50%),
+    radial-gradient(circle at 0% 100%, #4c1d95 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%237311d4' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/svg%3E");
 }
 
-.safe-pattern-bg {
-  background-image: radial-gradient(rgba(115, 17, 212, 0.3) 1px, transparent 1px);
-  background-size: 20px 20px;
+.ambient-glow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
-.blur-circle {
-  width: 10rem;
-  height: 10rem;
-  background-color: rgba(115, 17, 212, 0.1);
-  border-radius: 9999px;
-  filter: blur(24px);
+.glow {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  background: rgba(115, 17, 212, 0.3);
+  border-radius: 50%;
+  filter: blur(120px);
 }
-.top-right { top: -2.5rem; right: -2.5rem; }
-.bottom-left { bottom: -2.5rem; left: -2.5rem; }
 
-/* Botones y Links */
-.custom-btn { transition: all 0.2s ease; }
-.custom-btn:hover { background-color: rgba(115, 17, 212, 0.9) !important; }
-.custom-btn:active { transform: scale(0.98); }
+.glow-top { top: -10%; left: -10%; }
+.glow-bottom { bottom: -10%; right: -10%; }
 
-.link-hover { text-decoration: none; transition: all 0.2s ease; text-underline-offset: 4px; text-decoration-thickness: 2px; }
-.link-hover:hover { text-decoration: underline; }
+.login-container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 420px;
+  padding: 16px;
+}
+
+.login-card {
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  overflow: hidden;
+}
+
+@media (max-width: 600px) {
+  .q-px-xl {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+  .q-pb-xl {
+    padding-bottom: 32px !important;
+  }
+  .title {
+    font-size: 24px;
+  }
+}
+
+.logo-circle {
+  margin: 0 auto 24px auto;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(115, 17, 212, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-family: "Playfair Display", serif;
+  font-size: 28px;
+  margin-top: 0;
+  margin-bottom: 8px;
+  line-height: 1.2;
+  color: #111;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.register-text {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.register-link {
+  color: #7311d4;
+  font-weight: 500;
+  margin-left: 4px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.login-btn {
+  width: 100%;
+  background: #7311d4;
+  color: white;
+  font-weight: 600;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(115, 17, 212, 0.4);
+}
+
+.bottom-bar {
+  height: 6px;
+  background: linear-gradient(to right, #7311d4, #a855f7, #6366f1);
+}
+
+.copyright {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+}
 </style>

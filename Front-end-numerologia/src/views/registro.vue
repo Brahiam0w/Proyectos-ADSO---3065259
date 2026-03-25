@@ -28,7 +28,7 @@
 
             <!-- Área de Formulario con scroll interno si es necesario -->
             <q-card-section class="q-px-lg q-pb-lg scroll-area">
-              <q-form @submit.prevent="handleRegister" class="q-gutter-y-md q-mt-md">
+              <q-form ref="registerForm" @submit.prevent="handleRegister" class="q-gutter-y-md q-mt-md">
                 
                 <q-input
                   v-model="form.fullname"
@@ -37,6 +37,7 @@
                   filled
                   dense
                   label-color="amber-8"
+                  :rules="[val => !!val || 'El nombre es obligatorio']"
                 >
                   <template #prepend>
                     <q-icon name="person_outline" color="amber-8" size="20px" />
@@ -45,17 +46,47 @@
 
                 <div class="birth-container">
                   <div class="custom-label q-mb-xs flex items-center">
-                    <q-icon name="stars" size="12px" class="q-mr-xs" />
+                    <q-icon name="event" size="12px" class="q-mr-xs" />
                     Fecha de Nacimiento
                   </div>
                   <q-input
                     v-model="form.birthdate"
-                    type="date"
+                    mask="####/##/##"
                     dark
                     filled
                     dense
                     class="birth-input"
-                  />
+                    placeholder="AAAA/MM/DD"
+                    hint="Debes ser mayor de 18 años"
+                    hide-hint
+                    :rules="[
+                      val => !!val || 'La fecha es obligatoria',
+                      val => {
+                        const hoy = new Date();
+                        const fechaNac = new Date(val);
+                        if (fechaNac > hoy) return 'Fecha inválida';
+                        const edadMinima = new Date(hoy.getFullYear() - 18, hoy.getMonth(), hoy.getDate());
+                        return fechaNac <= edadMinima || 'Mínimo 18 años';
+                      }
+                    ]"
+                  >
+                    <template v-slot:append>
+                      <q-icon name="calendar_month" class="cursor-pointer" color="amber-8">
+                        <q-popup-proxy ref="qDateProxy" cover transition-show="scale" transition-hide="scale">
+                          <q-date 
+                            v-model="form.birthdate" 
+                            dark 
+                            minimal
+                            color="amber-9" 
+                            text-color="black"
+                            mask="YYYY/MM/DD"
+                            :options="date => date <= hoyFormateado"
+                            @update:model-value="() => $refs.qDateProxy.hide()"
+                          />
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
                 </div>
 
                 <q-input
@@ -66,6 +97,10 @@
                   filled
                   dense
                   label-color="amber-8"
+                  :rules="[
+                    val => !!val || 'El correo es obligatorio',
+                    val => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) || 'Formato de correo no válido'
+                  ]"
                 >
                   <template #prepend>
                     <q-icon name="alternate_email" color="amber-8" size="20px" />
@@ -80,6 +115,10 @@
                   filled
                   dense
                   label-color="amber-8"
+                  :rules="[
+                    val => !!val || 'La contraseña es obligatoria',
+                    val => val.length >= 6 || 'Mínimo 6 caracteres'
+                  ]"
                 >
                   <template #prepend>
                     <q-icon name="lock_outline" color="amber-8" size="20px" />
@@ -183,8 +222,14 @@ const router = useRouter()
 const $q = useQuasar()
 const authStore = useAuthStore()
 
+const registerForm = ref(null)
 const showPassword = ref(false)
 const loading = ref(false)
+
+const hoyFormateado = (() => {
+  const now = new Date();
+  return `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}`;
+})();
 
 const form = reactive({
   fullname: '',
@@ -204,35 +249,17 @@ const genderOptions = [
 ]
 
 const handleRegister = async () => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const isValid = await registerForm.value.validate()
+
+  if (!isValid) {
+    return
+  }
 
   if (!form.terms) {
     $q.notify({
       color: 'warning',
       message: 'Debes aceptar los términos y condiciones',
       icon: 'warning',
-      position: 'top'
-    })
-    return
-  }
-
-  if (!form.fullname || !form.birthdate || !form.email || !form.password) {
-    $q.notify({
-      color: 'negative',
-      message: 'Por favor, completa los campos obligatorios',
-      icon: 'report_problem',
-      position: 'top'
-    })
-    return
-  }
-
-  if (!emailRegex.test(form.email)) {
-    $q.notify({
-      message: 'Email no válido',
-      caption: 'Formato incorrecto',
-      icon: 'alternate_email',
-      color: 'purple-10',
-      textColor: 'white',
       position: 'top'
     })
     return
@@ -252,11 +279,11 @@ const handleRegister = async () => {
   if (res.success) {
     $q.notify({
       color: 'positive',
-      message: `¡Registro exitoso! Bienvenido, ${authStore.user.nombre}.`,
+      message: '¡Registro exitoso! Por favor, inicia sesión con tus credenciales.',
       icon: 'stars',
       position: 'top'
     })
-    router.push('/perfil')
+    router.push('/')
   } else {
     $q.notify({
       color: 'negative',

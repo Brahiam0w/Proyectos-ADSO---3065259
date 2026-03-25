@@ -20,7 +20,7 @@ const planesIniciales = [
   { 
     nombre: 'Plan Místico', 
     tag: 'Premium', 
-    precio: 9.99, 
+    precio: 39000, // Precio en Pesos Colombianos (COP)
     periodo: 'mes', 
     icon: 'auto_fix_high', 
     features: [
@@ -39,7 +39,7 @@ const seedDB = async () => {
     await connectDB();
     await Plan.deleteMany({});
     await Plan.insertMany(planesIniciales);
-    console.log('✅ Base de datos actualizada: Soporte por comunidad eliminado del Plan Iniciado.');
+    console.log('✅ Base de datos actualizada con precios en Pesos Colombianos (COP).');
     process.exit();
   } catch (error) {
     console.error('❌ Error al poblar la base de datos:', error);

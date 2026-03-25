@@ -224,19 +224,26 @@ onMounted(async () => {
   height: 100dvh; 
   padding: 0 !important; 
   background-image: radial-gradient(circle at 50% 50%, rgba(115, 17, 212, 0.05) 0%, transparent 100%); 
-  overflow: hidden; 
+  overflow-y: auto; 
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  scrollbar-width: none;
 }
+.main-content-dark::-webkit-scrollbar { display: none; }
 
 .container { 
   max-width: 1000px; 
   width: 100%; 
-  padding: 20px 24px; 
+  padding: 80px 24px 40px 24px; 
   display: flex; 
   flex-direction: column; 
+}
+
+@media (max-width: 600px) {
+  .container { padding: 80px 16px 40px 16px; }
+  .text-h4 { font-size: 1.8rem; }
 }
 
 .container-detail { max-width: 800px; width: 100%; }

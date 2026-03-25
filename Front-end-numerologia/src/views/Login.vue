@@ -28,16 +28,19 @@
             </q-card-section>
 
             <q-card-section class="q-px-xl q-pb-xl">
-              <q-form @submit.prevent="handleLogin" class="q-gutter-md">
+              <q-form ref="loginForm" @submit.prevent="handleLogin" class="q-gutter-md">
 
                 <q-input
                   v-model="email"
-                  type="text"
+                  type="email"
                   label="Correo electrónico"
                   filled
                   dense
                   lazy-rules
-                  :rules="[val => !!val || 'Campo requerido']"
+                  :rules="[
+                    val => !!val || 'El correo es obligatorio',
+                    val => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) || 'Formato de correo no válido'
+                  ]"
                 >
                   <template v-slot:prepend>
                     <q-icon name="mail_outline" />
@@ -52,7 +55,9 @@
                     filled
                     dense
                     lazy-rules
-                    :rules="[val => !!val || 'Campo requerido']"
+                    :rules="[
+                      val => !!val || 'La contraseña es obligatoria'
+                    ]"
                   >
                     <template v-slot:prepend>
                       <q-icon name="lock_outline" />
@@ -123,36 +128,16 @@ const router = useRouter()
 const $q = useQuasar()
 const authStore = useAuthStore()
 
+const loginForm = ref(null)
 const email = ref('')
 const password = ref('')
 const loading = ref(false)
 const showPassword = ref(false)
 
 const handleLogin = async () => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const isValid = await loginForm.value.validate()
 
-  if (!email.value || !password.value) {
-    $q.notify({
-      color: 'negative',
-      message: 'Por favor, completa todos los campos',
-      icon: 'report_problem',
-      position: 'top',
-      timeout: 3000
-    })
-    return
-  }
-
-  if (!emailRegex.test(email.value)) {
-    $q.notify({
-      progress: true,
-      message: 'El formato del correo no es válido',
-      caption: 'Asegúrate de incluir un @ y un dominio',
-      icon: 'mail',
-      color: 'purple-10',
-      textColor: 'white',
-      position: 'top',
-      actions: [{ icon: 'close', color: 'white' }]
-    })
+  if (!isValid) {
     return
   }
 
@@ -228,7 +213,7 @@ const irARegistro = () => {
   z-index: 2;
   width: 100%;
   max-width: 420px;
-  padding: 24px;
+  padding: 16px;
 }
 
 .login-card {
@@ -237,6 +222,19 @@ const irARegistro = () => {
   border-radius: 16px;
   box-shadow: 0 20px 50px rgba(0,0,0,0.4);
   overflow: hidden;
+}
+
+@media (max-width: 600px) {
+  .q-px-xl {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+  .q-pb-xl {
+    padding-bottom: 32px !important;
+  }
+  .title {
+    font-size: 24px;
+  }
 }
 
 .logo-circle {

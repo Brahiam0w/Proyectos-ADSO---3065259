@@ -12,7 +12,7 @@ export const useUserStore = defineStore("user", () => {
         loading.value = true;
         error.value = null;
         try {
-            const response = await api.put(`/usuarios/${authStore.user._id}`, userData);
+            const response = await api.put("/usuarios/perfil", userData);
             if (response.data.success) {
                 // Actualizar el usuario en el authStore
                 authStore.user = response.data.usuario;
@@ -46,13 +46,13 @@ export const useUserStore = defineStore("user", () => {
         loading.value = true;
         error.value = null;
         try {
-            const response = await api.delete("/usuarios/perfil/eliminar");
+            const response = await api.delete("/usuarios/perfil/desactivar");
             if (response.data.success) {
                 authStore.logout();
                 return { success: true };
             }
         } catch (err) {
-            error.value = err.response?.data?.mensaje || "Error al eliminar cuenta";
+            error.value = err.response?.data?.mensaje || "Error al desactivar la cuenta";
             return { success: false, mensaje: error.value };
         } finally {
             loading.value = false;
@@ -76,12 +76,30 @@ export const useUserStore = defineStore("user", () => {
         }
     };
 
+    const suspenderPlan = async () => {
+        loading.value = true;
+        error.value = null;
+        try {
+            const response = await api.post("/usuarios/perfil/suspender-plan");
+            if (response.data.success) {
+                authStore.user = response.data.usuario;
+                return { success: true, mensaje: response.data.mensaje };
+            }
+        } catch (err) {
+            error.value = err.response?.data?.mensaje || "Error al suspender el plan";
+            return { success: false, mensaje: error.value };
+        } finally {
+            loading.value = false;
+        }
+    };
+
     return {
         loading,
         error,
         actualizarPerfil,
         cambiarPassword,
         eliminarCuenta,
-        activarPlan
+        activarPlan,
+        suspenderPlan
     };
 });

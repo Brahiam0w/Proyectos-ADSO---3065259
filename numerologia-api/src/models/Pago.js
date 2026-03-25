@@ -22,8 +22,21 @@ const pagoSchema = new mongoose.Schema(
     },
     metodo: {
       type: String,
-      enum: ['tarjeta', 'efectivo', 'transferencia'],
+      enum: ['tarjeta', 'efectivo', 'transferencia', 'Mercado Pago'],
       required: [true, 'El método de pago es obligatorio'],
+    },
+    mpPreferenceId: {
+      type: String,
+      default: null,
+    },
+    mpPaymentId: {
+      type: String,
+      default: null,
+    },
+    estado: {
+      type: String,
+      enum: ['pendiente', 'aprobado', 'rechazado', 'fallido'],
+      default: 'pendiente',
     },
   },
   {

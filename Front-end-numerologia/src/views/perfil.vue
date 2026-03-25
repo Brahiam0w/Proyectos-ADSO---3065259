@@ -74,7 +74,7 @@
       </div>
     </q-drawer>
 
-    <!-- BOTÓN AVATAR FLOTANTE (Con Lógica de Inicial) -->
+    <!-- BOTÓN AVATAR FLOTANTE -->
     <div v-if="!drawer" class="fixed-top-left z-top q-ma-lg">
       <div class="avatar-trigger-wrapper">
         <div class="pulse-ring"></div>
@@ -83,7 +83,7 @@
           class="avatar-mystic-trigger cursor-pointer shadow-10"
           @click="drawer = true"
         >
-          <img v-if="user.avatar" :src="user.avatar">
+          <img v-if="user.avatar" :src="user.avatar" style="object-fit: cover;">
           <span v-else>{{ user.nombre ? user.nombre.charAt(0).toUpperCase() : 'U' }}</span>
           <q-tooltip anchor="center right" self="center left" class="bg-gold text-black">Abrir Oráculo</q-tooltip>
         </q-avatar>
@@ -265,7 +265,7 @@ const handleLogout = () => { authStore.logout(); router.push('/') }
 .text-gold { color: #d4af37; }
 .bg-gold { background: #d4af37; }
 
-/* ELIMINAR SCROLL */
+/* LAYOUT BASE */
 .mystic-dark-layout { 
   background: #0a0612; 
   color: #e0e0e0; 
@@ -275,18 +275,25 @@ const handleLogout = () => { authStore.logout(); router.push('/') }
 
 .main-content-dark {
   height: 100vh;
-  overflow: hidden;
+  overflow-y: auto;
   background-image: radial-gradient(circle at 0% 0%, rgba(115, 17, 212, 0.05) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+  scrollbar-width: none;
 }
+.main-content-dark::-webkit-scrollbar { display: none; }
 
 .container { 
   max-width: 1100px; 
   margin: auto; 
   padding: 40px 24px;
-  height: 100%;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+@media (max-width: 1023px) {
+  .container { padding: 100px 16px 40px 16px; justify-content: flex-start; }
+  .text-h2 { font-size: 2.5rem; }
 }
 
 /* Sidebar */
@@ -295,26 +302,32 @@ const handleLogout = () => { authStore.logout(); router.push('/') }
 .nav-item:hover { background: rgba(255, 255, 255, 0.03); color: #d4af37; }
 .nav-active { background: rgba(212, 175, 55, 0.1) !important; color: #d4af37 !important; border: 1px solid rgba(212, 175, 55, 0.2); }
 
-/* Avatar Trigger con Brillo Dorado */
-.fixed-top-left { z-index: 2000; }
-.avatar-trigger-wrapper { position: relative; display: inline-block; }
+/* Avatar Trigger Flotante */
+.avatar-trigger-wrapper { 
+  position: relative; 
+  display: inline-block;
+  width: 64px;
+  height: 64px;
+}
 
 .avatar-mystic-trigger {
-  background: #110a1f; border: 2px solid #d4af37; color: #d4af37; font-weight: 900;
-  transition: all 0.3s ease; position: relative; z-index: 2;
-  overflow: hidden;
+  background: #110a1f; 
+  border: 2px solid #d4af37; 
+  color: #d4af37; 
+  font-weight: 900;
+  transition: all 0.3s ease;
 }
 
 .pulse-ring {
   position: absolute; top: 0; left: 0; right: 0; bottom: 0;
   border-radius: 50%; border: 4px solid #d4af37;
-  animation: pulse-gold 2s infinite; z-index: 1;
+  animation: pulse-gold 2s infinite;
 }
 
 @keyframes pulse-gold {
-  0% { transform: scale(0.9); opacity: 1; box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
-  70% { transform: scale(1.2); opacity: 0; box-shadow: 0 0 0 20px rgba(212, 175, 55, 0); }
-  100% { transform: scale(0.9); opacity: 0; box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+  0% { transform: scale(0.9); opacity: 1; }
+  70% { transform: scale(1.2); opacity: 0; }
+  100% { transform: scale(0.9); opacity: 0; }
 }
 
 .avatar-mystic-static { 

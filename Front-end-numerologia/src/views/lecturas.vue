@@ -190,6 +190,15 @@ const formatFecha = (f) => {
 }
 
 const handleGenerarLectura = async () => {
+  if (!user.value.nombre || !user.value.fecha_nacimiento) {
+    $q.notify({
+      color: "warning",
+      message: "Completa tu nombre y fecha de nacimiento en el perfil antes de consultar el oráculo.",
+      icon: "person",
+      actions: [{ label: 'Ir al Perfil', color: 'white', handler: () => router.push('/configuracion') }]
+    });
+    return;
+  }
   const res = await lecturaStore.generarLecturaPrincipal(user.value?._id);
   if (res.success) {
     $q.notify({ color: "positive", message: res.mensaje || "Lectura generada", icon: "stars", position: 'top', timeout: 2000 });
@@ -199,6 +208,15 @@ const handleGenerarLectura = async () => {
 };
 
 const handleGenerarDiaria = async () => {
+  if (!user.value.nombre || !user.value.fecha_nacimiento) {
+    $q.notify({
+      color: "warning",
+      message: "Completa tu perfil para recibir tu guía diaria.",
+      icon: "person",
+      actions: [{ label: 'Ir al Perfil', color: 'white', handler: () => router.push('/configuracion') }]
+    });
+    return;
+  }
   const res = await lecturaStore.generarLecturaDiaria(user.value?._id);
   if (res.success) {
     $q.notify({ color: "positive", message: res.mensaje || "Guía diaria lista", icon: "today", position: 'top', timeout: 2000 });
@@ -209,7 +227,7 @@ const handleGenerarDiaria = async () => {
 
 const descargarPDF = async () => {
   if (!lecturaActual.value) return;
-  if (user.value.estado !== 'activo') {
+  if (user.value.plan !== 'mistico') {
     $q.notify({ color: 'warning', message: 'PDF exclusivo del Plan Místico', icon: 'lock', actions: [{ label: 'Planes', color: 'white', handler: () => router.push('/planes') }] });
     return;
   }

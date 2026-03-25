@@ -50,10 +50,17 @@ const usuarioSchema = new mongoose.Schema(
       enum: ['admin', 'usuario'],
       default: 'usuario',
     },
+    plan: {
+      type: String,
+      enum: ['gratuito', 'mistico'],
+      default: 'gratuito',
+    },
     fecha_expiracion_plan: {
       type: Date,
       default: null,
     },
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
   },
   {
     timestamps: { createdAt: 'fecha_registro', updatedAt: 'fecha_actualizacion' },

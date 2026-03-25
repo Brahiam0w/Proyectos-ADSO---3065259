@@ -1,19 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const {
-  listarPagos,
-  pagosPorUsuario,
-  registrarPago,
-  estadoMembresia,
+const { 
+    crearPreferencia, 
+    recibirNotificacion, 
+    verificarPago, 
+    redirigirDesdeMP 
 } = require('../controllers/pagoController');
 const { proteger } = require('../middlewares/authMiddleware');
-const { soloRoles } = require('../middlewares/roleMiddleware');
 
-router.use(proteger);
+// Generar el link de pago seguro
+router.post('/crear-preferencia', proteger, crearPreferencia);
 
-router.get('/', soloRoles('admin'), listarPagos);           // Solo admin
-router.post('/', registrarPago);                             // Admin o el propio usuario
-router.get('/estado/:usuario_id', estadoMembresia);          // Admin: cualquiera | Usuario: el suyo
-router.get('/:usuario_id', pagosPorUsuario);                 // Admin: cualquiera | Usuario: el suyo
+// Webhook para Mercado Pago (llamado automáticamente)
+router.post('/webhook', recibirNotificacion);
+
+// Verificar estado del pago (desde el frontend)
+router.get('/verificar', proteger, verificarPago);
+
+// Redirigir al frontend con los parámetros de MP
+router.get('/redirect', redirigirDesdeMP);
 
 module.exports = router;

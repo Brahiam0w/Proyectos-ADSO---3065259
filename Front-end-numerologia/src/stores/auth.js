@@ -52,13 +52,26 @@ export const useAuthStore = defineStore("auth", () => {
         }
     };
 
+    const loadUser = async () => {
+        if (!user.value || !user.value._id) return;
+        
+        try {
+            const response = await api.get(`/usuarios/${user.value._id}`);
+            if (response.data.success) {
+                user.value = response.data.usuario;
+            }
+        } catch (err) {
+            console.error('Error cargando usuario:', err);
+        }
+    };
+
     const logout = () => {
         user.value = null;
         token.value = null;
         localStorage.clear();
     };
 
-    return { user, token, loading, error, login, register, logout };
+    return { user, token, loading, error, login, register, loadUser, logout };
 }, {
     persist: true,
 });
