@@ -15,7 +15,8 @@ const planesIniciales = [
       'Cálculo de Número de Vida',
       'Acceso al Portal Místico'
     ],
-    planColor: 'blue-10'
+    planColor: 'blue-10',
+    activo: true
   },
   { 
     nombre: 'Plan Místico', 
@@ -24,13 +25,14 @@ const planesIniciales = [
     periodo: 'mes', 
     icon: 'auto_fix_high', 
     features: [
-      'Lecturas Diarias con IA Gemini',
+      'Lecturas Diarias con IA Grok',
       'Notificaciones Diarias por Email',
       'Historial de Lecturas Ilimitado',
       'Descarga de Guías en PDF',
       'Análisis Profundo de Vibración'
     ],
-    planColor: 'amber-10'
+    planColor: 'amber-10',
+    activo: true
   }
 ];
 

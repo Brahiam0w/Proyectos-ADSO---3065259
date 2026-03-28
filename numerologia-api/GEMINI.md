@@ -12,7 +12,7 @@ Sistema integral de numerología que utiliza Inteligencia Artificial (Google Gen
 - **Framework:** Express.js
 - **Base de Datos:** MongoDB con Mongoose
 - **Autenticación:** JWT (JSON Web Tokens) y bcryptjs
-- **IA:** @google/generative-ai, @anthropic-ai/sdk
+- **IA:** Usaremos grok
 - **Tareas Programadas:** node-cron
 
 ### Frontend (/Front-end-numerologia)

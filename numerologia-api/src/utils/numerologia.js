@@ -2,6 +2,7 @@
  * UTILIDADES DE NUMEROLOGÍA
  * Contiene las funciones de cálculo y los textos interpretativos
  */
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // Números maestros que NO se reducen
 const NUMEROS_MAESTROS = [11, 22, 33];
@@ -162,14 +163,12 @@ const generarLecturaPrincipalIA = async (usuario) => {
   const numero = calcularNumeroCaminoVida(usuario.fecha_nacimiento);
   const interp = interpretacionesPrincipales[numero] || interpretacionesPrincipales[1];
 
-  // Intentar usar IA real si hay API key configurada
+  // Usar Gemini (Google Generative AI) para lectura principal
   const apiKey = process.env.GEMINI_API_KEY;
   if (apiKey) {
     try {
-      console.log(`GEMINI: Intentando con clave de longitud ${apiKey.length}. Comienza con ${apiKey.substring(0, 4)}...`);
-      const { GoogleGenerativeAI } = require('@google/generative-ai');
-      const genAI = new GoogleGenerativeAI(apiKey);q
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
       const prompt = `Eres un maestro numerólogo. Genera una lectura numerológica personal y profunda para ${usuario.nombre}.
 Su número de Camino de Vida es el ${numero} (${interp.titulo}).
@@ -181,16 +180,15 @@ Su propósito de vida es: ${interp.proposito}.
 Genera una lectura de 3 párrafos: 1) Descripción de su esencia, 2) Sus dones y desafíos en esta vida, 3) Un mensaje de guidance espiritual personalizado. Usa un tono cálido, profundo y esperanzador.`;
 
       const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const contenidoIA = response.text();
+      const contenidoIA = result.response.text();
 
       return { numero, contenido: contenidoIA };
     } catch (err) {
-      console.error('ERROR CRÍTICO GEMINI (Lectura Principal):', err.message);
-      if (err.stack) console.error(err.stack);
+      console.warn('⚠️ GEMINI no disponible:', err.message.substring(0, 80));
+      console.log('📝 Usando generación estática de fallback...');
     }
   } else {
-    console.warn('GEMINI_API_KEY no encontrada en el entorno.');
+    console.log('📝 GEMINI_API_KEY no configurada, usando fallback estático.');
   }
 
   // Lectura simulada (sin API key)
@@ -232,12 +230,11 @@ const generarLecturaDiariaIA = async (usuario) => {
     9: 'Cierra ciclos con amor. Suelta lo que ya no te sirve y hazlo con gratitud. Cada final es el inicio de algo más grande y hermoso.',
   };
 
-  // Intentar usar IA real (Gemini) para la lectura diaria
+  // Intentar usar Gemini (Google Generative AI) para la lectura diaria
   if (process.env.GEMINI_API_KEY) {
     try {
-      const { GoogleGenerativeAI } = require('@google/generative-ai');
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
       const prompt = `Eres un maestro numerólogo. Genera una lectura diaria breve y poderosa para ${usuario.nombre}.
 Hoy es ${new Date().toLocaleDateString('es-CO', { dateStyle: 'full' })}.
@@ -245,15 +242,15 @@ Su número de Camino de Vida es ${numeroCamino} y el número del día de hoy es 
 Escribe un mensaje de máximo 3 párrafos: 1) Energía del día según la vibración ${combinacion}, 2) Consejo práctico para aprovechar esta energía, 3) Afirmación corta y poderosa. Usa un tono inspirador y personal.`;
 
       const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const contenidoIA = response.text();
+      const contenidoIA = result.response.text();
 
       return { numero: combinacion, contenido: contenidoIA };
     } catch (err) {
-      console.error('ERROR CRÍTICO GEMINI (Lectura Diaria):', err.message);
+      console.warn('⚠️ GEMINI no disponible:', err.message.substring(0, 80));
+      console.log('📝 Usando generación estática de fallback...');
     }
   } else {
-    console.warn('GEMINI_API_KEY no encontrada en el entorno.');
+    console.log('📝 GEMINI_API_KEY no configurada, usando fallback estático.');
   }
 
   const contenido = `LECTURA DIARIA — ${new Date().toLocaleDateString('es-CO', { dateStyle: 'full' })}
