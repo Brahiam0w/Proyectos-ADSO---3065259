@@ -21,8 +21,8 @@ const crearPreferencia = async (req, res) => {
       return res.status(404).json({ success: false, mensaje: 'Usuario no encontrado' });
     }
 
-    const frontendUrl = process.env.FRONTEND_URL || 'https://numerologia-api.netlify.app/#/planes';
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:3000';
+    const frontendUrl = process.env.FRONTEND_URL || 'https://numerologia-api.netlify.app';
+    const backendUrl = process.env.BACKEND_URL || 'https://numerologia-backend.onrender.com';
 
     const preference = new Preference(client);
     
