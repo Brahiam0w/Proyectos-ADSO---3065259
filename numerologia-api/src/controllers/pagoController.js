@@ -21,7 +21,7 @@ const crearPreferencia = async (req, res) => {
       return res.status(404).json({ success: false, mensaje: 'Usuario no encontrado' });
     }
 
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const frontendUrl = process.env.FRONTEND_URL || 'https://numerologia-api.netlify.app/#/planes';
     const backendUrl = process.env.BACKEND_URL || 'http://localhost:3000';
 
     const preference = new Preference(client);
@@ -38,10 +38,11 @@ const crearPreferencia = async (req, res) => {
         }
       ],
       back_urls: {
-        success: `${backendUrl}/api/pagos/redirect?type=exito`,
-        failure: `${backendUrl}/api/pagos/redirect?type=fallo`,
-        pending: `${backendUrl}/api/pagos/redirect?type=pendiente`,
+        success: `${frontendUrl}/#/planes?status=success`,
+        failure: `${frontendUrl}/#/planes?status=failure`,
+        pending: `${frontendUrl}/#/planes?status=pending`,
       },
+      auto_return: 'approved',
       external_reference: usuarioId.toString(),
     };
 
