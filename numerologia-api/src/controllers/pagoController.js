@@ -38,11 +38,10 @@ const crearPreferencia = async (req, res) => {
         }
       ],
       back_urls: {
-        success: `${frontendUrl}/#/planes?status=success`,
-        failure: `${frontendUrl}/#/planes?status=failure`,
-        pending: `${frontendUrl}/#/planes?status=pending`,
+        success: `${backendUrl}/api/pagos/redirect?type=exito`,
+        failure: `${backendUrl}/api/pagos/redirect?type=fallo`,
+        pending: `${backendUrl}/api/pagos/redirect?type=pendiente`,
       },
-      auto_return: 'approved',
       external_reference: usuarioId.toString(),
     };
 
@@ -370,9 +369,38 @@ const redirigirDesdeMP = async (req, res) => {
             await pagoData.save();
             
             console.log(`[REDIRECT] ✅ Plan activado para: ${usuarioId}`);
-            return res.redirect(`${frontendUrl}/#/planes?status=success&external_reference=${usuarioId}`);
-        } 
-        
+
+            // Renderizar pantalla de confirmación con botón "Ir a Mi Cuenta"
+            const html = `
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>¡Pago Exitoso!</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: linear-gradient(135deg, #1a0f2e 0%, #0d081a 100%); color: white; text-align: center; }
+                        .card { background: rgba(255,255,255,0.05); padding: 3rem; border-radius: 24px; border: 1px solid rgba(212, 175, 55, 0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.5); max-width: 400px; width: 90%; }
+                        h1 { color: #d4af37; margin-bottom: 1rem; }
+                        p { color: #ccc; line-height: 1.6; margin-bottom: 2rem; }
+                        .btn { display: inline-block; padding: 1rem 2rem; background: #d4af37; color: #0d081a; text-decoration: none; border-radius: 12px; font-weight: bold; transition: 0.3s; }
+                        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3); }
+                    </style>
+                </head>
+                <body>
+                    <div class="card">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">✨</div>
+                        <h1>¡Pago Aprobado!</h1>
+                        <p>Tu conexión con el oráculo ha sido elevada. El Plan Místico ya está activo en tu cuenta.</p>
+                        <a href="${frontendUrl}/#/planes?status=success&external_reference=${usuarioId}" class="btn">
+                            Ir a Mi Cuenta
+                        </a>
+                    </div>
+                </body>
+                </html>
+            `;
+            return res.send(html);
+            }
         if (pagoData && (mpStatus === 'fallo' || mpStatus === 'pendiente')) {
             pagoData.estado = mpStatus === 'fallo' ? 'rechazado' : 'pendiente';
             await pagoData.save();

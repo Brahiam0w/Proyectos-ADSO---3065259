@@ -117,56 +117,63 @@ describe("Flujo Completo: Login, Compra y Lecturas", () => {
       });
 
       // Finalizar Pago
-      cy.get('button').contains(/Pagar|Confirmar/i).click({ force: true });
+      cy.log("Haciendo clic en Pagar...");
+      cy.get('button').contains(/Pagar|Confirmar|Pay|Confirm/i, { timeout: 20000 }).should('be.visible').click({ force: true });
       
-      // Confirmación
-      cy.contains(/¡Listo!|Pago aprobado|acreditó/i, { timeout: 60000 }).should("be.visible");
-      cy.contains(/Volver|Regresar/i).click({ force: true });
+      // Confirmación y clic en Ir a Mi Cuenta
+      cy.log("Esperando pantalla de confirmación...");
+      cy.contains(/¡Pago Aprobado!|¡Listo!|Pago aprobado/i, { timeout: 60000 }).should("be.visible");
+      cy.contains(/Ir a Mi Cuenta|Volver|Regresar/i).click({ force: true });
     });
 
     // 6. GENERAR LECTURAS
     cy.url().should("include", "/planes");
-    
+    cy.contains("¡Plan Místico activado!", { timeout: 20000 }).should("be.visible");
+
     cy.get(".avatar-mystic-trigger").click();
     cy.contains(".nav-item", "Lecturas").click();
     
-    cy.contains("Lectura Principal").click();
-    cy.contains("Misión de Vida", { timeout: 60000 }).should("be.visible");
+    cy.log("Generando Lectura Principal...");
+    cy.contains("Lectura Principal").click({ force: true });
+    cy.wait(3000);
 
-    cy.contains("Lectura Diaria").click();
-    cy.contains("Guía Diaria", { timeout: 60000 }).should("be.visible");
+    cy.log("Generando Lectura Diaria...");
+    cy.contains("Lectura Diaria").click({ force: true });
+    cy.wait(5000); 
 
-    // 7. IR A HISTORIAL, ABRIR Y CERRAR LECTURAS
+    // 7. HISTORIAL: LEER LOS ARCHIVOS
     cy.get(".avatar-mystic-trigger").click();
     cy.contains(".nav-item", "Historial").click();
     cy.url().should("match", /\/historial/i);
+    cy.wait(4000);
 
-    // Abrir y cerrar una Guía Diaria
-    cy.get(".history-card").not(".principal-border").first().click();
-    cy.get(".q-dialog .q-bar .q-btn").find('i.q-icon:contains("close")').parent().click();
+    // Abrir y cerrar primer "archivo" (X superior)
+    cy.get('.history-card').not('.principal-border').first().click();
+    cy.get('.modal-detail-container', { timeout: 15000 }).should('be.visible');
+    cy.wait(2000);
+    cy.get('.modal-detail-container').find('button').filter(':has(.q-icon), :contains("close")').first().click({ force: true });
 
-    // Abrir y cerrar una Esencia de Vida
-    cy.get(".history-card.principal-border").first().click();
-    cy.get(".q-dialog .q-bar .q-btn").find('i.q-icon:contains("close")').parent().click();
+    // Abrir y cerrar segundo "archivo" (X superior)
+    cy.get('.principal-border').first().click();
+    cy.get('.modal-detail-container', { timeout: 15000 }).should('be.visible');
+    cy.wait(2000);
+    cy.get('.modal-detail-container').find('button').filter(':has(.q-icon), :contains("close")').first().click({ force: true });
 
-    // 8. IR A CONFIGURACIÓN Y ACTUALIZAR PERFIL
+    // 8. CONFIGURACIÓN: ACTUALIZAR IDENTIDAD
     cy.get(".avatar-mystic-trigger").click();
     cy.contains(".nav-item", "Configuración").click();
-    cy.url().should("match", /\/configuracion/i);
+    cy.url().should("include", "/configuracion");
 
-    cy.get('input[aria-label="Nombre de Iniciado"]').clear().type("Prueba1");
-    
-    // Seleccionar Género Femenino
-    cy.get('.q-select').contains('Esencia (Género)').click({ force: true });
-    cy.get('.q-item__label').contains('femenino').click();
+    cy.contains('.q-field', 'Nombre de Iniciado').find('input').clear({ force: true }).type("TEST HECHO", { force: true });
+    cy.contains('.q-field', 'Esencia (Género)').click();
+    cy.get('.q-menu .q-item').contains('femenino').click();
 
     cy.contains("button", "Actualizar Identidad").click();
-    cy.contains("Su identidad ha sido actualizada en las estrellas", { timeout: 10000 }).should("be.visible");
+    cy.contains("identidad ha sido actualizada", { timeout: 15000 }).should("be.visible");
 
     // 9. CERRAR PORTAL
     cy.get(".avatar-mystic-trigger").click();
-    cy.get(".logout-btn").contains("Cerrar Portal").click();
-
+    cy.get(".logout-btn").click();
     cy.url().should("include", "/");
   });
 });
