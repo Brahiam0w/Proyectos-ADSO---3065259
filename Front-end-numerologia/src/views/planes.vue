@@ -201,7 +201,8 @@ onMounted(async () => {
   if ((status === 'success' || status === 'approved') && externalReference) {
     $q.loading.show({ message: 'Sincronizando su suscripción con el oráculo...' });
     try {
-      const res = await api.get(`/pagos/confirmar?status=approved&external_reference=${externalReference}`);
+      // Corregido: el endpoint correcto en el backend es /verificar, no /confirmar
+      const res = await api.get(`/pagos/verificar?status=approved&external_reference=${externalReference}`);
       if (res.data.success) {
         $q.notify({ color: 'positive', message: '¡Plan Místico activado con éxito!', icon: 'auto_awesome', position: 'top' });
         // Limpiar URL eliminando los parámetros
