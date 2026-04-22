@@ -26,8 +26,11 @@ const crearPreferencia = async (req, res) => {
 
     const preference = new Preference(client);
 
-    // Limpiamos la URL base para asegurar que no tenga espacios ni diagonales al final
-    const base = backendUrl.trim().replace(/\/+$/, "");
+    // 1. Limpiar y asegurar que la URL sea absoluta y tenga protocolo
+    let base = backendUrl.trim().replace(/\/+$/, "");
+    if (!base.startsWith('http')) {
+      base = `https://${base}`; // Forzar HTTPS si falta el protocolo
+    }
 
     const body = {
       items: [
@@ -45,12 +48,16 @@ const crearPreferencia = async (req, res) => {
         failure: `${base}/api/pagos/redirect?type=fallo`,
         pending: `${base}/api/pagos/redirect?type=pendiente`,
       },
-      auto_return: 'approved', // Activado para redirección automática
       external_reference: usuarioId.toString(),
     };
 
-    console.log('[MP] URL de éxito configurada:', body.back_urls.success);
-    console.log('[MP] Creando preferencia para:', usuario.email);
+    // 2. Mercado Pago EXIGE HTTPS para que el auto_return funcione.
+    // Si tu web desplegada tiene HTTPS, esto se activará y volverá solo.
+    if (base.startsWith('https')) {
+      body.auto_return = 'approved';
+    }
+
+    console.log('[MP] Creando preferencia con Success URL:', body.back_urls.success);
     const response = await preference.create({ body });
 
     // Calcular fecha de vencimiento (31 días desde hoy)
