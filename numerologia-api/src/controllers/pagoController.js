@@ -42,6 +42,7 @@ const crearPreferencia = async (req, res) => {
         failure: `${backendUrl}/api/pagos/redirect?type=fallo`,
         pending: `${backendUrl}/api/pagos/redirect?type=pendiente`,
       },
+      auto_return: 'approved',
       external_reference: usuarioId.toString(),
     };
 
@@ -340,312 +341,48 @@ const redirigirDesdeMP = async (req, res) => {
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 
     console.log(`\n[REDIRECT] ========== REDIRECT desde Mercado Pago ==========`);
-    console.log(`[REDIRECT] Tipo: ${type}`);
-    console.log(`[REDIRECT] Usuario: ${usuarioId}`);
-    console.log(`[REDIRECT] Preference ID: ${preference_id}`);
-    console.log(`[REDIRECT] Payment ID: ${payment_id}`);
+    console.log(`[REDIRECT] Tipo: ${type}, Usuario: ${usuarioId}`);
 
     try {
-        // Validar que tenemos usuario_id válido
-        if (!usuarioId || usuarioId === 'test123' || usuarioId === 'undefined') {
-            console.log(`[REDIRECT] ⚠️ Usuario ID inválido: ${usuarioId}`);
-            // Devolver página amigable sin actualizar BD
-            const html = `
-                <!DOCTYPE html>
-                <html lang="es">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Información de Pago</title>
-                    <style>
-                        body { font-family: Arial; display: flex; align-items: center; justify-content: center; height: 100vh; background: #f0f0f0; }
-                        .container { background: white; padding: 2rem; border-radius: 8px; text-align: center; max-width: 500px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-                        h1 { color: #f39c12; }
-                        p { color: #666; line-height: 1.6; }
-                        a { display: inline-block; margin-top: 1rem; padding: 0.75rem 2rem; background: #667eea; color: white; text-decoration: none; border-radius: 4px; }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <h1>⏳ Procesando tu Pago</h1>
-                        <p>Tu solicitud está siendo procesada. Por favor, espera a ser redirigido o haz click en el botón.</p>
-                        <a href="${frontendUrl}/#/planes">Volver a Planes</a>
-                    </div>
-                </body>
-                </html>
-            `;
-            res.send(html);
-            console.log(`[REDIRECT] ========== FIN REDIRECT (PREVIEW) ==========\n`);
-            return;
+        if (!usuarioId || usuarioId === 'undefined') {
+            console.log(`[REDIRECT] ⚠️ Usuario ID inválido`);
+            return res.redirect(`${frontendUrl}/#/planes?status=error`);
         }
 
-        // Buscar el pago más reciente del usuario
-        let pagoData = null;
-        let usuarioData = null;
         let mpStatus = type;
+        const pagoData = await Pago.findOne({
+            usuario_id: usuarioId,
+            metodo: 'Mercado Pago'
+        }).sort({ createdAt: -1 });
 
-        if (usuarioId) {
-            // Buscar pago en BD
-            pagoData = await Pago.findOne({
-                usuario_id: usuarioId,
-                metodo: 'Mercado Pago'
-            }).sort({ createdAt: -1 });
+        if (pagoData && mpStatus === 'exito') {
+            const fechaExpiracion = new Date();
+            fechaExpiracion.setDate(fechaExpiracion.getDate() + 31);
+            
+            await Usuario.findByIdAndUpdate(usuarioId, {
+                plan: 'mistico',
+                fecha_expiracion_plan: fechaExpiracion,
+                estado: 'activo'
+            });
 
-            // Si encontramos el pago y está aprobado, activar plan
-            if (pagoData && mpStatus === 'exito') {
-                console.log(`[REDIRECT] ✅ Pago encontrado, actualizando usuario`);
-                
-                const fechaExpiracion = new Date();
-                fechaExpiracion.setDate(fechaExpiracion.getDate() + 31);
-                
-                usuarioData = await Usuario.findByIdAndUpdate(
-                    usuarioId,
-                    {
-                        plan: 'mistico',
-                        fecha_expiracion_plan: fechaExpiracion,
-                        estado: 'activo'
-                    },
-                    { new: true }
-                );
-
-                // Actualizar estado del pago
-                pagoData.estado = 'aprobado';
-                await pagoData.save();
-            }
-            else if (pagoData && (mpStatus === 'fallo' || mpStatus === 'pendiente')) {
-                usuarioData = await Usuario.findById(usuarioId);
-                pagoData.estado = mpStatus === 'fallo' ? 'rechazado' : 'pendiente';
-                await pagoData.save();
-            }
-        }
-
-        // Determinar icon y colores según el tipo
-        let icon = '⏳';
-        let color = '#f39c12';
-        let titulo = 'Pago Pendiente';
-        let mensaje = 'Tu pago está siendo procesado';
-
-        if (type === 'exito') {
-            icon = '✅';
-            color = '#27ae60';
-            titulo = '¡Pago Aprobado!';
-            mensaje = 'Tu suscripción al Plan Místico ha sido activada correctamente';
+            pagoData.estado = 'aprobado';
+            if (payment_id) pagoData.mpPaymentId = String(payment_id);
+            await pagoData.save();
+            
+            console.log(`[REDIRECT] ✅ Plan activado para: ${usuarioId}`);
+            return res.redirect(`${frontendUrl}/#/planes?status=success&external_reference=${usuarioId}`);
         } 
-        else if (type === 'fallo') {
-            icon = '❌';
-            color = '#e74c3c';
-            titulo = 'Pago Rechazado';
-            mensaje = 'El pago no pudo ser procesado. Por favor, intenta nuevamente';
+        
+        if (pagoData && (mpStatus === 'fallo' || mpStatus === 'pendiente')) {
+            pagoData.estado = mpStatus === 'fallo' ? 'rechazado' : 'pendiente';
+            await pagoData.save();
         }
 
-        // HTML de la pantalla de resultado
-        const html = `
-            <!DOCTYPE html>
-            <html lang="es">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>${titulo}</title>
-                <style>
-                    * { margin: 0; padding: 0; box-sizing: border-box; }
-                    body { 
-                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-                        display: flex; 
-                        flex-direction: column; 
-                        align-items: center; 
-                        justify-content: center; 
-                        min-height: 100vh; 
-                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                        color: #333;
-                        padding: 20px;
-                    }
-                    .container {
-                        background: white;
-                        border-radius: 20px;
-                        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-                        max-width: 600px;
-                        width: 100%;
-                        overflow: hidden;
-                        animation: slideUp 0.5s ease-out;
-                    }
-                    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-                    .header {
-                        background: ${color};
-                        padding: 3rem 2rem;
-                        text-align: center;
-                        color: white;
-                    }
-                    .icon { font-size: 4rem; margin-bottom: 1rem; }
-                    .titulo { 
-                        font-size: 2rem; 
-                        font-weight: 700; 
-                        margin-bottom: 0.5rem;
-                    }
-                    .subtitulo {
-                        font-size: 1.1rem;
-                        opacity: 0.95;
-                        line-height: 1.5;
-                    }
-                    .body {
-                        padding: 2.5rem;
-                    }
-                    .mensaje {
-                        color: #666;
-                        font-size: 1rem;
-                        margin-bottom: 2rem;
-                        line-height: 1.6;
-                        text-align: center;
-                    }
-                    .detalles {
-                        background: #f8f9fa;
-                        border-radius: 12px;
-                        padding: 1.5rem;
-                        margin-bottom: 2rem;
-                    }
-                    .detalle-item {
-                        display: flex;
-                        justify-content: space-between;
-                        padding: 0.75rem 0;
-                        border-bottom: 1px solid #e0e0e0;
-                    }
-                    .detalle-item:last-child {
-                        border-bottom: none;
-                    }
-                    .label {
-                        font-weight: 600;
-                        color: #2c3e50;
-                    }
-                    .valor {
-                        color: #667eea;
-                        font-weight: 500;
-                    }
-                    .acciones {
-                        display: flex;
-                        gap: 1rem;
-                        justify-content: center;
-                        flex-wrap: wrap;
-                    }
-                    .btn {
-                        padding: 0.75rem 2rem;
-                        border: none;
-                        border-radius: 8px;
-                        font-size: 1rem;
-                        font-weight: 600;
-                        cursor: pointer;
-                        transition: all 0.3s ease;
-                        text-decoration: none;
-                        display: inline-block;
-                    }
-                    .btn-primary {
-                        background: ${color};
-                        color: white;
-                    }
-                    .btn-primary:hover {
-                        transform: translateY(-2px);
-                        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-                    }
-                    .btn-secondary {
-                        background: white;
-                        color: ${color};
-                        border: 2px solid ${color};
-                    }
-                    .btn-secondary:hover {
-                        background: ${color};
-                        color: white;
-                    }
-                    .footer {
-                        text-align: center;
-                        padding: 1.5rem;
-                        background: #f8f9fa;
-                        color: #666;
-                        font-size: 0.9rem;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <div class="header">
-                        <div class="icon">${icon}</div>
-                        <div class="titulo">${titulo}</div>
-                        <div class="subtitulo">${mensaje}</div>
-                    </div>
-                    
-                    <div class="body">
-                        ${pagoData ? `
-                        <div class="detalles">
-                            <div class="detalle-item">
-                                <span class="label">Plan</span>
-                                <span class="valor">Plan Místico Numerología</span>
-                            </div>
-                            <div class="detalle-item">
-                                <span class="label">Monto Pagado</span>
-                                <span class="valor">$${pagoData.monto?.toLocaleString('es-CO') || '39,000'} COP</span>
-                            </div>
-                            <div class="detalle-item">
-                                <span class="label">Duración</span>
-                                <span class="valor">31 días</span>
-                            </div>
-                            <div class="detalle-item">
-                                <span class="label">Fecha de Pago</span>
-                                <span class="valor">${new Date(pagoData.fecha_pago).toLocaleDateString('es-CO')}</span>
-                            </div>
-                            <div class="detalle-item">
-                                <span class="label">Estado</span>
-                                <span class="valor" style="color: ${color}">${type === 'exito' ? 'APROBADO' : type === 'fallo' ? 'RECHAZADO' : 'PENDIENTE'}</span>
-                            </div>
-                        </div>
-                        ` : ''}
-                        
-                        <div class="acciones">
-                            ${type === 'exito' ? `
-                                <a href="${frontendUrl}/#/planes" class="btn btn-primary">
-                                    Ir a Mi Cuenta
-                                </a>
-                            ` : `
-                                <a href="${frontendUrl}/#/planes" class="btn btn-secondary">
-                                    Volver a Planes
-                                </a>
-                                <a href="${frontendUrl}/#/planes" class="btn btn-primary">
-                                    Intentar de Nuevo
-                                </a>
-                            `}
-                        </div>
-                    </div>
-                    
-                    <div class="footer">
-                        <p>Operación ${type === 'exito' ? '#' + (pagoData?.mpPaymentId || pagoData?._id || 'N/A'): 'procesada'}</p>
-                        <p style="margin-top: 0.5rem; opacity: 0.7;">Seguridad garantizada por Mercado Pago</p>
-                    </div>
-                </div>
-            </body>
-            </html>
-        `;
-
-        res.send(html);
-        console.log(`[REDIRECT] ========== FIN REDIRECT (${type.toUpperCase()}) ==========\n`);
+        return res.redirect(`${frontendUrl}/#/planes?status=${type || 'pendiente'}`);
 
     } catch (error) {
-        console.error('[REDIRECT] Error:', error);
-        res.status(500).send(`
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>Error</title>
-                <style>
-                    body { font-family: Arial; display: flex; align-items: center; justify-content: center; height: 100vh; background: #f0f0f0; }
-                    .error { background: white; padding: 2rem; border-radius: 8px; text-align: center; max-width: 500px; }
-                    h1 { color: #e74c3c; }
-                </style>
-            </head>
-            <body>
-                <div class="error">
-                    <h1>❌ Error al procesar el pago</h1>
-                    <p>Por favor, contacta con soporte.</p>
-                </div>
-            </body>
-            </html>
-        `);
+        console.error('[REDIRECT] ❌ Error:', error);
+        res.redirect(`${frontendUrl}/#/planes?status=error`);
     }
 };
 
