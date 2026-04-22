@@ -47,10 +47,14 @@ const crearPreferencia = async (req, res) => {
         failure: failureUrl,
         pending: pendingUrl,
       },
-      auto_return: 'approved',
       binary_mode: true,
       external_reference: usuarioId.toString(),
     };
+
+    // Solo activamos auto_return si la URL es segura (HTTPS) para evitar el Error 400 en localhost.
+    if (backendUrl.startsWith('https')) {
+      body.auto_return = 'approved';
+    }
 
     console.log('[MP] Success URL:', successUrl);
     const response = await preference.create({ body });
