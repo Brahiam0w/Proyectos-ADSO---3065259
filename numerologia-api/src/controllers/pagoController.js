@@ -26,6 +26,9 @@ const crearPreferencia = async (req, res) => {
 
     const preference = new Preference(client);
 
+    // Construcción limpia de URLs para evitar errores en Mercado Pago
+    const base = backendUrl.replace(/\/+$/, ''); // Quita diagonales al final de la URL base
+
     const body = {
       items: [
         {
@@ -38,18 +41,13 @@ const crearPreferencia = async (req, res) => {
         }
       ],
       back_urls: {
-        success: `${backendUrl}/api/pagos/redirect?type=exito`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://'),
-        failure: `${backendUrl}/api/pagos/redirect?type=fallo`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://'),
-        pending: `${backendUrl}/api/pagos/redirect?type=pendiente`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://'),
+        success: `${base}/api/pagos/redirect?type=exito`,
+        failure: `${base}/api/pagos/redirect?type=fallo`,
+        pending: `${base}/api/pagos/redirect?type=pendiente`,
       },
+      auto_return: 'approved',
       external_reference: usuarioId.toString(),
     };
-
-    // MP solo permite auto_return en URLs HTTPS reales.
-    // Si estamos en localhost o http, desactivarlo para evitar error 400.
-    if (backendUrl.startsWith('https')) {
-      body.auto_return = 'approved';
-    }
 
     // Solo agregar notification_url si existe la variable de entorno y no es localhost
     if (process.env.WEBHOOK_URL && !process.env.WEBHOOK_URL.includes('localhost')) {
