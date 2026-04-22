@@ -26,6 +26,11 @@ const crearPreferencia = async (req, res) => {
 
     const preference = new Preference(client);
     
+    // Asegurar que las URLs sean absolutas y no tengan problemas de formato
+    const successUrl = `${backendUrl}/api/pagos/redirect?type=exito`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://');
+    const failureUrl = `${backendUrl}/api/pagos/redirect?type=fallo`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://');
+    const pendingUrl = `${backendUrl}/api/pagos/redirect?type=pendiente`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://');
+
     const body = {
       items: [
         {
@@ -33,18 +38,23 @@ const crearPreferencia = async (req, res) => {
           title: 'Plan Místico Numerología',
           description: 'Acceso completo a lecturas místicas personalizadas por 31 días',
           quantity: 1,
-          unit_price: Number(monto), 
+          unit_price: Math.floor(Number(monto)), 
           currency_id: 'COP', 
         }
       ],
       back_urls: {
-        success: `${backendUrl}/api/pagos/redirect?type=exito`,
-        failure: `${backendUrl}/api/pagos/redirect?type=fallo`,
-        pending: `${backendUrl}/api/pagos/redirect?type=pendiente`,
+        success: successUrl,
+        failure: failureUrl,
+        pending: pendingUrl,
       },
-      auto_return: 'approved',
       external_reference: usuarioId.toString(),
     };
+
+    // MP solo permite auto_return en URLs HTTPS reales. 
+    // Si estamos en localhost o http, desactivarlo para evitar error 400.
+    if (backendUrl.startsWith('https')) {
+      body.auto_return = 'approved';
+    }
 
     // Solo agregar notification_url si existe la variable de entorno y no es localhost
     if (process.env.WEBHOOK_URL && !process.env.WEBHOOK_URL.includes('localhost')) {
@@ -217,18 +227,6 @@ const verificarPago = async (req, res) => {
                 }
             }
 
-            // Segundo: si tenemos payment_id guardado, consultarlo directo
-            if (!pagoMP && pagoReciente.mpPaymentId) {
-                console.log(`[VERIFICAR] 2️⃣ Consultando payment_id directo: ${pagoReciente.mpPaymentId}`);
-                try {
-                    pagoMP = await mpPayment.get({ id: pagoReciente.mpPaymentId });
-                    idEncontrado = pagoReciente.mpPaymentId;
-                    console.log(`[VERIFICAR] ✓ Payment encontrado`);
-                } catch (err) {
-                    console.log(`[VERIFICAR] Error consultando payment_id:`, err.message);
-                }
-            }
-
             // Procesar resultado
             if (pagoMP) {
                 const status = pagoMP.status;
@@ -256,8 +254,6 @@ const verificarPago = async (req, res) => {
                     );
 
                     console.log(`[VERIFICAR] 🎉 Plan usuario actualizado a MISTICO`);
-                    console.log(`[VERIFICAR] ========== FIN VERIFICACIÓN (APROBADO) ==========\n`);
-                    
                     return res.json({
                         success: true,
                         status: 'approved',
@@ -267,44 +263,19 @@ const verificarPago = async (req, res) => {
                     });
                 } 
                 else if (status === 'rejected' || status === 'in_mediation' || status === 'cancelled') {
-                    console.log(`[VERIFICAR] ❌ Pago RECHAZADO: ${status}`);
-                    
                     pagoReciente.mpPaymentId = String(idEncontrado);
                     pagoReciente.estado = 'rechazado';
                     await pagoReciente.save();
-
-                    console.log(`[VERIFICAR] ========== FIN VERIFICACIÓN (RECHAZADO) ==========\n`);
-                    
-                    return res.json({
-                        success: true,
-                        status: 'rejected',
-                        pago: pagoReciente,
-                        mensaje: `❌ Pago ${status}`
-                    });
+                    return res.json({ success: true, status: 'rejected', pago: pagoReciente });
                 } 
-                else if (status === 'pending' || status === 'in_process') {
-                    console.log(`[VERIFICAR] ⏳ Pago en proceso: ${status}`);
-                    console.log(`[VERIFICAR] ========== FIN VERIFICACIÓN (PENDIENTE) ==========\n`);
-                    
-                    return res.json({
-                        success: true,
-                        status: 'pending',
-                        pago: pagoReciente,
-                        mensaje: `⏳ Pago ${status}`
-                    });
+                else {
+                    return res.json({ success: true, status: 'pending', pago: pagoReciente });
                 }
             }
             else {
-                console.log(`[VERIFICAR] ⏳ No se encontró pago en MP (quizás aún no se procesó)`);
-                console.log(`[VERIFICAR] ========== FIN VERIFICACIÓN (SIN PAGO EN MP) ==========\n`);
-                
-                return res.json({
-                    success: true,
-                    status: 'pending',
-                    pago: pagoReciente,
-                    mensaje: 'Esperando confirmación de Mercado Pago...'
-                });
+                return res.json({ success: true, status: 'pending', pago: pagoReciente });
             }
+
 
         } catch (mpError) {
             console.error(`[VERIFICAR] ❌ Error consultando Mercado Pago:`, mpError.message);
@@ -369,40 +340,11 @@ const redirigirDesdeMP = async (req, res) => {
             pagoData.estado = 'aprobado';
             if (payment_id) pagoData.mpPaymentId = String(payment_id);
             await pagoData.save();
-            
-            console.log(`[REDIRECT] ✅ Plan activado para: ${usuarioId}`);
 
-            // Renderizar pantalla de confirmación con botón "Ir a Mi Cuenta"
-            const html = `
-                <!DOCTYPE html>
-                <html lang="es">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>¡Pago Exitoso!</title>
-                    <style>
-                        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: linear-gradient(135deg, #1a0f2e 0%, #0d081a 100%); color: white; text-align: center; }
-                        .card { background: rgba(255,255,255,0.05); padding: 3rem; border-radius: 24px; border: 1px solid rgba(212, 175, 55, 0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.5); max-width: 400px; width: 90%; }
-                        h1 { color: #d4af37; margin-bottom: 1rem; }
-                        p { color: #ccc; line-height: 1.6; margin-bottom: 2rem; }
-                        .btn { display: inline-block; padding: 1rem 2rem; background: #d4af37; color: #0d081a; text-decoration: none; border-radius: 12px; font-weight: bold; transition: 0.3s; }
-                        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3); }
-                    </style>
-                </head>
-                <body>
-                    <div class="card">
-                        <div style="font-size: 4rem; margin-bottom: 1rem;">✨</div>
-                        <h1>¡Pago Aprobado!</h1>
-                        <p>Tu conexión con el oráculo ha sido elevada. El Plan Místico ya está activo en tu cuenta.</p>
-                        <a href="${frontendUrl}/#/planes?status=success&external_reference=${usuarioId}" class="btn">
-                            Ir a Mi Cuenta
-                        </a>
-                    </div>
-                </body>
-                </html>
-            `;
-            return res.send(html);
+            console.log(`[REDIRECT] ✅ Plan activado para: ${usuarioId}`);
+            return res.redirect(`${frontendUrl}/#/planes?status=success&external_reference=${usuarioId}`);
             }
+
         if (pagoData && (mpStatus === 'fallo' || mpStatus === 'pendiente')) {
             pagoData.estado = mpStatus === 'fallo' ? 'rechazado' : 'pendiente';
             await pagoData.save();

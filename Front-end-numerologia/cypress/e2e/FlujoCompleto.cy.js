@@ -26,9 +26,9 @@ describe("Flujo Completo: Login, Compra y Lecturas", () => {
     // 4. CONFIRMAR EN EL DIÁLOGO
     cy.contains("Ir a Pagar").click();
 
-    // 5. INTERACCIÓN CON MERCADO PAGO (Soporte para múltiples dominios de sandbox)
-    cy.origin(/mercadopago\.com/i, { args: { email } }, ({ email }) => {
-      cy.get('body', { timeout: 45000 }).should('be.visible');
+    // 5. INTERACCIÓN CON MERCADO PAGO (SANDBOX)
+    cy.origin("https://sandbox.mercadopago.com.co", { args: { email } }, ({ email }) => {
+      cy.get('body', { timeout: 30000 }).should('be.visible');
 
       // Aceptar cookies
       cy.get('body').then(($body) => {
@@ -124,7 +124,8 @@ describe("Flujo Completo: Login, Compra y Lecturas", () => {
       cy.log("Esperando confirmación nativa de Mercado Pago...");
       cy.contains(/¡Listo!|Pago aprobado|acreditó|Approved|Success/i, { timeout: 60000 }).should("be.visible");
       
-      // El retorno es automático (5s), pero podemos forzar clic si el botón aparece
+      // El retorno es automático o mediante clic en el botón nativo "Volver" de Mercado Pago
+      cy.log("Aceptando retorno nativo de Mercado Pago...");
       cy.get('body').then(($body) => {
         const backBtn = $body.find('a, button').filter((i, el) => 
           /Volver|Regresar|Return|Back/i.test(el.innerText)
@@ -132,15 +133,14 @@ describe("Flujo Completo: Login, Compra y Lecturas", () => {
         if (backBtn.length > 0) {
           cy.wrap(backBtn).first().click({ force: true });
         } else {
-          cy.log("Esperando auto-redirección de 5 segundos...");
-          cy.wait(6000); 
+          cy.wait(5000); // Esperar auto-redirección si no hay botón
         }
       });
     });
 
     // 6. VOLVER AL FRONTEND Y GENERAR LECTURAS
     cy.url({ timeout: 60000 }).should("include", "/planes");
-    cy.contains("¡Plan Místico activado!", { timeout: 20000 }).should("be.visible");
+    cy.contains("¡Plan Místico activado!", { timeout: 30000 }).should("be.visible");
 
     cy.get(".avatar-mystic-trigger").click();
     cy.contains(".nav-item", "Lecturas").click();
