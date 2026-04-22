@@ -26,9 +26,17 @@ describe("Flujo Completo: Login, Compra y Lecturas", () => {
     // 4. CONFIRMAR EN EL DIÁLOGO
     cy.contains("Ir a Pagar").click();
 
-    // 5. INTERACCIÓN CON MERCADO PAGO (SANDBOX)
-    cy.origin("https://sandbox.mercadopago.com.co", { args: { email } }, ({ email }) => {
-      cy.get('body', { timeout: 30000 }).should('be.visible');
+    // 5. INTERACCIÓN CON MERCADO PAGO
+    // Esperar a que la URL cambie a Mercado Pago para determinar el origin dinámicamente
+    cy.url({ timeout: 60000 }).should("include", "mercadopago");
+
+    cy.url().then((url) => {
+      const urlObj = new URL(url);
+      const origin = urlObj.origin;
+      cy.log(`Detectado origin de Mercado Pago: ${origin}`);
+
+      cy.origin(origin, { args: { email } }, ({ email }) => {
+        cy.get('body', { timeout: 30000 }).should('be.visible');
 
       // Aceptar cookies
       cy.get('body').then(($body) => {
@@ -122,6 +130,7 @@ describe("Flujo Completo: Login, Compra y Lecturas", () => {
       // Confirmación
       cy.contains(/¡Listo!|Pago aprobado|acreditó/i, { timeout: 60000 }).should("be.visible");
       cy.contains(/Volver|Regresar/i).click({ force: true });
+    });
     });
 
     // 6. GENERAR LECTURAS
