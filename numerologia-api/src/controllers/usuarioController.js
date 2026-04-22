@@ -145,11 +145,10 @@ const activarPlanMistico = async (req, res) => {
       metodo: 'tarjeta'
     });
 
-    res.status(200).json({ 
-      success: true, 
-      mensaje: '¡Plan Místico activado con éxito! Registro guardado en base de datos.',
-      usuario: {
-        _id: usuario._id,
+    res.status(200).json({
+      success: true,
+      mensaje: '¡Plan Místico activado!',
+      usuario: {        _id: usuario._id,
         nombre: usuario.nombre,
         email: usuario.email,
         fecha_nacimiento: usuario.fecha_nacimiento,

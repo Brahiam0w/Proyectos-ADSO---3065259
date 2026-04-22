@@ -2,7 +2,7 @@ import { defineConfig } from "cypress";
 
 export default defineConfig({
   e2e: {
-    baseUrl: "https://proyectos-adso-3065259.vercel.app/",
+    baseUrl: "https://numerologia-api.netlify.app",
     chromeWebSecurity: false,
     setupNodeEvents(on, config) {
       // implement node event listeners here

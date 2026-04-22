@@ -204,7 +204,7 @@ onMounted(async () => {
       // Corregido: el endpoint correcto en el backend es /verificar, no /confirmar
       const res = await api.get(`/pagos/verificar?status=approved&external_reference=${externalReference}`);
       if (res.data.success) {
-        $q.notify({ color: 'positive', message: '¡Plan Místico activado con éxito!', icon: 'auto_awesome', position: 'top' });
+        $q.notify({ color: 'positive', message: '¡Plan Místico activado!', icon: 'auto_awesome', position: 'top' });
         // Limpiar URL eliminando los parámetros
         const newUrl = window.location.pathname + window.location.hash.split('?')[0];
         window.history.replaceState({}, document.title, newUrl);
