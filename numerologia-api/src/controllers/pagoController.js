@@ -48,8 +48,13 @@ const crearPreferencia = async (req, res) => {
         pending: pendingUrl,
       },
       external_reference: usuarioId.toString(),
-      auto_return: 'approved',
     };
+
+    // MP solo permite auto_return en URLs HTTPS reales.
+    // Si estamos en localhost o http, desactivarlo para evitar error 400.
+    if (backendUrl.startsWith('https')) {
+      body.auto_return = 'approved';
+    }
 
     // Solo agregar notification_url si existe la variable de entorno y no es localhost
     if (process.env.WEBHOOK_URL && !process.env.WEBHOOK_URL.includes('localhost')) {
