@@ -278,13 +278,15 @@ const handlePlanClick = async (plan) => {
       });
       
       const res = await api.post('/pagos/crear-preferencia');
-      
-      if (res.data.success && res.data.init_point) {
-        console.log('✅ Redirigiendo a Mercado Pago:', res.data.init_point);
+
+      // Priorizar sandbox_init_point para pruebas, si no usar init_point
+      const paymentUrl = res.data.sandbox_init_point || res.data.init_point;
+
+      if (res.data.success && paymentUrl) {
+        console.log('✅ Redirigiendo a Mercado Pago:', paymentUrl);
         // Redirección directa a Mercado Pago en la misma pestaña
-        window.location.href = res.data.init_point;
-      } else {
-        $q.loading.hide();
+        window.location.href = paymentUrl;
+      } else {        $q.loading.hide();
         const msg = res.data.mensaje || 'No se pudo generar el link de pago';
         $q.notify({ color: 'negative', message: msg, icon: 'error' });
       }
