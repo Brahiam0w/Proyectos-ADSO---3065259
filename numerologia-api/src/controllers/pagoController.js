@@ -47,14 +47,10 @@ const crearPreferencia = async (req, res) => {
         failure: failureUrl,
         pending: pendingUrl,
       },
+      auto_return: 'approved',
+      binary_mode: true,
       external_reference: usuarioId.toString(),
     };
-
-    // MP solo permite auto_return en URLs HTTPS reales.
-    // Si tu web desplegada tiene HTTPS, esto se activará y funcionará el retorno.
-    if (backendUrl.startsWith('https')) {
-      body.auto_return = 'approved';
-    }
 
     console.log('[MP] Success URL:', successUrl);
     const response = await preference.create({ body });
