@@ -26,10 +26,8 @@ const crearPreferencia = async (req, res) => {
 
     const preference = new Preference(client);
 
-    // Asegurar que las URLs sean absolutas y no tengan problemas de formato
-    const successUrl = `${backendUrl}/api/pagos/redirect?type=exito`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://');
-    const failureUrl = `${backendUrl}/api/pagos/redirect?type=fallo`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://');
-    const pendingUrl = `${backendUrl}/api/pagos/redirect?type=pendiente`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://');
+    // Limpiamos la URL para evitar errores de formato (dobles diagonales, etc.)
+    const cleanBackendUrl = backendUrl.replace(/\/+$/, ''); // Quita diagonal al final si existe
 
     const body = {
       items: [
@@ -43,12 +41,12 @@ const crearPreferencia = async (req, res) => {
         }
       ],
       back_urls: {
-        success: successUrl,
-        failure: failureUrl,
-        pending: pendingUrl,
+        success: `${cleanBackendUrl}/api/pagos/redirect?type=exito`,
+        failure: `${cleanBackendUrl}/api/pagos/redirect?type=fallo`,
+        pending: `${cleanBackendUrl}/api/pagos/redirect?type=pendiente`,
       },
-      external_reference: usuarioId.toString(),
       auto_return: 'approved',
+      external_reference: usuarioId.toString(),
     };
 
     // Solo agregar notification_url si existe la variable de entorno y no es localhost
