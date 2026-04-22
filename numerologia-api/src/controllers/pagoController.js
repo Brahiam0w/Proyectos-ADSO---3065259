@@ -2,8 +2,8 @@ const { MercadoPagoConfig, Preference, Payment: MPPayment } = require('mercadopa
 const Usuario = require('../models/Usuario');
 const Pago = require('../models/Pago');
 
-// Configuración de Mercado Pago 
-const client = new MercadoPagoConfig({ 
+// Configuración de Mercado Pago
+const client = new MercadoPagoConfig({
   accessToken: process.env.MP_ACCESS_TOKEN
 });
 
@@ -25,7 +25,7 @@ const crearPreferencia = async (req, res) => {
     const backendUrl = process.env.BACKEND_URL || 'http://localhost:3000';
 
     const preference = new Preference(client);
-    
+
     // Asegurar que las URLs sean absolutas y no tengan problemas de formato
     const successUrl = `${backendUrl}/api/pagos/redirect?type=exito`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://');
     const failureUrl = `${backendUrl}/api/pagos/redirect?type=fallo`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://');
@@ -38,8 +38,8 @@ const crearPreferencia = async (req, res) => {
           title: 'Plan Místico Numerología',
           description: 'Acceso completo a lecturas místicas personalizadas por 31 días',
           quantity: 1,
-          unit_price: Math.floor(Number(monto)), 
-          currency_id: 'COP', 
+          unit_price: Math.floor(Number(monto)),
+          currency_id: 'COP',
         }
       ],
       back_urls: {
@@ -48,13 +48,8 @@ const crearPreferencia = async (req, res) => {
         pending: pendingUrl,
       },
       external_reference: usuarioId.toString(),
+      auto_return: 'approved',
     };
-
-    // MP solo permite auto_return en URLs HTTPS reales. 
-    // Si estamos en localhost o http, desactivarlo para evitar error 400.
-    if (backendUrl.startsWith('https')) {
-      body.auto_return = 'approved';
-    }
 
     // Solo agregar notification_url si existe la variable de entorno y no es localhost
     if (process.env.WEBHOOK_URL && !process.env.WEBHOOK_URL.includes('localhost')) {
@@ -63,7 +58,7 @@ const crearPreferencia = async (req, res) => {
 
     console.log('[MP] Creando preferencia para:', usuario.email);
     const response = await preference.create({ body });
-    
+
     // Calcular fecha de vencimiento (31 días desde hoy)
     const fecha_pago = new Date();
     const fecha_vencimiento = new Date(fecha_pago);
@@ -127,11 +122,11 @@ const recibirNotificacion = async (req, res) => {
                     // Activar plan del usuario
                     const fechaExpiracion = new Date();
                     fechaExpiracion.setDate(fechaExpiracion.getDate() + 31);
-                    
-                    await Usuario.findByIdAndUpdate(usuarioId, { 
+
+                    await Usuario.findByIdAndUpdate(usuarioId, {
                         plan: 'mistico',
                         fecha_expiracion_plan: fechaExpiracion,
-                        estado: 'activo' 
+                        estado: 'activo'
                     });
                 }
             }
@@ -160,10 +155,10 @@ const verificarPago = async (req, res) => {
 
         if (!pagoReciente) {
             console.log(`[VERIFICAR] ❌ No hay pagos para este usuario`);
-            return res.json({ 
-                success: true, 
-                status: 'no_payment', 
-                mensaje: 'No hay pagos registrados' 
+            return res.json({
+                success: true,
+                status: 'no_payment',
+                mensaje: 'No hay pagos registrados'
             });
         }
 
@@ -212,7 +207,7 @@ const verificarPago = async (req, res) => {
                     if (listaPagos.results && listaPagos.results.length > 0) {
                         for (const pago of listaPagos.results) {
                             console.log(`[VERIFICAR]   → Pago ${pago.id}: status=${pago.status}, preference=${pago.preference_id}`);
-                            
+
                             // Coincide con nuestra preferencia
                             if (pago.preference_id === pagoReciente.mpPreferenceId) {
                                 pagoMP = pago;
@@ -234,7 +229,7 @@ const verificarPago = async (req, res) => {
 
                 if (status === 'approved') {
                     console.log(`[VERIFICAR] ✅✅ PAGO APROBADO!`);
-                    
+
                     pagoReciente.mpPaymentId = String(idEncontrado);
                     pagoReciente.estado = 'aprobado';
                     await pagoReciente.save();
@@ -242,7 +237,7 @@ const verificarPago = async (req, res) => {
                     // Activar plan
                     const fechaExpiracion = new Date();
                     fechaExpiracion.setDate(fechaExpiracion.getDate() + 31);
-                    
+
                     const usuarioActualizado = await Usuario.findByIdAndUpdate(
                         usuarioId,
                         {
@@ -258,16 +253,15 @@ const verificarPago = async (req, res) => {
                         success: true,
                         status: 'approved',
                         pago: pagoReciente,
-                        usuario: usuarioActualizado,
-                        mensaje: '✅ Pago aprobado - Plan Místico activado'
+                        usuario: usuarioActualizado
                     });
-                } 
+                }
                 else if (status === 'rejected' || status === 'in_mediation' || status === 'cancelled') {
                     pagoReciente.mpPaymentId = String(idEncontrado);
                     pagoReciente.estado = 'rechazado';
                     await pagoReciente.save();
                     return res.json({ success: true, status: 'rejected', pago: pagoReciente });
-                } 
+                }
                 else {
                     return res.json({ success: true, status: 'pending', pago: pagoReciente });
                 }
@@ -279,10 +273,10 @@ const verificarPago = async (req, res) => {
 
         } catch (mpError) {
             console.error(`[VERIFICAR] ❌ Error consultando Mercado Pago:`, mpError.message);
-            
+
             console.log(`[VERIFICAR] ⚠️ Fallback: usando estado local de BD`);
             console.log(`[VERIFICAR] ========== FIN VERIFICACIÓN (ERROR MP) ==========\n`);
-            
+
             return res.json({
                 success: true,
                 status: pagoReciente.estado || 'pending',
@@ -294,9 +288,9 @@ const verificarPago = async (req, res) => {
     } catch (error) {
         console.error('[VERIFICAR] ❌ Error general:', error.message);
         console.log(`[VERIFICAR] ========== FIN VERIFICACIÓN (ERROR GENERAL) ==========\n`);
-        
-        res.status(500).json({ 
-            success: false, 
+
+        res.status(500).json({
+            success: false,
             mensaje: 'Error al verificar el pago'
         });
     }
@@ -316,7 +310,7 @@ const redirigirDesdeMP = async (req, res) => {
 
     try {
         const esExitoso = type === 'exito' || req.query.status === 'approved' || req.query.collection_status === 'approved';
-        
+
         if (!usuarioId || usuarioId === 'undefined') {
             console.log(`[REDIRECT] ⚠️ Usuario ID inválido`);
             return res.redirect(`${frontendUrl}/#/planes?status=error`);
@@ -330,7 +324,7 @@ const redirigirDesdeMP = async (req, res) => {
         if (pagoData && esExitoso) {
             const fechaExpiracion = new Date();
             fechaExpiracion.setDate(fechaExpiracion.getDate() + 31);
-            
+
             await Usuario.findByIdAndUpdate(usuarioId, {
                 plan: 'mistico',
                 fecha_expiracion_plan: fechaExpiracion,
@@ -345,8 +339,8 @@ const redirigirDesdeMP = async (req, res) => {
             return res.redirect(`${frontendUrl}/#/planes?status=success&external_reference=${usuarioId}`);
             }
 
-        if (pagoData && (mpStatus === 'fallo' || mpStatus === 'pendiente')) {
-            pagoData.estado = mpStatus === 'fallo' ? 'rechazado' : 'pendiente';
+        if (pagoData && (type === 'fallo' || type === 'pendiente')) {
+            pagoData.estado = type === 'fallo' ? 'rechazado' : 'pendiente';
             await pagoData.save();
         }
 
