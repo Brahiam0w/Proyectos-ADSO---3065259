@@ -26,8 +26,8 @@ const crearPreferencia = async (req, res) => {
 
     const preference = new Preference(client);
 
-    // Construcción limpia de URLs para evitar errores en Mercado Pago
-    const base = backendUrl.replace(/\/+$/, ''); // Quita diagonales al final de la URL base
+    // Limpiamos la URL base para asegurar que no tenga espacios ni diagonales al final
+    const base = backendUrl.trim().replace(/\/+$/, "");
 
     const body = {
       items: [
@@ -45,15 +45,11 @@ const crearPreferencia = async (req, res) => {
         failure: `${base}/api/pagos/redirect?type=fallo`,
         pending: `${base}/api/pagos/redirect?type=pendiente`,
       },
-      auto_return: 'approved',
+      auto_return: 'approved', // Activado para redirección automática
       external_reference: usuarioId.toString(),
     };
 
-    // Solo agregar notification_url si existe la variable de entorno y no es localhost
-    if (process.env.WEBHOOK_URL && !process.env.WEBHOOK_URL.includes('localhost')) {
-      body.notification_url = process.env.WEBHOOK_URL;
-    }
-
+    console.log('[MP] URL de éxito configurada:', body.back_urls.success);
     console.log('[MP] Creando preferencia para:', usuario.email);
     const response = await preference.create({ body });
 
