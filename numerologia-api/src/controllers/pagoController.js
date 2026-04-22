@@ -26,11 +26,10 @@ const crearPreferencia = async (req, res) => {
 
     const preference = new Preference(client);
 
-    // 1. Limpiar y asegurar que la URL sea absoluta y tenga protocolo
-    let base = backendUrl.trim().replace(/\/+$/, "");
-    if (!base.startsWith('http')) {
-      base = `https://${base}`; // Forzar HTTPS si falta el protocolo
-    }
+    // Restauramos la lógica exacta que tenías antes
+    const successUrl = `${backendUrl}/api/pagos/redirect?type=exito`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://');
+    const failureUrl = `${backendUrl}/api/pagos/redirect?type=fallo`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://');
+    const pendingUrl = `${backendUrl}/api/pagos/redirect?type=pendiente`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://');
 
     const body = {
       items: [
@@ -44,20 +43,20 @@ const crearPreferencia = async (req, res) => {
         }
       ],
       back_urls: {
-        success: `${base}/api/pagos/redirect?type=exito`,
-        failure: `${base}/api/pagos/redirect?type=fallo`,
-        pending: `${base}/api/pagos/redirect?type=pendiente`,
+        success: successUrl,
+        failure: failureUrl,
+        pending: pendingUrl,
       },
       external_reference: usuarioId.toString(),
     };
 
-    // 2. Mercado Pago EXIGE HTTPS para que el auto_return funcione.
-    // Si tu web desplegada tiene HTTPS, esto se activará y volverá solo.
-    if (base.startsWith('https')) {
+    // MP solo permite auto_return en URLs HTTPS reales.
+    // Si tu web desplegada tiene HTTPS, esto se activará y funcionará el retorno.
+    if (backendUrl.startsWith('https')) {
       body.auto_return = 'approved';
     }
 
-    console.log('[MP] Creando preferencia con Success URL:', body.back_urls.success);
+    console.log('[MP] Success URL:', successUrl);
     const response = await preference.create({ body });
 
     // Calcular fecha de vencimiento (31 días desde hoy)
