@@ -26,9 +26,6 @@ const crearPreferencia = async (req, res) => {
 
     const preference = new Preference(client);
 
-    // Limpiamos la URL para evitar errores de formato (dobles diagonales, etc.)
-    const cleanBackendUrl = backendUrl.replace(/\/+$/, ''); // Quita diagonal al final si existe
-
     const body = {
       items: [
         {
@@ -41,13 +38,18 @@ const crearPreferencia = async (req, res) => {
         }
       ],
       back_urls: {
-        success: `${cleanBackendUrl}/api/pagos/redirect?type=exito`,
-        failure: `${cleanBackendUrl}/api/pagos/redirect?type=fallo`,
-        pending: `${cleanBackendUrl}/api/pagos/redirect?type=pendiente`,
+        success: `${backendUrl}/api/pagos/redirect?type=exito`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://'),
+        failure: `${backendUrl}/api/pagos/redirect?type=fallo`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://'),
+        pending: `${backendUrl}/api/pagos/redirect?type=pendiente`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://'),
       },
-      auto_return: 'approved',
       external_reference: usuarioId.toString(),
     };
+
+    // MP solo permite auto_return en URLs HTTPS reales.
+    // Si estamos en localhost o http, desactivarlo para evitar error 400.
+    if (backendUrl.startsWith('https')) {
+      body.auto_return = 'approved';
+    }
 
     // Solo agregar notification_url si existe la variable de entorno y no es localhost
     if (process.env.WEBHOOK_URL && !process.env.WEBHOOK_URL.includes('localhost')) {
