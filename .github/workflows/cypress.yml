@@ -1,0 +1,59 @@
+name: Pruebas de Numerología (Cypress)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      # 1. INSTALACIÓN Y ARRANQUE DEL BACKEND (numerologia-api)
+      - name: Instalar y Arrancar Backend
+        working-directory: ./numerologia-api
+        run: |
+          npm install
+          npm run dev & # Ejecutar en segundo plano
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PORT: 3000
+
+      # 2. EJECUCIÓN DE CYPRESS (Front-end-numerologia)
+      - name: Ejecutar Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: ./Front-end-numerologia
+          start: npm run dev
+          wait-on: 'http://localhost:5173'
+          wait-on-timeout: 120
+          browser: chrome
+        env:
+          CYPRESS_email: ${{ secrets.TEST_EMAIL }}
+          CYPRESS_password: ${{ secrets.TEST_PASSWORD }}
+
+      # 3. GUARDAR RESULTADOS SI HAY FALLOS
+      - name: Guardar Evidencias (Screenshots)
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: Front-end-numerologia/cypress/screenshots
+
+      - name: Guardar Videos de las Pruebas
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-videos
+          path: Front-end-numerologia/cypress/videos

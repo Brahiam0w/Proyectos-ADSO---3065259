@@ -21,8 +21,8 @@ const crearPreferencia = async (req, res) => {
       return res.status(404).json({ success: false, mensaje: 'Usuario no encontrado' });
     }
 
-    const frontendUrl = process.env.FRONTEND_URL || 'https://numerologia-api.netlify.app/#/planes';
-    const backendUrl = process.env.BACKEND_URL || 'https://numerologia-backend.onrender.com';
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:3000';
 
     const preference = new Preference(client);
     
@@ -38,11 +38,10 @@ const crearPreferencia = async (req, res) => {
         }
       ],
       back_urls: {
-        success: `${frontendUrl}/#/planes?status=success`,
-        failure: `${frontendUrl}/#/planes?status=failure`,
-        pending: `${frontendUrl}/#/planes?status=pending`,
+        success: `${backendUrl}/api/pagos/redirect?type=exito`,
+        failure: `${backendUrl}/api/pagos/redirect?type=fallo`,
+        pending: `${backendUrl}/api/pagos/redirect?type=pendiente`,
       },
-      auto_return: 'approved',
       external_reference: usuarioId.toString(),
     };
 
@@ -650,75 +649,4 @@ const redirigirDesdeMP = async (req, res) => {
     }
 };
 
-/**
- * GET /api/pagos/confirmar
- * El frontend llama a esta ruta tras volver de Mercado Pago para sincronizar el estado
- */
-const confirmarPago = async (req, res) => {
-    const { status, external_reference } = req.query;
-    const usuarioId = external_reference;
-
-    console.log(`[CONFIRMAR] Verificando pago para usuario: ${usuarioId}, status: ${status}`);
-
-    try {
-        if (!usuarioId || usuarioId === 'undefined') {
-            return res.status(400).json({ success: false, mensaje: 'Usuario no identificado' });
-        }
-
-        // Buscar el último pago pendiente de este usuario
-        const pago = await Pago.findOne({
-            usuario_id: usuarioId,
-            metodo: 'Mercado Pago'
-        }).sort({ createdAt: -1 });
-
-        if (!pago) {
-            return res.status(404).json({ success: false, mensaje: 'No se encontró un registro de pago' });
-        }
-
-        // Si el estado que viene de MP es aprobado/success
-        if (status === 'approved' || status === 'success') {
-            // 1. Actualizar el pago en BD si aún está pendiente
-            if (pago.estado === 'pendiente') {
-                pago.estado = 'aprobado';
-                await pago.save();
-                console.log(`[CONFIRMAR] ✅ Pago ${pago._id} marcado como aprobado`);
-            }
-
-            // 2. Activar el plan al usuario
-            const fechaExpiracion = new Date();
-            fechaExpiracion.setDate(fechaExpiracion.getDate() + 31);
-
-            const usuarioActualizado = await Usuario.findByIdAndUpdate(
-                usuarioId,
-                {
-                    plan: 'mistico',
-                    fecha_expiracion_plan: fechaExpiracion,
-                    estado: 'activo'
-                },
-                { new: true }
-            );
-
-            return res.json({
-                success: true,
-                mensaje: 'Plan activado correctamente',
-                usuario: usuarioActualizado
-            });
-        } else {
-            // Si el pago falló o está pendiente
-            pago.estado = status === 'failure' ? 'rechazado' : 'pendiente';
-            await pago.save();
-            
-            return res.json({
-                success: false,
-                mensaje: 'El pago no ha sido aprobado aún',
-                estado: pago.estado
-            });
-        }
-
-    } catch (error) {
-        console.error('[CONFIRMAR] ❌ Error:', error);
-        res.status(500).json({ success: false, mensaje: 'Error al confirmar el pago' });
-    }
-};
-
-module.exports = { crearPreferencia, recibirNotificacion, verificarPago, redirigirDesdeMP, confirmarPago };
+module.exports = { crearPreferencia, recibirNotificacion, verificarPago, redirigirDesdeMP };

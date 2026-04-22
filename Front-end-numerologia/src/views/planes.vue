@@ -273,7 +273,8 @@ const handlePlanClick = async (plan) => {
   }).onOk(async () => {
     try {
       $q.loading.show({ 
-        message: 'Generando orden de pago...'
+        message: 'Generando orden de pago...',
+        spinner: true
       });
       
       const res = await api.post('/pagos/crear-preferencia');

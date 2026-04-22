@@ -4,8 +4,7 @@ const {
     crearPreferencia, 
     recibirNotificacion, 
     verificarPago, 
-    redirigirDesdeMP,
-    confirmarPago
+    redirigirDesdeMP 
 } = require('../controllers/pagoController');
 const { proteger } = require('../middlewares/authMiddleware');
 
@@ -17,9 +16,6 @@ router.post('/webhook', recibirNotificacion);
 
 // Verificar estado del pago (desde el frontend)
 router.get('/verificar', proteger, verificarPago);
-
-// Confirmar estado tras volver de Mercado Pago
-router.get('/confirmar', confirmarPago);
 
 // Redirigir al frontend con los parámetros de MP
 router.get('/redirect', redirigirDesdeMP);
