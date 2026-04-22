@@ -42,6 +42,7 @@ const crearPreferencia = async (req, res) => {
         failure: `${backendUrl}/api/pagos/redirect?type=fallo`,
         pending: `${backendUrl}/api/pagos/redirect?type=pendiente`,
       },
+      auto_return: 'approved',
       external_reference: usuarioId.toString(),
     };
 
@@ -343,18 +344,19 @@ const redirigirDesdeMP = async (req, res) => {
     console.log(`[REDIRECT] Tipo: ${type}, Usuario: ${usuarioId}`);
 
     try {
+        const esExitoso = type === 'exito' || req.query.status === 'approved' || req.query.collection_status === 'approved';
+        
         if (!usuarioId || usuarioId === 'undefined') {
             console.log(`[REDIRECT] ⚠️ Usuario ID inválido`);
             return res.redirect(`${frontendUrl}/#/planes?status=error`);
         }
 
-        let mpStatus = type;
         const pagoData = await Pago.findOne({
             usuario_id: usuarioId,
             metodo: 'Mercado Pago'
         }).sort({ createdAt: -1 });
 
-        if (pagoData && mpStatus === 'exito') {
+        if (pagoData && esExitoso) {
             const fechaExpiracion = new Date();
             fechaExpiracion.setDate(fechaExpiracion.getDate() + 31);
             

@@ -26,9 +26,9 @@ describe("Flujo Completo: Login, Compra y Lecturas", () => {
     // 4. CONFIRMAR EN EL DIÁLOGO
     cy.contains("Ir a Pagar").click();
 
-    // 5. INTERACCIÓN CON MERCADO PAGO (SANDBOX)
-    cy.origin("https://sandbox.mercadopago.com.co", { args: { email } }, ({ email }) => {
-      cy.get('body', { timeout: 30000 }).should('be.visible');
+    // 5. INTERACCIÓN CON MERCADO PAGO (Soporte para múltiples dominios de sandbox)
+    cy.origin(/mercadopago\.com/i, { args: { email } }, ({ email }) => {
+      cy.get('body', { timeout: 45000 }).should('be.visible');
 
       // Aceptar cookies
       cy.get('body').then(($body) => {
@@ -120,14 +120,26 @@ describe("Flujo Completo: Login, Compra y Lecturas", () => {
       cy.log("Haciendo clic en Pagar...");
       cy.get('button').contains(/Pagar|Confirmar|Pay|Confirm/i, { timeout: 20000 }).should('be.visible').click({ force: true });
       
-      // Confirmación y clic en Ir a Mi Cuenta
-      cy.log("Esperando pantalla de confirmación...");
-      cy.contains(/¡Pago Aprobado!|¡Listo!|Pago aprobado/i, { timeout: 60000 }).should("be.visible");
-      cy.contains(/Ir a Mi Cuenta|Volver|Regresar/i).click({ force: true });
+      // Confirmación nativa de Mercado Pago y retorno
+      cy.log("Esperando confirmación nativa de Mercado Pago...");
+      cy.contains(/¡Listo!|Pago aprobado|acreditó|Approved|Success/i, { timeout: 60000 }).should("be.visible");
+      
+      // El retorno es automático (5s), pero podemos forzar clic si el botón aparece
+      cy.get('body').then(($body) => {
+        const backBtn = $body.find('a, button').filter((i, el) => 
+          /Volver|Regresar|Return|Back/i.test(el.innerText)
+        );
+        if (backBtn.length > 0) {
+          cy.wrap(backBtn).first().click({ force: true });
+        } else {
+          cy.log("Esperando auto-redirección de 5 segundos...");
+          cy.wait(6000); 
+        }
+      });
     });
 
-    // 6. GENERAR LECTURAS
-    cy.url().should("include", "/planes");
+    // 6. VOLVER AL FRONTEND Y GENERAR LECTURAS
+    cy.url({ timeout: 60000 }).should("include", "/planes");
     cy.contains("¡Plan Místico activado!", { timeout: 20000 }).should("be.visible");
 
     cy.get(".avatar-mystic-trigger").click();
@@ -163,7 +175,17 @@ describe("Flujo Completo: Login, Compra y Lecturas", () => {
     cy.get(".avatar-mystic-trigger").click();
     cy.contains(".nav-item", "Configuración").click();
     cy.url().should("include", "/configuracion");
+    cy.wait(3000);
 
+    // NUEVO: Suspender Vínculo y Confirmar
+    cy.log("Suspendiendo vínculo místico...");
+    cy.contains("button", "Suspender Vínculo").should('be.visible').click({ force: true });
+    cy.wait(2000);
+    cy.contains("button", "Confirmar Suspensión").should('be.visible').click({ force: true });
+    cy.contains("vínculo ha regresado al estado básico", { timeout: 10000 }).should("be.visible");
+    cy.wait(2000);
+
+    // Cambiar Nombre de Iniciado
     cy.contains('.q-field', 'Nombre de Iniciado').find('input').clear({ force: true }).type("TEST HECHO", { force: true });
     cy.contains('.q-field', 'Esencia (Género)').click();
     cy.get('.q-menu .q-item').contains('femenino').click();
