@@ -48,13 +48,8 @@ const crearPreferencia = async (req, res) => {
         pending: pendingUrl,
       },
       external_reference: usuarioId.toString(),
+      auto_return: 'approved',
     };
-
-    // MP solo permite auto_return en URLs HTTPS reales.
-    // Si estamos en localhost o http, desactivarlo para evitar error 400.
-    if (backendUrl.startsWith('https')) {
-      body.auto_return = 'approved';
-    }
 
     // Solo agregar notification_url si existe la variable de entorno y no es localhost
     if (process.env.WEBHOOK_URL && !process.env.WEBHOOK_URL.includes('localhost')) {
@@ -144,102 +139,63 @@ const recibirNotificacion = async (req, res) => {
 /**
  * GET /api/pagos/verificar
  * Verifica el estado del pago más reciente del usuario
- * Busca por preference_id en MP (funciona en localhost)
  */
 const verificarPago = async (req, res) => {
     const usuarioId = req.usuario._id;
 
     try {
-        console.log(`\n[VERIFICAR] ========== Iniciando verificación para usuario: ${usuarioId} ==========`);
-
-        // Buscar el pago más reciente del usuario
         const pagoReciente = await Pago.findOne({
             usuario_id: usuarioId,
             metodo: 'Mercado Pago',
         }).sort({ createdAt: -1 });
 
         if (!pagoReciente) {
-            console.log(`[VERIFICAR] ❌ No hay pagos para este usuario`);
-            return res.json({
-                success: true,
-                status: 'no_payment',
-                mensaje: 'No hay pagos registrados'
-            });
+            return res.json({ success: true, status: 'no_payment' });
         }
 
-        console.log(`[VERIFICAR] Pago encontrado:`, {
-            id: pagoReciente._id,
-            estado: pagoReciente.estado,
-            mpPaymentId: pagoReciente.mpPaymentId,
-            mpPreferenceId: pagoReciente.mpPreferenceId
-        });
-
-        // Si ya está aprobado, devolverlo
         if (pagoReciente.estado === 'aprobado') {
             const usuario = await Usuario.findById(usuarioId);
-            console.log(`[VERIFICAR] ✅ Pago ya estaba aprobado`);
             return res.json({
                 success: true,
                 status: 'approved',
                 pago: pagoReciente,
-                usuario: usuario,
-                mensaje: 'Pago ya aprobado'
+                usuario: usuario
             });
         }
 
-        // Intentar verificar en Mercado Pago
         try {
             const mpPayment = new MPPayment(client);
             let pagoMP = null;
             let idEncontrado = null;
 
-             // Primero: buscar por preference_id (es lo más seguro para localhost)
             if (pagoReciente.mpPreferenceId) {
-                console.log(`[VERIFICAR] 1️⃣ Buscando pagos por external_reference (usuario ID)...`);
-                try {
-                    // Buscar todos los pagos del usuario en los últimos 30 minutos
-                    const hace30Min = new Date(Date.now() - 30 * 60 * 1000);
-                    const listaPagos = await mpPayment.list({
-                        external_reference: usuarioId.toString(),
-                        begin_date: hace30Min.toISOString(),
-                        sort: 'date_created',
-                        criteria: 'desc'
-                    });
+                const hace30Min = new Date(Date.now() - 30 * 60 * 1000);
+                const listaPagos = await mpPayment.list({
+                    external_reference: usuarioId.toString(),
+                    begin_date: hace30Min.toISOString(),
+                    sort: 'date_created',
+                    criteria: 'desc'
+                });
 
-                    console.log(`[VERIFICAR] Total de pagos encontrados: ${listaPagos.results?.length || 0}`);
-
-                    // Buscar el pago que coincida con nuestra preference_id
-                    if (listaPagos.results && listaPagos.results.length > 0) {
-                        for (const pago of listaPagos.results) {
-                            console.log(`[VERIFICAR]   → Pago ${pago.id}: status=${pago.status}, preference=${pago.preference_id}`);
-
-                            // Coincide con nuestra preferencia
-                            if (pago.preference_id === pagoReciente.mpPreferenceId) {
-                                pagoMP = pago;
-                                idEncontrado = pago.id;
-                                console.log(`[VERIFICAR] ✓ Encontrado el pago correcto!`);
-                                break;
-                            }
+                if (listaPagos.results && listaPagos.results.length > 0) {
+                    for (const pago of listaPagos.results) {
+                        if (pago.preference_id === pagoReciente.mpPreferenceId) {
+                            pagoMP = pago;
+                            idEncontrado = pago.id;
+                            break;
                         }
                     }
-                } catch (err) {
-                    console.log(`[VERIFICAR] Error en búsqueda por externe_reference:`, err.message);
                 }
             }
 
-            // Procesar resultado
             if (pagoMP) {
                 const status = pagoMP.status;
-                console.log(`[VERIFICAR] 📊 Estado en MP: ${status} (ID: ${idEncontrado})`);
 
                 if (status === 'approved') {
-                    console.log(`[VERIFICAR] ✅✅ PAGO APROBADO!`);
-
                     pagoReciente.mpPaymentId = String(idEncontrado);
                     pagoReciente.estado = 'aprobado';
                     await pagoReciente.save();
 
-                    // Activar plan
                     const fechaExpiracion = new Date();
                     fechaExpiracion.setDate(fechaExpiracion.getDate() + 31);
 
@@ -253,7 +209,6 @@ const verificarPago = async (req, res) => {
                         { new: true }
                     );
 
-                    console.log(`[VERIFICAR] 🎉 Plan usuario actualizado a MISTICO`);
                     return res.json({
                         success: true,
                         status: 'approved',
@@ -267,57 +222,36 @@ const verificarPago = async (req, res) => {
                     await pagoReciente.save();
                     return res.json({ success: true, status: 'rejected', pago: pagoReciente });
                 }
-                else {
-                    return res.json({ success: true, status: 'pending', pago: pagoReciente });
-                }
             }
-            else {
-                return res.json({ success: true, status: 'pending', pago: pagoReciente });
-            }
-
+            
+            return res.json({ success: true, status: 'pending', pago: pagoReciente });
 
         } catch (mpError) {
-            console.error(`[VERIFICAR] ❌ Error consultando Mercado Pago:`, mpError.message);
-
-            console.log(`[VERIFICAR] ⚠️ Fallback: usando estado local de BD`);
-            console.log(`[VERIFICAR] ========== FIN VERIFICACIÓN (ERROR MP) ==========\n`);
-
             return res.json({
                 success: true,
                 status: pagoReciente.estado || 'pending',
-                pago: pagoReciente,
-                mensaje: 'Estado local (MP no disponible)'
+                pago: pagoReciente
             });
         }
 
     } catch (error) {
-        console.error('[VERIFICAR] ❌ Error general:', error.message);
-        console.log(`[VERIFICAR] ========== FIN VERIFICACIÓN (ERROR GENERAL) ==========\n`);
-
-        res.status(500).json({
-            success: false,
-            mensaje: 'Error al verificar el pago'
-        });
+        res.status(500).json({ success: false, mensaje: 'Error al verificar el pago' });
     }
 };
 
 /**
  * GET /api/pagos/redirect
- * Pantalla que muestra el estado del pago con detalles
+ * Redirección directa al frontend
  */
 const redirigirDesdeMP = async (req, res) => {
-    const { type, external_reference, preference_id, payment_id } = req.query;
+    const { type, external_reference, payment_id } = req.query;
     const usuarioId = external_reference;
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-
-    console.log(`\n[REDIRECT] ========== REDIRECT desde Mercado Pago ==========`);
-    console.log(`[REDIRECT] Tipo: ${type}, Usuario: ${usuarioId}`);
 
     try {
         const esExitoso = type === 'exito' || req.query.status === 'approved' || req.query.collection_status === 'approved';
 
         if (!usuarioId || usuarioId === 'undefined') {
-            console.log(`[REDIRECT] ⚠️ Usuario ID inválido`);
             return res.redirect(`${frontendUrl}/#/planes?status=error`);
         }
 
@@ -340,9 +274,8 @@ const redirigirDesdeMP = async (req, res) => {
             if (payment_id) pagoData.mpPaymentId = String(payment_id);
             await pagoData.save();
 
-            console.log(`[REDIRECT] ✅ Plan activado para: ${usuarioId}`);
             return res.redirect(`${frontendUrl}/#/planes?status=success&external_reference=${usuarioId}`);
-            }
+        }
 
         if (pagoData && (type === 'fallo' || type === 'pendiente')) {
             pagoData.estado = type === 'fallo' ? 'rechazado' : 'pendiente';
@@ -352,7 +285,6 @@ const redirigirDesdeMP = async (req, res) => {
         return res.redirect(`${frontendUrl}/#/planes?status=${type || 'pendiente'}`);
 
     } catch (error) {
-        console.error('[REDIRECT] ❌ Error:', error);
         res.redirect(`${frontendUrl}/#/planes?status=error`);
     }
 };
